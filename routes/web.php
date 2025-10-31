@@ -4,6 +4,7 @@ use App\Http\Controllers\ChildController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MeasurementController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
@@ -45,6 +46,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::prefix('children/{child}')->name('children.')->group(function () {
         Route::resource('measurements', MeasurementController::class);
     });
+    
+    // User Management routes
+    Route::resource('users', UserController::class);
+    Route::post('users/{user}/toggle-status', [UserController::class, 'toggleStatus'])
+        ->name('users.toggle-status');
 });
 
 require __DIR__.'/settings.php';
