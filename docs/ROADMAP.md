@@ -2,7 +2,7 @@
 
 **Project:** OPT Plus Digital System  
 **Timeline:** 12 months (January 2026 - December 2026)  
-**Current Status:** Sprint 3 Complete (Full-Stack) ✅ | Sprint 4 Next 🎯  
+**Current Status:** Sprint 4 Complete (Analytics & Reports) ✅ | Sprint 5 Next 🎯  
 **Last Updated:** October 31, 2025
 
 ## Overview
@@ -12,12 +12,12 @@ This roadmap breaks down the 12-month implementation plan into actionable sprint
 ## Timeline Summary
 
 ```
-Phase 1: MVP Development          ████████████░░░░░░░░░░░░  (Months 1-4)
+Phase 1: MVP Development          ████████████████░░░░░░░░  (Months 1-4)
 Phase 2: Enhanced Features        ░░░░░░░░░░░░████████░░░░  (Months 5-7)
 Phase 3: Integration & Security   ░░░░░░░░░░░░░░░░░░██████  (Months 8-10)
 Phase 4: Nationwide Deployment    ░░░░░░░░░░░░░░░░░░░░░░██  (Months 11-12)
 
-Progress: ██████░░░░░░░░░░░░░░░░░░ 28% (2/7 MVP sprints complete)
+Progress: ████████████░░░░░░░░░░░░ 57% (4/7 MVP sprints complete)
 ```
 
 ---
@@ -287,7 +287,132 @@ $result = $service->calculateNutritionalStatus(
 
 ---
 
-### Sprint 4: Measurement Entry Module
+### Sprint 4: Analytics Dashboard & Reporting ✅
+**Status:** COMPLETED  
+**Duration:** October 31, 2025  
+**Team:** 1 Full-stack Developer  
+**Priority:** 🔴 Critical
+
+#### Goals
+- [x] Build analytics dashboard with statistics
+- [x] Create data visualization components
+- [x] Implement reporting system
+- [x] Generate OPT Plus reports
+- [x] Add barangay-specific analytics
+
+#### Tasks Completed
+- [x] **Backend Services**
+  - [x] AnalyticsService (274 lines) - statistical calculations
+  - [x] ReportService (225 lines) - report generation
+  - [x] Overall statistics calculation
+  - [x] Nutritional status breakdown
+  - [x] High-risk children identification
+  - [x] Barangay comparison analytics
+  - [x] Monthly trend analysis (6 months)
+
+- [x] **Backend Controllers**
+  - [x] DashboardController (75 lines) - dashboard rendering
+  - [x] ReportController (79 lines) - report views
+  - [x] Role-based dashboard logic
+  - [x] Barangay-specific analytics endpoint
+
+- [x] **Frontend Components**
+  - [x] dashboard-cards.tsx (317 lines) - reusable components
+  - [x] StatCard - statistics display
+  - [x] NutritionalStatusCard - status breakdown
+  - [x] HighRiskChildrenList - high-risk children
+
+- [x] **Frontend Pages**
+  - [x] dashboard.tsx (updated - 262 lines)
+  - [x] analytics/barangay.tsx (316 lines)
+  - [x] reports/index.tsx (142 lines)
+  - [x] Chart.js integration (Line, Bar charts)
+  - [x] Responsive design
+
+- [x] **Report Types**
+  - [x] OPT Plus Summary Report
+  - [x] Master List
+  - [x] Target List (High-Risk Children)
+  - [x] Barangay Comparison
+
+#### Deliverables
+- ✅ Analytics dashboard: `/dashboard`
+- ✅ Barangay analytics: `/analytics/barangay/{id}`
+- ✅ Reports index: `/reports`
+- ✅ OPT summary: `/reports/opt-summary`
+- ✅ Master list: `/reports/master-list`
+- ✅ Target list: `/reports/target-list`
+- ✅ Barangay comparison: `/reports/barangay-comparison`
+
+#### Acceptance Criteria
+- [x] Dashboard displays overall statistics
+- [x] Nutritional status visualization works
+- [x] High-risk children identified correctly
+- [x] Monthly trends show 6 months of data
+- [x] Barangay-specific analytics filter properly
+- [x] Reports generate without errors
+- [x] Charts render correctly (Chart.js)
+- [x] Responsive on mobile and desktop
+- [x] Color-coded indicators are clear
+
+#### Code Statistics
+- Backend: 653 lines (2 services + 2 controllers)
+- Frontend: 1,037 lines (1 component + 3 pages)
+- Total: 1,690 lines of production code
+- Files Created: 6 new files
+- Routes Added: 10 routes
+
+**Report:** See [SPRINT-4-COMPLETE.md](SPRINT-4-COMPLETE.md)
+
+---
+
+### Sprint 5: Reports Export & User Management
+**Duration:** Weeks 9-10 (Dec 24 - Jan 6, 2026)  
+**Team:** 1 Full-stack Developer  
+**Priority:** 🔴 Critical
+
+#### Goals
+- Build PDF export functionality
+- Implement Excel export (eOPT format)
+- Create user management system
+- Add role-based access control
+
+#### Tasks
+- [ ] **Export Functionality**
+  - [ ] PDF generation (DomPDF)
+  - [ ] Excel export (PhpSpreadsheet)
+  - [ ] eOPT-compatible format
+  - [ ] Print-friendly layouts
+  - [ ] Download buttons on reports
+
+- [ ] **User Management**
+  - [ ] User CRUD operations
+  - [ ] Role assignment (BHW, BNS, Municipal, Admin)
+  - [ ] Permission management
+  - [ ] User profile pages
+  - [ ] Activity logging
+
+#### Deliverables
+- Export buttons on all reports
+- User management: `/users`
+- Role management: `/roles`
+
+#### Acceptance Criteria
+- [ ] PDF reports match NNC format
+- [ ] Excel export compatible with eOPT Tool
+- [ ] Admin can manage users
+- [ ] Role-based permissions work
+- [ ] Audit trail for user actions
+
+#### Testing Requirements
+- [ ] Test PDF generation
+- [ ] Test Excel export format
+- [ ] Test user CRUD operations
+- [ ] Test permission enforcement
+
+---
+
+### Sprint 6: Offline Support & Performance
 **Duration:** Weeks 9-10 (Dec 24 - Jan 6, 2026)  
 **Team:** 1 Full-stack Developer  
 **Priority:** 🔴 Critical
