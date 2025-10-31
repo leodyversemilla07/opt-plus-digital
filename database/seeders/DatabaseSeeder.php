@@ -26,6 +26,7 @@ class DatabaseSeeder extends Seeder
 
         // Run seeders in order
         $this->call([
+            WhoStandardSeeder::class,  // WHO data first
             BarangaySeeder::class,
             ChildSeeder::class,
         ]);
