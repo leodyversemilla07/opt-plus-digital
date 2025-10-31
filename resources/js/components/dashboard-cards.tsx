@@ -1,11 +1,8 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { 
-    Activity, 
-    Users, 
     TrendingUp, 
     AlertTriangle,
-    MapPin,
-    Calendar
+    MapPin
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
@@ -248,7 +245,7 @@ export function HighRiskChildrenList({ children }: HighRiskChildrenListProps) {
             </CardHeader>
             <CardContent>
                 <div className="space-y-3">
-                    {children.map((item, index) => (
+                    {children.map((item) => (
                         <div 
                             key={item.child.id} 
                             className="flex items-start justify-between p-3 border rounded-lg hover:bg-accent/50 transition-colors"

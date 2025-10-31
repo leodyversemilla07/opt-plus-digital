@@ -9,32 +9,10 @@ import {
     Activity, 
     MapPin, 
     TrendingUp,
-    Calendar,
     Percent
 } from 'lucide-react';
-import { Line } from 'react-chartjs-2';
-import {
-    Chart as ChartJS,
-    CategoryScale,
-    LinearScale,
-    PointElement,
-    LineElement,
-    Title,
-    Tooltip,
-    Legend,
-    Filler,
-} from 'chart.js';
-
-ChartJS.register(
-    CategoryScale,
-    LinearScale,
-    PointElement,
-    LineElement,
-    Title,
-    Tooltip,
-    Legend,
-    Filler
-);
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
+import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from 'recharts';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -83,10 +61,31 @@ interface BarangayData {
     malnutrition_rate: number;
 }
 
+interface HighRiskChild {
+    child: {
+        id: string;
+        full_name: string;
+        sex: 'male' | 'female';
+        age_in_months: number;
+        barangay: {
+            name: string;
+            municipality: string;
+        };
+    };
+    measurement: {
+        opt_classification: string;
+        wfa_zscore: number | null;
+        hfa_zscore: number | null;
+        wfh_zscore: number | null;
+        measurement_date: string;
+    };
+    days_since_measurement: number;
+}
+
 interface DashboardProps {
     overallStats: OverallStats;
     nutritionalStatus: NutritionalStatus;
-    highRiskChildren: any[];
+    highRiskChildren: HighRiskChild[];
     monthlyTrends: MonthlyTrend[];
     barangayComparison: BarangayData[];
 }
@@ -99,38 +98,15 @@ export default function Dashboard({
     barangayComparison,
 }: DashboardProps) {
     // Chart data for monthly trends
-    const trendChartData = {
-        labels: monthlyTrends.map(t => t.label),
-        datasets: [
-            {
-                label: 'Total Measurements',
-                data: monthlyTrends.map(t => t.measurements),
-                borderColor: 'rgb(59, 130, 246)',
-                backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                fill: true,
-                tension: 0.4,
-            },
-        ],
-    };
+    const trendChartData = monthlyTrends.map(t => ({
+        month: t.label,
+        measurements: t.measurements,
+    }));
 
-    const trendChartOptions = {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            legend: {
-                display: false,
-            },
-            title: {
-                display: false,
-            },
-        },
-        scales: {
-            y: {
-                beginAtZero: true,
-                ticks: {
-                    precision: 0,
-                },
-            },
+    const chartConfig = {
+        measurements: {
+            label: "Measurements",
+            color: "hsl(var(--chart-1))",
         },
     };
 
@@ -195,9 +171,31 @@ export default function Dashboard({
                             <CardDescription>Last 6 months</CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <div className="h-[300px]">
-                                <Line data={trendChartData} options={trendChartOptions} />
-                            </div>
+                            <ChartContainer config={chartConfig} className="h-[300px] w-full">
+                                <AreaChart data={trendChartData}>
+                                    <CartesianGrid strokeDasharray="3 3" />
+                                    <XAxis 
+                                        dataKey="month" 
+                                        tickLine={false}
+                                        axisLine={false}
+                                        tickMargin={8}
+                                    />
+                                    <YAxis
+                                        tickLine={false}
+                                        axisLine={false}
+                                        tickMargin={8}
+                                    />
+                                    <ChartTooltip content={<ChartTooltipContent />} />
+                                    <Area
+                                        type="monotone"
+                                        dataKey="measurements"
+                                        stroke="hsl(var(--chart-1))"
+                                        fill="hsl(var(--chart-1))"
+                                        fillOpacity={0.2}
+                                        strokeWidth={2}
+                                    />
+                                </AreaChart>
+                            </ChartContainer>
                         </CardContent>
                     </Card>
                 </div>

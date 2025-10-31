@@ -53,15 +53,23 @@ class DashboardController extends Controller
      */
     public function barangay(Request $request, string $barangayId): Response
     {
+        $barangay = \App\Models\Barangay::findOrFail($barangayId);
+        
         $nutritionalStatus = $this->analyticsService->getLatestMeasurementsStatistics($barangayId);
         $highRiskChildren = $this->analyticsService->getHighRiskChildren($barangayId, 10);
         $monthlyTrends = $this->analyticsService->getMonthlyTrends($barangayId);
+        
+        $totalChildren = \App\Models\Child::where('barangay_id', $barangayId)->count();
+        $measuredChildren = $nutritionalStatus['total'];
 
         return Inertia::render('analytics/barangay', [
+            'barangay' => $barangay,
             'barangayId' => $barangayId,
             'nutritionalStatus' => $nutritionalStatus,
             'highRiskChildren' => $highRiskChildren,
             'monthlyTrends' => $monthlyTrends,
+            'totalChildren' => $totalChildren,
+            'measuredChildren' => $measuredChildren,
         ]);
     }
 }
