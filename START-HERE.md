@@ -1,6 +1,6 @@
 # Start Here - Quick Reference
 
-> **Sprint 1 COMPLETE!** Sprint 2 (WHO Growth Standards) is next.
+> **Sprint 2 COMPLETE (Backend)!** Sprint 3 (Child Registration + UI) is next.
 
 ## 📅 Project Timeline at a Glance
 
@@ -8,8 +8,9 @@
 |-------|-------|--------|-------|
 | **Sprint 0** | Oct 29 - Nov 11, 2025 | ✅ DONE | Foundation setup |
 | **Sprint 1** | Oct 31, 2025 | ✅ DONE | Database & Models |
-| **Sprint 2** | Nov 12 - Nov 25, 2025 | 🎯 NEXT | WHO Growth Standards |
-| **Sprint 3-7** | Nov 26 - Feb 17, 2026 | 📋 Planned | MVP Features |
+| **Sprint 2** | Oct 31, 2025 | ✅ DONE | WHO Engine (Backend) |
+| **Sprint 3** | Nov 12 - Nov 25, 2025 | 🎯 NEXT | Child Registration + UI |
+| **Sprint 4-7** | Nov 26 - Feb 17, 2026 | 📋 Planned | MVP Features |
 | **Phase 2** | Feb 18 - Jun 2, 2026 | 📋 Planned | Enhanced features |
 | **Phase 3** | Jun 3 - Aug 26, 2026 | 📋 Planned | Integration & Security |
 | **Phase 4** | Aug 27 - Dec 31, 2026 | 📋 Planned | Nationwide deployment |
@@ -27,9 +28,10 @@
 1. ✅ Read [GETTING-STARTED.md](docs/GETTING-STARTED.md) - Setup guide
 2. ✅ Run `composer setup` to install project
 3. ✅ Familiarize yourself with [DEVELOPMENT.md](docs/DEVELOPMENT.md)
-4. ✅ Review [Sprint 1 Completion](docs/SPRINT-1-COMPLETE.md) - What's done
-5. 📋 Pick your first task from [Sprint 2](docs/ROADMAP.md#sprint-2-who-growth-standards-engine)
-6. 📋 Review [CONTRIBUTING.md](CONTRIBUTING.md) guidelines
+4. ✅ Review [Sprint 1 Completion](docs/SPRINT-1-COMPLETE.md) - Database schema
+5. ✅ Review [Sprint 2 Completion](docs/SPRINT-2-COMPLETE.md) - WHO calculator
+6. 📋 Pick your first task from [Sprint 3](docs/ROADMAP.md#sprint-3-child-registration-module)
+7. 📋 Review [CONTRIBUTING.md](CONTRIBUTING.md) guidelines
 
 ### For Stakeholders
 1. ✅ Read Executive Summary in [OPT-Plus-Digital-System.md](OPT-Plus-Digital-System.md#executive-summary)
@@ -37,60 +39,66 @@
 3. 📋 Schedule stakeholder demo for Dec 20, 2025
 4. 📋 Identify pilot barangays for alpha testing
 
-## ✅ Sprint 1 COMPLETE (Oct 31, 2025)
+## ✅ Sprint 2 COMPLETE (Oct 31, 2025)
 
-**Focus:** Database Schema & Core Models - **ALL DONE!**
+**Focus:** WHO Growth Standards Engine - **BACKEND DONE!**
 
 ### Completed Deliverables
 
-✅ **3 Core Models** - Barangay, Child, Measurement
-✅ **3 Migrations** - With foreign keys and indexes
-✅ **3 Factories** - Realistic Filipino test data
-✅ **2 Seeders** - 50 barangays, 750-1,500 children
-✅ **27 Unit Tests** - All models validated
-✅ **Documentation** - DATABASE.md (446 lines)
+✅ **WHO Calculator Service** - LMS algorithm, all 3 indicators
+✅ **Measurement Service** - CRUD with validation
+✅ **Measurement Observer** - Auto z-score calculation
+✅ **Inertia Controller** - Ready for React components
+✅ **14 Unit Tests** - WHO calculator validated
+✅ **Documentation** - SPRINT-2-COMPLETE.md
 
-📖 **Read the full report:** [docs/SPRINT-1-COMPLETE.md](docs/SPRINT-1-COMPLETE.md)
+📖 **Read the full report:** [docs/SPRINT-2-COMPLETE.md](docs/SPRINT-2-COMPLETE.md)
+
+⚠️  **Frontend Pending:** React components will be built in Sprint 3
 
 ---
 
-## 📋 Sprint 2 Tasks (Nov 12-25, 2025)
+## 📋 Sprint 3 Tasks (Nov 12-25, 2025)
 
-**Focus:** WHO Growth Standards Engine
+**Focus:** Child Registration Module + UI
 
 ### High Priority Tasks
 
-#### Backend Developer 1
-- [ ] Create WHO reference tables migrations (LMS data)
-- [ ] Import WHO data for Weight-for-Age
-- [ ] Import WHO data for Height-for-Age
-- [ ] Import WHO data for Weight-for-Height
+#### Full Stack Developer 1
+- [ ] Create child registration form (React)
+- [ ] Implement form validation with Inertia
+- [ ] Add duplicate detection logic
+- [ ] Create QR code generation
+- [ ] Build child search interface
 
-#### Backend Developer 2
-- [ ] Create `WHOCalculatorService` class
-- [ ] Implement z-score calculation algorithm
-- [ ] Add interpolation for missing ages
-- [ ] Write unit tests for calculator
+#### Full Stack Developer 2
+- [ ] Create measurement entry form (React)
+- [ ] Implement WHO z-score display
+- [ ] Add measurement history view
+- [ ] Build growth charts (Chart.js)
+- [ ] Create dashboard components
 
-#### Backend Developer 3
-- [ ] Create `MeasurementService` class
-- [ ] Auto-calculate z-scores on measurement save
-- [ ] Auto-assign nutritional status
-- [ ] Add validation for measurement ranges
+#### Backend Developer
+- [ ] Create ChildController (Inertia)
+- [ ] Add child search endpoint
+- [ ] Implement duplicate detection service
+- [ ] Generate family serial numbers
+- [ ] Add photo upload handling
 
-#### Full Stack Developer
-- [ ] Create basic measurement API endpoints
-- [ ] POST /api/measurements (create with auto-calculation)
-- [ ] GET /api/children/{id}/measurements (list)
-- [ ] Write feature tests for API
+#### Frontend Developer
+- [ ] Build reusable form components
+- [ ] Create data tables with shadcn/ui
+- [ ] Add form error handling
+- [ ] Implement loading states
+- [ ] Add success notifications
 
-### Acceptance Criteria for Sprint 2
+### Acceptance Criteria for Sprint 3
 
-- [ ] WHO reference data imported successfully
-- [ ] Z-score calculations match WHO reference values
-- [ ] Measurements auto-calculate z-scores on save
-- [ ] API endpoints working and tested
-- [ ] All tests pass (unit + feature)
+- [ ] Child registration form working
+- [ ] Duplicate detection functional
+- [ ] Measurement entry form complete
+- [ ] Growth charts displaying
+- [ ] All forms validated
 - [ ] Code review completed and merged
 
 ## 🎯 MVP Features (By Feb 17, 2026)
