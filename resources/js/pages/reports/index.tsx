@@ -9,7 +9,9 @@ import {
     AlertTriangle,
     MapPin,
     Download,
-    Calendar
+    Calendar,
+    FileDown,
+    FileSpreadsheet
 } from 'lucide-react';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -26,6 +28,8 @@ export default function ReportsIndex() {
             description: 'Complete overview of nutritional status and coverage',
             icon: FileText,
             href: '/reports/opt-summary',
+            exportPDF: '/reports/export/opt-summary/pdf',
+            exportExcel: '/reports/export/opt-summary/excel',
             color: 'text-blue-600 dark:text-blue-400',
             bgColor: 'bg-blue-100 dark:bg-blue-900/20',
         },
@@ -34,6 +38,8 @@ export default function ReportsIndex() {
             description: 'Complete list of all registered children with measurements',
             icon: Users,
             href: '/reports/master-list',
+            exportPDF: '/reports/export/master-list/pdf',
+            exportExcel: '/reports/export/master-list/excel',
             color: 'text-green-600 dark:text-green-400',
             bgColor: 'bg-green-100 dark:bg-green-900/20',
         },
@@ -42,6 +48,8 @@ export default function ReportsIndex() {
             description: 'High-risk children requiring immediate intervention',
             icon: AlertTriangle,
             href: '/reports/target-list',
+            exportPDF: '/reports/export/target-list/pdf',
+            exportExcel: '/reports/export/target-list/excel',
             color: 'text-red-600 dark:text-red-400',
             bgColor: 'bg-red-100 dark:bg-red-900/20',
         },
@@ -54,6 +62,10 @@ export default function ReportsIndex() {
             bgColor: 'bg-purple-100 dark:bg-purple-900/20',
         },
     ];
+
+    const handleExport = (url: string) => {
+        window.open(url, '_blank');
+    };
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -72,30 +84,50 @@ export default function ReportsIndex() {
                     {reports.map((report) => {
                         const Icon = report.icon;
                         return (
-                            <Link key={report.href} href={report.href}>
-                                <Card className="hover:border-primary transition-colors cursor-pointer h-full">
-                                    <CardHeader>
-                                        <div className="flex items-start justify-between">
-                                            <div className="flex-1">
-                                                <CardTitle className="flex items-center gap-2">
-                                                    {report.title}
-                                                </CardTitle>
-                                                <CardDescription className="mt-2">
-                                                    {report.description}
-                                                </CardDescription>
-                                            </div>
-                                            <div className={`p-3 rounded-lg ${report.bgColor}`}>
-                                                <Icon className={`h-6 w-6 ${report.color}`} />
-                                            </div>
+                            <Card key={report.href} className="hover:border-primary transition-colors h-full">
+                                <CardHeader>
+                                    <div className="flex items-start justify-between">
+                                        <div className="flex-1">
+                                            <CardTitle className="flex items-center gap-2">
+                                                {report.title}
+                                            </CardTitle>
+                                            <CardDescription className="mt-2">
+                                                {report.description}
+                                            </CardDescription>
                                         </div>
-                                    </CardHeader>
-                                    <CardContent>
+                                        <div className={`p-3 rounded-lg ${report.bgColor}`}>
+                                            <Icon className={`h-6 w-6 ${report.color}`} />
+                                        </div>
+                                    </div>
+                                </CardHeader>
+                                <CardContent className="space-y-2">
+                                    <Link href={report.href}>
                                         <Button variant="outline" className="w-full">
                                             View Report
                                         </Button>
-                                    </CardContent>
-                                </Card>
-                            </Link>
+                                    </Link>
+                                    {report.exportPDF && report.exportExcel && (
+                                        <div className="grid grid-cols-2 gap-2">
+                                            <Button 
+                                                variant="secondary" 
+                                                size="sm"
+                                                onClick={() => handleExport(report.exportPDF!)}
+                                            >
+                                                <FileDown className="h-4 w-4 mr-2" />
+                                                PDF
+                                            </Button>
+                                            <Button 
+                                                variant="secondary" 
+                                                size="sm"
+                                                onClick={() => handleExport(report.exportExcel!)}
+                                            >
+                                                <FileSpreadsheet className="h-4 w-4 mr-2" />
+                                                Excel
+                                            </Button>
+                                        </div>
+                                    )}
+                                </CardContent>
+                            </Card>
                         );
                     })}
                 </div>
@@ -132,7 +164,7 @@ export default function ReportsIndex() {
                     <CardContent className="text-sm text-blue-800 dark:text-blue-200 space-y-2">
                         <p>• Reports are generated in real-time based on current data</p>
                         <p>• Use filters to generate barangay-specific reports</p>
-                        <p>• Export options (PDF/Excel) will be available in future updates</p>
+                        <p>• Export to PDF for printing or Excel for further analysis</p>
                         <p>• Target list shows children requiring immediate intervention</p>
                     </CardContent>
                 </Card>

@@ -3,14 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Services\ReportService;
+use App\Services\ExportService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class ReportController extends Controller
 {
     public function __construct(
-        private ReportService $reportService
+        private ReportService $reportService,
+        private ExportService $exportService
     ) {}
 
     /**
@@ -75,5 +78,77 @@ class ReportController extends Controller
         return Inertia::render('reports/barangay-comparison', [
             'report' => $report,
         ]);
+    }
+
+    /**
+     * Export OPT Summary as PDF
+     */
+    public function exportOPTSummaryPDF(Request $request): BinaryFileResponse
+    {
+        return $this->exportService->exportOPTSummaryPDF(
+            $request->query('barangay'),
+            $request->query('start_date'),
+            $request->query('end_date')
+        );
+    }
+
+    /**
+     * Export Master List as PDF
+     */
+    public function exportMasterListPDF(Request $request): BinaryFileResponse
+    {
+        return $this->exportService->exportMasterListPDF(
+            $request->query('barangay'),
+            $request->query('start_date'),
+            $request->query('end_date')
+        );
+    }
+
+    /**
+     * Export Target List as PDF
+     */
+    public function exportTargetListPDF(Request $request): BinaryFileResponse
+    {
+        return $this->exportService->exportTargetListPDF(
+            $request->query('barangay'),
+            $request->query('start_date'),
+            $request->query('end_date')
+        );
+    }
+
+    /**
+     * Export OPT Summary as Excel
+     */
+    public function exportOPTSummaryExcel(Request $request): BinaryFileResponse
+    {
+        return $this->exportService->exportOPTSummaryExcel(
+            $request->query('barangay'),
+            $request->query('start_date'),
+            $request->query('end_date')
+        );
+    }
+
+    /**
+     * Export Master List as Excel
+     */
+    public function exportMasterListExcel(Request $request): BinaryFileResponse
+    {
+        return $this->exportService->exportMasterListExcel(
+            $request->query('barangay'),
+            $request->query('start_date'),
+            $request->query('end_date')
+        );
+    }
+
+    /**
+     * Export Target List as Excel
+     */
+    public function exportTargetListExcel(Request $request): BinaryFileResponse
+    {
+        return $this->exportService->exportTargetListExcel(
+            $request->query('barangay'),
+            $request->query('start_date'),
+            $request->query('end_date')
+        );
     }
 }
