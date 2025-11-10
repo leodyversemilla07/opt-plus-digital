@@ -13,7 +13,7 @@ interface Child {
     age_in_months: number;
     barangay: {
         name: string;
-        municipality: string;
+        municipality_city: string;
     };
     is_indigenous_people: boolean;
     indigenous_people_group: string | null;
@@ -105,7 +105,7 @@ export default function ChildCard({ child, showActions = true }: ChildCardProps)
                                 <MapPin className="h-4 w-4" />
                                 <span>
                                     {child.barangay.name},{' '}
-                                    {child.barangay.municipality}
+                                    {child.barangay.municipality_city}
                                 </span>
                             </div>
 

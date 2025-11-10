@@ -1,5 +1,6 @@
 import { Head, Link } from '@inertiajs/react';
 import AppLayout from '@/layouts/app-layout';
+import { index as childrenIndex, show as childrenShow, edit as childrenEdit } from '@/routes/children';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -20,7 +21,7 @@ interface Child {
     age_in_months: number;
     barangay: {
         name: string;
-        municipality: string;
+        municipality_city: string;
     };
     mother_name: string | null;
     father_name: string | null;
@@ -90,20 +91,21 @@ export default function Duplicates({ duplicates }: Props) {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Potential Duplicate Children" />
 
-            <div className="py-12">
-                <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
+            <div className="flex flex-col gap-6 p-6">
+                <div className="mx-auto max-w-7xl w-full">
                     {/* Header */}
-                    <div className="mb-6">
-                        <div>
-                            <h1 className="text-3xl font-bold text-gray-900">
-                                Potential Duplicate Children
-                            </h1>
-                            <p className="mt-1 text-sm text-gray-600">
-                                Review and resolve potential duplicate
-                                registrations
-                            </p>
-                        </div>
+                    <div>
+                        <h1 className="text-3xl font-bold tracking-tight">
+                            Potential Duplicate Children
+                        </h1>
+                        <p className="text-muted-foreground mt-1">
+                            Review and resolve potential duplicate
+                            registrations
+                        </p>
                     </div>
+                </div>
+
+                <div className="mx-auto max-w-7xl w-full">
 
                     {/* Alert */}
                     {duplicates.length > 0 && (
@@ -134,13 +136,13 @@ export default function Duplicates({ duplicates }: Props) {
                                 <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
                                     <User className="h-8 w-8 text-green-600" />
                                 </div>
-                                <h3 className="text-lg font-semibold text-gray-900">
+                                <h3 className="text-lg font-semibold tracking-tight">
                                     No Duplicates Found
                                 </h3>
-                                <p className="mt-2 text-sm text-gray-600">
+                                <p className="mt-2 text-sm text-muted-foreground">
                                     All child registrations appear to be unique.
                                 </p>
-                                <Link href="/children" className="mt-4 inline-block">
+                                <Link href={childrenIndex.url()} className="mt-4 inline-block">
                                     <Button>Back to Children List</Button>
                                 </Link>
                             </CardContent>
@@ -155,7 +157,7 @@ export default function Duplicates({ duplicates }: Props) {
                                                 <CardTitle>
                                                     Duplicate Group #{groupIndex + 1}
                                                 </CardTitle>
-                                                <p className="mt-1 text-sm text-gray-600">
+                                                <p className="mt-1 text-sm text-muted-foreground">
                                                     {getCriteriaDescription(
                                                         group.criteria
                                                     )}
@@ -181,7 +183,7 @@ export default function Duplicates({ duplicates }: Props) {
                                                         <div className="flex items-start justify-between">
                                                             <div className="flex-1">
                                                                 <div className="flex items-center gap-2">
-                                                                    <h4 className="font-semibold text-gray-900">
+                                                                    <h4 className="font-semibold tracking-tight">
                                                                         {
                                                                             child.full_name
                                                                         }
@@ -208,7 +210,7 @@ export default function Duplicates({ duplicates }: Props) {
                                                                 </div>
 
                                                                 <div className="mt-3 grid gap-2 text-sm md:grid-cols-2">
-                                                                    <div className="flex items-center gap-2 text-gray-600">
+                                                                    <div className="flex items-center gap-2 text-muted-foreground">
                                                                         <Calendar className="h-4 w-4" />
                                                                         <span>
                                                                             Born:{' '}
@@ -222,7 +224,7 @@ export default function Duplicates({ duplicates }: Props) {
                                                                             )
                                                                         </span>
                                                                     </div>
-                                                                    <div className="flex items-center gap-2 text-gray-600">
+                                                                    <div className="flex items-center gap-2 text-muted-foreground">
                                                                         <MapPin className="h-4 w-4" />
                                                                         <span>
                                                                             {
@@ -234,11 +236,11 @@ export default function Duplicates({ duplicates }: Props) {
                                                                             {
                                                                                 child
                                                                                     .barangay
-                                                                                    .municipality
+                                                                                    .municipality_city
                                                                             }
                                                                         </span>
                                                                     </div>
-                                                                    <div className="text-gray-600">
+                                                                    <div className="text-muted-foreground">
                                                                         <span className="font-medium">
                                                                             FSN:
                                                                         </span>{' '}
@@ -247,7 +249,7 @@ export default function Duplicates({ duplicates }: Props) {
                                                                         }
                                                                     </div>
                                                                     {child.mother_name && (
-                                                                        <div className="text-gray-600">
+                                                                        <div className="text-muted-foreground">
                                                                             <span className="font-medium">
                                                                                 Mother:
                                                                             </span>{' '}
@@ -257,7 +259,7 @@ export default function Duplicates({ duplicates }: Props) {
                                                                         </div>
                                                                     )}
                                                                     {child.father_name && (
-                                                                        <div className="text-gray-600">
+                                                                        <div className="text-muted-foreground">
                                                                             <span className="font-medium">
                                                                                 Father:
                                                                             </span>{' '}
@@ -266,7 +268,7 @@ export default function Duplicates({ duplicates }: Props) {
                                                                             }
                                                                         </div>
                                                                     )}
-                                                                    <div className="text-gray-600">
+                                                                    <div className="text-muted-foreground">
                                                                         <span className="font-medium">
                                                                             Registered:
                                                                         </span>{' '}
@@ -279,7 +281,7 @@ export default function Duplicates({ duplicates }: Props) {
 
                                                             <div className="ml-4 flex gap-2">
                                                                 <Link
-                                                                    href={`/children/${child.id}`}
+                                                                    href={childrenShow.url(child.id)}
                                                                 >
                                                                     <Button
                                                                         variant="outline"
@@ -289,7 +291,7 @@ export default function Duplicates({ duplicates }: Props) {
                                                                     </Button>
                                                                 </Link>
                                                                 <Link
-                                                                    href={`/children/${child.id}/edit`}
+                                                                    href={childrenEdit.url(child.id)}
                                                                 >
                                                                     <Button
                                                                         variant="outline"
@@ -307,7 +309,7 @@ export default function Duplicates({ duplicates }: Props) {
 
                                         {/* Actions */}
                                         <div className="mt-4 flex gap-2 border-t pt-4">
-                                            <p className="flex-1 text-sm text-gray-600">
+                                            <p className="flex-1 text-sm text-muted-foreground">
                                                 <span className="font-medium">
                                                     Action Required:
                                                 </span>{' '}
@@ -328,7 +330,7 @@ export default function Duplicates({ duplicates }: Props) {
                             <CardTitle>How Duplicates Are Detected</CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <div className="space-y-2 text-sm text-gray-700">
+                            <div className="space-y-2 text-sm text-muted-foreground">
                                 <p>
                                     <span className="font-semibold">
                                         High Confidence:

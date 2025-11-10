@@ -50,7 +50,7 @@ interface MonthlyTrend {
 interface BarangayData {
     barangay_id: string;
     barangay_name: string;
-    municipality: string;
+    municipality_city: string;
     total_children: number;
     measured_children: number;
     coverage_rate: number;
@@ -69,7 +69,7 @@ interface HighRiskChild {
         age_in_months: number;
         barangay: {
             name: string;
-            municipality: string;
+            municipality_city: string;
         };
     };
     measurement: {
@@ -231,7 +231,7 @@ export default function Dashboard({
                                         {barangayComparison.map((barangay) => (
                                             <tr key={barangay.barangay_id} className="border-b hover:bg-accent/50">
                                                 <td className="p-2 font-medium">{barangay.barangay_name}</td>
-                                                <td className="p-2 text-muted-foreground">{barangay.municipality}</td>
+                                                <td className="p-2 text-muted-foreground">{barangay.municipality_city}</td>
                                                 <td className="p-2 text-right">{barangay.total_children}</td>
                                                 <td className="p-2 text-right">{barangay.coverage_rate}%</td>
                                                 <td className="p-2 text-right text-green-600 dark:text-green-400">

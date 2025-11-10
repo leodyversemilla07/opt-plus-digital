@@ -31,7 +31,7 @@ class BarangaySeeder extends Seeder
                 'psgc_code' => '1337500897',
                 'estimated_population_0_59_months' => 850,
             ],
-            
+
             // NCR - Quezon City
             [
                 'name' => 'Batasan Hills',
@@ -49,7 +49,7 @@ class BarangaySeeder extends Seeder
                 'psgc_code' => '1374200030',
                 'estimated_population_0_59_months' => 680,
             ],
-            
+
             // Region VII - Cebu
             [
                 'name' => 'Guadalupe',
@@ -67,7 +67,7 @@ class BarangaySeeder extends Seeder
                 'psgc_code' => '0722200045',
                 'estimated_population_0_59_months' => 390,
             ],
-            
+
             // Region XI - Davao
             [
                 'name' => 'Poblacion',
@@ -85,7 +85,7 @@ class BarangaySeeder extends Seeder
                 'psgc_code' => '1123800014',
                 'estimated_population_0_59_months' => 560,
             ],
-            
+
             // Region IV-A - Cavite
             [
                 'name' => 'San Jose',
@@ -103,7 +103,7 @@ class BarangaySeeder extends Seeder
                 'psgc_code' => '0421200065',
                 'estimated_population_0_59_months' => 490,
             ],
-            
+
             // Region III - Bulacan
             [
                 'name' => 'San Jose',
@@ -132,7 +132,7 @@ class BarangaySeeder extends Seeder
 
         // Create additional random barangays for testing
         Barangay::factory(38)->create();
-        
+
         $this->command->info('Seeded 50 barangays (12 real + 38 test data)');
     }
 }

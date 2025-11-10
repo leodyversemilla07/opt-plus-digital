@@ -9,7 +9,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->foreignId('barangay_id')->nullable()->after('email')->constrained()->nullOnDelete();
+            $table->uuid('barangay_id')->nullable()->after('email');
+            $table->foreign('barangay_id')->references('id')->on('barangays')->nullOnDelete();
             $table->string('phone')->nullable()->after('email');
             $table->boolean('is_active')->default(true)->after('email_verified_at');
         });

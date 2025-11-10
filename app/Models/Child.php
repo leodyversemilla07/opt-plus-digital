@@ -65,7 +65,11 @@ class Child extends Model
     protected function fullName(): Attribute
     {
         return Attribute::make(
-            get: fn () => trim("{$this->first_name} {$this->middle_name} {$this->last_name}")
+            get: fn () => trim(implode(' ', array_filter([
+                $this->first_name,
+                $this->middle_name,
+                $this->last_name,
+            ])))
         );
     }
 
@@ -73,14 +77,14 @@ class Child extends Model
     {
         return Attribute::make(
             get: function () {
-                if (!$this->date_of_birth) {
+                if (! $this->date_of_birth) {
                     return null;
                 }
-                
+
                 $birthDate = $this->date_of_birth;
                 $now = now();
-                
-                return $birthDate->diffInMonths($now);
+
+                return (int) $birthDate->diffInMonths($now);
             }
         );
     }
@@ -89,10 +93,10 @@ class Child extends Model
     {
         return Attribute::make(
             get: function () {
-                if (!$this->date_of_birth) {
+                if (! $this->date_of_birth) {
                     return null;
                 }
-                
+
                 return $this->date_of_birth->age;
             }
         );
@@ -106,12 +110,14 @@ class Child extends Model
     public function isEligibleForOpt(): bool
     {
         $ageInMonths = $this->age_in_months;
+
         return $ageInMonths !== null && $ageInMonths >= 0 && $ageInMonths <= 59;
     }
 
     public function getCurrentNutritionalStatus(): ?string
     {
         $latest = $this->latestMeasurement();
+
         return $latest?->opt_classification;
     }
 

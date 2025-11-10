@@ -1,7 +1,6 @@
 <?php
 
 use App\Models\Barangay;
-use App\Models\Child;
 
 test('barangay has fillable attributes', function () {
     $fillable = [
@@ -14,23 +13,23 @@ test('barangay has fillable attributes', function () {
         'geographic_coordinates',
     ];
 
-    $barangay = new Barangay();
+    $barangay = new Barangay;
     expect($barangay->getFillable())->toBe($fillable);
 });
 
 test('barangay casts estimated population to integer', function () {
-    $barangay = new Barangay();
+    $barangay = new Barangay;
     expect($barangay->getCasts())->toHaveKey('estimated_population_0_59_months', 'integer');
 });
 
 test('barangay uses uuid for primary key', function () {
-    $barangay = new Barangay();
+    $barangay = new Barangay;
     expect($barangay->getKeyType())->toBe('string')
         ->and($barangay->getIncrementing())->toBeFalse();
 });
 
 test('barangay has many children', function () {
-    $barangay = new Barangay();
+    $barangay = new Barangay;
     expect($barangay->children())->toBeInstanceOf(Illuminate\Database\Eloquent\Relations\HasMany::class);
 });
 

@@ -1,5 +1,6 @@
 import { Head, Link } from '@inertiajs/react';
 import AppLayout from '@/layouts/app-layout';
+import { create as measurementsCreate } from '@/routes/children/measurements';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -79,7 +80,7 @@ export default function Index({ child, measurements }: Props) {
     };
 
     const getZScoreColor = (zscore: number | null) => {
-        if (!zscore) return 'text-gray-500';
+        if (!zscore) return 'text-muted-foreground';
         if (zscore < -3) return 'text-red-600 font-semibold';
         if (zscore < -2) return 'text-orange-600';
         if (zscore > 3) return 'text-red-600 font-semibold';
@@ -108,15 +109,15 @@ export default function Index({ child, measurements }: Props) {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={`Measurements - ${child.full_name}`} />
 
-            <div className="py-12">
-                <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
+            <div className="flex flex-col gap-6 p-6">
+                <div className="mx-auto max-w-7xl w-full">
                     {/* Header */}
-                    <div className="mb-6 flex items-center justify-between">
+                    <div className="flex items-center justify-between">
                         <div>
-                            <h1 className="text-3xl font-bold text-gray-900">
+                            <h1 className="text-3xl font-bold tracking-tight">
                                 Measurement History
                             </h1>
-                            <p className="mt-1 text-sm text-gray-600">
+                            <p className="text-muted-foreground mt-1">
                                 {child.full_name} •{' '}
                                 {getAgeDisplay(child.age_in_months)} •{' '}
                                 {measurements.length} measurement
@@ -124,7 +125,7 @@ export default function Index({ child, measurements }: Props) {
                             </p>
                         </div>
                         <Link
-                            href={`/children/${child.id}/measurements/create`}
+                            href={measurementsCreate.url(child.id)}
                         >
                             <Button>
                                 <Plus className="mr-2 h-4 w-4" />
@@ -132,13 +133,16 @@ export default function Index({ child, measurements }: Props) {
                             </Button>
                         </Link>
                     </div>
+                </div>
+
+                <div className="mx-auto max-w-7xl w-full">
 
                     {/* Latest Measurement Summary */}
                     {measurements.length > 0 && (
                         <div className="mb-6 grid gap-4 md:grid-cols-4">
                             <Card>
                                 <CardHeader className="pb-3">
-                                    <CardTitle className="text-sm font-medium text-gray-600">
+                                    <CardTitle className="text-sm font-medium text-muted-foreground">
                                         Latest Weight
                                     </CardTitle>
                                 </CardHeader>
@@ -153,16 +157,16 @@ export default function Index({ child, measurements }: Props) {
                                         )}`}
                                     >
                                         Z-score:{' '}
-                                        {measurements[0].weight_for_age_zscore?.toFixed(
-                                            2
-                                        ) || 'N/A'}
+                                        {measurements[0].weight_for_age_zscore != null
+                                            ? Number(measurements[0].weight_for_age_zscore).toFixed(2)
+                                            : 'N/A'}
                                     </p>
                                 </CardContent>
                             </Card>
 
                             <Card>
                                 <CardHeader className="pb-3">
-                                    <CardTitle className="text-sm font-medium text-gray-600">
+                                    <CardTitle className="text-sm font-medium text-muted-foreground">
                                         Latest Height
                                     </CardTitle>
                                 </CardHeader>
@@ -177,16 +181,16 @@ export default function Index({ child, measurements }: Props) {
                                         )}`}
                                     >
                                         Z-score:{' '}
-                                        {measurements[0].height_for_age_zscore?.toFixed(
-                                            2
-                                        ) || 'N/A'}
+                                        {measurements[0].height_for_age_zscore != null
+                                            ? Number(measurements[0].height_for_age_zscore).toFixed(2)
+                                            : 'N/A'}
                                     </p>
                                 </CardContent>
                             </Card>
 
                             <Card>
                                 <CardHeader className="pb-3">
-                                    <CardTitle className="text-sm font-medium text-gray-600">
+                                    <CardTitle className="text-sm font-medium text-muted-foreground">
                                         Status
                                     </CardTitle>
                                 </CardHeader>
@@ -199,7 +203,7 @@ export default function Index({ child, measurements }: Props) {
 
                             <Card>
                                 <CardHeader className="pb-3">
-                                    <CardTitle className="text-sm font-medium text-gray-600">
+                                    <CardTitle className="text-sm font-medium text-muted-foreground">
                                         Last Measured
                                     </CardTitle>
                                 </CardHeader>
@@ -209,7 +213,7 @@ export default function Index({ child, measurements }: Props) {
                                             measurements[0].measurement_date
                                         ).toLocaleDateString()}
                                     </div>
-                                    <p className="text-sm text-gray-600">
+                                    <p className="text-sm text-muted-foreground">
                                         by {measurements[0].measured_by.name}
                                     </p>
                                 </CardContent>
@@ -224,12 +228,12 @@ export default function Index({ child, measurements }: Props) {
                         </CardHeader>
                         <CardContent>
                             {measurements.length === 0 ? (
-                                <div className="py-8 text-center text-gray-500">
+                                <div className="py-8 text-center text-muted-foreground">
                                     <p className="mb-4">
                                         No measurements recorded yet.
                                     </p>
                                     <Link
-                                        href={`/children/${child.id}/measurements/create`}
+                                        href={measurementsCreate.url(child.id)}
                                     >
                                         <Button>
                                             <Plus className="mr-2 h-4 w-4" />
@@ -330,34 +334,34 @@ export default function Index({ child, measurements }: Props) {
                                                                     measurement.weight_for_age_zscore
                                                                 )}
                                                             >
-                                                                {measurement.weight_for_age_zscore?.toFixed(
-                                                                    2
-                                                                ) || 'N/A'}
+                                                                {measurement.weight_for_age_zscore != null
+                                                                    ? Number(measurement.weight_for_age_zscore).toFixed(2)
+                                                                    : 'N/A'}
                                                             </TableCell>
                                                             <TableCell
                                                                 className={getZScoreColor(
                                                                     measurement.height_for_age_zscore
                                                                 )}
                                                             >
-                                                                {measurement.height_for_age_zscore?.toFixed(
-                                                                    2
-                                                                ) || 'N/A'}
+                                                                {measurement.height_for_age_zscore != null
+                                                                    ? Number(measurement.height_for_age_zscore).toFixed(2)
+                                                                    : 'N/A'}
                                                             </TableCell>
                                                             <TableCell
                                                                 className={getZScoreColor(
                                                                     measurement.weight_for_height_zscore
                                                                 )}
                                                             >
-                                                                {measurement.weight_for_height_zscore?.toFixed(
-                                                                    2
-                                                                ) || 'N/A'}
+                                                                {measurement.weight_for_height_zscore != null
+                                                                    ? Number(measurement.weight_for_height_zscore).toFixed(2)
+                                                                    : 'N/A'}
                                                             </TableCell>
                                                             <TableCell>
                                                                 {getStatusBadge(
                                                                     measurement.opt_classification
                                                                 )}
                                                             </TableCell>
-                                                            <TableCell className="text-sm text-gray-600">
+                                                            <TableCell className="text-sm text-muted-foreground">
                                                                 {
                                                                     measurement
                                                                         .measured_by
@@ -401,7 +405,7 @@ export default function Index({ child, measurements }: Props) {
                                     </span>
                                 </div>
                             </div>
-                            <p className="mt-4 text-xs text-gray-500">
+                            <p className="mt-4 text-xs text-muted-foreground">
                                 WFA = Weight-for-Age | HFA = Height-for-Age |
                                 WFH = Weight-for-Height | MUAC = Mid-Upper Arm
                                 Circumference

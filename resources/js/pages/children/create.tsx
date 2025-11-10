@@ -1,11 +1,12 @@
 import { Head, Link, useForm } from '@inertiajs/react';
 import { FormEventHandler } from 'react';
+import { index as childrenIndex } from '@/routes/children';
 import AppLayout from '@/layouts/app-layout';
 import { Button } from '@/components/ui/button';
 import { type BreadcrumbItem } from '@/types';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
     Select,
     SelectContent,
@@ -14,12 +15,18 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
+import {
+    Field,
+    FieldDescription,
+    FieldGroup,
+    FieldLabel,
+} from '@/components/ui/field';
 import { ArrowLeft } from 'lucide-react';
 
 interface Barangay {
     id: string;
     name: string;
-    municipality: string;
+    municipality_city: string;
     province: string;
 }
 
@@ -65,41 +72,34 @@ export default function Create({ barangays }: Props) {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Register Child" />
 
-            <div className="py-12">
-                <div className="mx-auto max-w-4xl sm:px-6 lg:px-8">
+            <div className="flex flex-col gap-6 p-6">
+                <div className="mx-auto max-w-4xl w-full">
                     {/* Header */}
-                    <div className="mb-6 flex items-center gap-4">
-                        <Link href="/children">
-                            <Button variant="ghost" size="icon">
-                                <ArrowLeft className="h-4 w-4" />
+                    <div className="flex items-center gap-2">
+                        <Link href={childrenIndex.url()}>
+                            <Button variant="ghost" size="sm">
+                                <ArrowLeft className="h-4 w-4 mr-2" />
+                                Back to Children
                             </Button>
                         </Link>
-                        <div>
-                            <h1 className="text-3xl font-bold text-gray-900">
-                                Register New Child
-                            </h1>
-                            <p className="mt-1 text-sm text-gray-600">
-                                Fill in the child's information below
-                            </p>
-                        </div>
                     </div>
+                </div>
 
+                <div className="mx-auto max-w-4xl w-full">
                     {/* Form */}
-                    <form onSubmit={submit}>
-                        <div className="space-y-6 rounded-lg bg-white p-6 shadow">
-                            {/* Child Information */}
-                            <div>
-                                <h2 className="mb-4 text-lg font-semibold">
-                                    Child Information
-                                </h2>
-                                <div className="grid gap-4 md:grid-cols-2">
-                                    <div>
-                                        <Label htmlFor="family_serial_number">
+                    <form onSubmit={submit} className="space-y-6">
+                        {/* Child Information */}
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Child Information</CardTitle>
+                            </CardHeader>
+                            <CardContent className="space-y-4">
+                                <FieldGroup>
+                                    <Field>
+                                        <FieldLabel htmlFor="family_serial_number">
                                             Family Serial Number{' '}
-                                            <span className="text-red-500">
-                                                *
-                                            </span>
-                                        </Label>
+                                            <span className="text-red-500">*</span>
+                                        </FieldLabel>
                                         <Input
                                             id="family_serial_number"
                                             value={data.family_serial_number}
@@ -112,19 +112,17 @@ export default function Create({ barangays }: Props) {
                                             required
                                         />
                                         {errors.family_serial_number && (
-                                            <p className="mt-1 text-sm text-red-500">
+                                            <FieldDescription className="text-red-500">
                                                 {errors.family_serial_number}
-                                            </p>
+                                            </FieldDescription>
                                         )}
-                                    </div>
+                                    </Field>
 
-                                    <div>
-                                        <Label htmlFor="first_name">
+                                    <Field>
+                                        <FieldLabel htmlFor="first_name">
                                             First Name{' '}
-                                            <span className="text-red-500">
-                                                *
-                                            </span>
-                                        </Label>
+                                            <span className="text-red-500">*</span>
+                                        </FieldLabel>
                                         <Input
                                             id="first_name"
                                             value={data.first_name}
@@ -137,16 +135,16 @@ export default function Create({ barangays }: Props) {
                                             required
                                         />
                                         {errors.first_name && (
-                                            <p className="mt-1 text-sm text-red-500">
+                                            <FieldDescription className="text-red-500">
                                                 {errors.first_name}
-                                            </p>
+                                            </FieldDescription>
                                         )}
-                                    </div>
+                                    </Field>
 
-                                    <div>
-                                        <Label htmlFor="middle_name">
+                                    <Field>
+                                        <FieldLabel htmlFor="middle_name">
                                             Middle Name
-                                        </Label>
+                                        </FieldLabel>
                                         <Input
                                             id="middle_name"
                                             value={data.middle_name}
@@ -157,15 +155,13 @@ export default function Create({ barangays }: Props) {
                                                 )
                                             }
                                         />
-                                    </div>
+                                    </Field>
 
-                                    <div>
-                                        <Label htmlFor="last_name">
+                                    <Field>
+                                        <FieldLabel htmlFor="last_name">
                                             Last Name{' '}
-                                            <span className="text-red-500">
-                                                *
-                                            </span>
-                                        </Label>
+                                            <span className="text-red-500">*</span>
+                                        </FieldLabel>
                                         <Input
                                             id="last_name"
                                             value={data.last_name}
@@ -178,14 +174,14 @@ export default function Create({ barangays }: Props) {
                                             required
                                         />
                                         {errors.last_name && (
-                                            <p className="mt-1 text-sm text-red-500">
+                                            <FieldDescription className="text-red-500">
                                                 {errors.last_name}
-                                            </p>
+                                            </FieldDescription>
                                         )}
-                                    </div>
+                                    </Field>
 
-                                    <div>
-                                        <Label htmlFor="suffix">Suffix</Label>
+                                    <Field>
+                                        <FieldLabel htmlFor="suffix">Suffix</FieldLabel>
                                         <Input
                                             id="suffix"
                                             value={data.suffix}
@@ -194,22 +190,20 @@ export default function Create({ barangays }: Props) {
                                             }
                                             placeholder="Jr., Sr., III, etc."
                                         />
-                                    </div>
+                                    </Field>
 
-                                    <div>
-                                        <Label htmlFor="sex">
+                                    <Field>
+                                        <FieldLabel htmlFor="sex">
                                             Sex{' '}
-                                            <span className="text-red-500">
-                                                *
-                                            </span>
-                                        </Label>
+                                            <span className="text-red-500">*</span>
+                                        </FieldLabel>
                                         <Select
                                             value={data.sex}
                                             onValueChange={(value) =>
                                                 setData('sex', value)
                                             }
                                         >
-                                            <SelectTrigger>
+                                            <SelectTrigger id="sex">
                                                 <SelectValue placeholder="Select sex" />
                                             </SelectTrigger>
                                             <SelectContent>
@@ -222,19 +216,17 @@ export default function Create({ barangays }: Props) {
                                             </SelectContent>
                                         </Select>
                                         {errors.sex && (
-                                            <p className="mt-1 text-sm text-red-500">
+                                            <FieldDescription className="text-red-500">
                                                 {errors.sex}
-                                            </p>
+                                            </FieldDescription>
                                         )}
-                                    </div>
+                                    </Field>
 
-                                    <div>
-                                        <Label htmlFor="date_of_birth">
+                                    <Field>
+                                        <FieldLabel htmlFor="date_of_birth">
                                             Date of Birth{' '}
-                                            <span className="text-red-500">
-                                                *
-                                            </span>
-                                        </Label>
+                                            <span className="text-red-500">*</span>
+                                        </FieldLabel>
                                         <Input
                                             id="date_of_birth"
                                             type="date"
@@ -253,16 +245,16 @@ export default function Create({ barangays }: Props) {
                                             required
                                         />
                                         {errors.date_of_birth && (
-                                            <p className="mt-1 text-sm text-red-500">
+                                            <FieldDescription className="text-red-500">
                                                 {errors.date_of_birth}
-                                            </p>
+                                            </FieldDescription>
                                         )}
-                                    </div>
+                                    </Field>
 
-                                    <div>
-                                        <Label htmlFor="birth_weight_kg">
+                                    <Field>
+                                        <FieldLabel htmlFor="birth_weight_kg">
                                             Birth Weight (kg)
-                                        </Label>
+                                        </FieldLabel>
                                         <Input
                                             id="birth_weight_kg"
                                             type="number"
@@ -276,12 +268,15 @@ export default function Create({ barangays }: Props) {
                                             }
                                             placeholder="2.5"
                                         />
-                                    </div>
+                                        <FieldDescription>
+                                            Optional: Weight at birth
+                                        </FieldDescription>
+                                    </Field>
 
-                                    <div>
-                                        <Label htmlFor="birth_length_cm">
+                                    <Field>
+                                        <FieldLabel htmlFor="birth_length_cm">
                                             Birth Length (cm)
-                                        </Label>
+                                        </FieldLabel>
                                         <Input
                                             id="birth_length_cm"
                                             type="number"
@@ -295,30 +290,33 @@ export default function Create({ barangays }: Props) {
                                             }
                                             placeholder="48.0"
                                         />
-                                    </div>
-                                </div>
-                            </div>
+                                        <FieldDescription>
+                                            Optional: Length at birth
+                                        </FieldDescription>
+                                    </Field>
+                                </FieldGroup>
+                            </CardContent>
+                        </Card>
 
-                            {/* Address */}
-                            <div>
-                                <h2 className="mb-4 text-lg font-semibold">
-                                    Address
-                                </h2>
-                                <div className="grid gap-4 md:grid-cols-2">
-                                    <div>
-                                        <Label htmlFor="barangay_id">
+                        {/* Address */}
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Address</CardTitle>
+                            </CardHeader>
+                            <CardContent className="space-y-4">
+                                <FieldGroup>
+                                    <Field>
+                                        <FieldLabel htmlFor="barangay_id">
                                             Barangay{' '}
-                                            <span className="text-red-500">
-                                                *
-                                            </span>
-                                        </Label>
+                                            <span className="text-red-500">*</span>
+                                        </FieldLabel>
                                         <Select
                                             value={data.barangay_id}
                                             onValueChange={(value) =>
                                                 setData('barangay_id', value)
                                             }
                                         >
-                                            <SelectTrigger>
+                                            <SelectTrigger id="barangay_id">
                                                 <SelectValue placeholder="Select barangay" />
                                             </SelectTrigger>
                                             <SelectContent>
@@ -328,22 +326,22 @@ export default function Create({ barangays }: Props) {
                                                         value={barangay.id}
                                                     >
                                                         {barangay.name},{' '}
-                                                        {barangay.municipality}
+                                                        {barangay.municipality_city}
                                                     </SelectItem>
                                                 ))}
                                             </SelectContent>
                                         </Select>
                                         {errors.barangay_id && (
-                                            <p className="mt-1 text-sm text-red-500">
+                                            <FieldDescription className="text-red-500">
                                                 {errors.barangay_id}
-                                            </p>
+                                            </FieldDescription>
                                         )}
-                                    </div>
+                                    </Field>
 
-                                    <div>
-                                        <Label htmlFor="purok_sitio">
+                                    <Field>
+                                        <FieldLabel htmlFor="purok_sitio">
                                             Purok/Sitio
-                                        </Label>
+                                        </FieldLabel>
                                         <Input
                                             id="purok_sitio"
                                             value={data.purok_sitio}
@@ -355,20 +353,25 @@ export default function Create({ barangays }: Props) {
                                             }
                                             placeholder="Purok 1"
                                         />
-                                    </div>
-                                </div>
-                            </div>
+                                        <FieldDescription>
+                                            Specify the purok or sitio within the barangay
+                                        </FieldDescription>
+                                    </Field>
+                                </FieldGroup>
+                            </CardContent>
+                        </Card>
 
-                            {/* Parents/Guardian */}
-                            <div>
-                                <h2 className="mb-4 text-lg font-semibold">
-                                    Parents/Guardian Information
-                                </h2>
-                                <div className="grid gap-4 md:grid-cols-2">
-                                    <div>
-                                        <Label htmlFor="mother_name">
+                        {/* Parents/Guardian */}
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Parents/Guardian Information</CardTitle>
+                            </CardHeader>
+                            <CardContent className="space-y-4">
+                                <FieldGroup>
+                                    <Field>
+                                        <FieldLabel htmlFor="mother_name">
                                             Mother's Name
-                                        </Label>
+                                        </FieldLabel>
                                         <Input
                                             id="mother_name"
                                             value={data.mother_name}
@@ -379,12 +382,12 @@ export default function Create({ barangays }: Props) {
                                                 )
                                             }
                                         />
-                                    </div>
+                                    </Field>
 
-                                    <div>
-                                        <Label htmlFor="father_name">
+                                    <Field>
+                                        <FieldLabel htmlFor="father_name">
                                             Father's Name
-                                        </Label>
+                                        </FieldLabel>
                                         <Input
                                             id="father_name"
                                             value={data.father_name}
@@ -395,12 +398,12 @@ export default function Create({ barangays }: Props) {
                                                 )
                                             }
                                         />
-                                    </div>
+                                    </Field>
 
-                                    <div>
-                                        <Label htmlFor="guardian_name">
+                                    <Field>
+                                        <FieldLabel htmlFor="guardian_name">
                                             Guardian's Name (if applicable)
-                                        </Label>
+                                        </FieldLabel>
                                         <Input
                                             id="guardian_name"
                                             value={data.guardian_name}
@@ -411,12 +414,12 @@ export default function Create({ barangays }: Props) {
                                                 )
                                             }
                                         />
-                                    </div>
+                                    </Field>
 
-                                    <div>
-                                        <Label htmlFor="guardian_relationship">
+                                    <Field>
+                                        <FieldLabel htmlFor="guardian_relationship">
                                             Guardian Relationship
-                                        </Label>
+                                        </FieldLabel>
                                         <Input
                                             id="guardian_relationship"
                                             value={data.guardian_relationship}
@@ -428,12 +431,12 @@ export default function Create({ barangays }: Props) {
                                             }
                                             placeholder="Grandmother, Aunt, etc."
                                         />
-                                    </div>
+                                    </Field>
 
-                                    <div>
-                                        <Label htmlFor="contact_number">
+                                    <Field>
+                                        <FieldLabel htmlFor="contact_number">
                                             Contact Number
-                                        </Label>
+                                        </FieldLabel>
                                         <Input
                                             id="contact_number"
                                             value={data.contact_number}
@@ -445,17 +448,19 @@ export default function Create({ barangays }: Props) {
                                             }
                                             placeholder="09XX XXX XXXX"
                                         />
-                                    </div>
-                                </div>
-                            </div>
+                                    </Field>
+                                </FieldGroup>
+                            </CardContent>
+                        </Card>
 
-                            {/* Indigenous People */}
-                            <div>
-                                <h2 className="mb-4 text-lg font-semibold">
-                                    Additional Information
-                                </h2>
-                                <div className="space-y-4">
-                                    <div className="flex items-center space-x-2">
+                        {/* Indigenous People */}
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Additional Information</CardTitle>
+                            </CardHeader>
+                            <CardContent className="space-y-4">
+                                <FieldGroup>
+                                    <Field orientation="horizontal">
                                         <Checkbox
                                             id="is_indigenous_people"
                                             checked={data.is_indigenous_people}
@@ -466,16 +471,19 @@ export default function Create({ barangays }: Props) {
                                                 )
                                             }
                                         />
-                                        <Label htmlFor="is_indigenous_people">
+                                        <FieldLabel
+                                            htmlFor="is_indigenous_people"
+                                            className="font-normal"
+                                        >
                                             Indigenous People
-                                        </Label>
-                                    </div>
+                                        </FieldLabel>
+                                    </Field>
 
                                     {data.is_indigenous_people && (
-                                        <div>
-                                            <Label htmlFor="indigenous_group">
+                                        <Field>
+                                            <FieldLabel htmlFor="indigenous_group">
                                                 Indigenous Group/Tribe
-                                            </Label>
+                                            </FieldLabel>
                                             <Input
                                                 id="indigenous_group"
                                                 value={data.indigenous_group}
@@ -487,11 +495,11 @@ export default function Create({ barangays }: Props) {
                                                 }
                                                 placeholder="e.g., Lumad, Mangyan, etc."
                                             />
-                                        </div>
+                                        </Field>
                                     )}
 
-                                    <div>
-                                        <Label htmlFor="notes">Notes</Label>
+                                    <Field>
+                                        <FieldLabel htmlFor="notes">Notes</FieldLabel>
                                         <Textarea
                                             id="notes"
                                             value={data.notes}
@@ -501,23 +509,26 @@ export default function Create({ barangays }: Props) {
                                             rows={3}
                                             placeholder="Additional notes or remarks..."
                                         />
-                                    </div>
-                                </div>
-                            </div>
+                                        <FieldDescription>
+                                            Any additional information about the child
+                                        </FieldDescription>
+                                    </Field>
+                                </FieldGroup>
+                            </CardContent>
+                        </Card>
 
-                            {/* Actions */}
-                            <div className="flex justify-end gap-2">
-                                <Link href="/children">
-                                    <Button variant="outline" type="button">
-                                        Cancel
-                                    </Button>
-                                </Link>
-                                <Button type="submit" disabled={processing}>
-                                    {processing
-                                        ? 'Registering...'
-                                        : 'Register Child'}
+                        {/* Actions */}
+                        <div className="flex justify-end gap-2">
+                            <Link href="/children">
+                                <Button variant="outline" type="button">
+                                    Cancel
                                 </Button>
-                            </div>
+                            </Link>
+                            <Button type="submit" disabled={processing}>
+                                {processing
+                                    ? 'Registering...'
+                                    : 'Register Child'}
+                            </Button>
                         </div>
                     </form>
                 </div>

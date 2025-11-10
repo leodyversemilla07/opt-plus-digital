@@ -128,7 +128,7 @@ class UserController extends Controller
             'is_active' => $validated['is_active'] ?? $user->is_active,
         ]);
 
-        if (!empty($validated['password'])) {
+        if (! empty($validated['password'])) {
             $user->update(['password' => Hash::make($validated['password'])]);
         }
 
@@ -148,7 +148,7 @@ class UserController extends Controller
 
     public function toggleStatus(User $user): RedirectResponse
     {
-        $user->update(['is_active' => !$user->is_active]);
+        $user->update(['is_active' => ! $user->is_active]);
 
         $status = $user->is_active ? 'activated' : 'deactivated';
 

@@ -9,11 +9,11 @@ class WhoStandardSeeder extends Seeder
 {
     /**
      * Run the database seeds.
-     * 
+     *
      * NOTE: This seeder contains SAMPLE DATA for development/testing.
      * For production, import full WHO 2006 Child Growth Standards data from:
      * https://www.who.int/tools/child-growth-standards/standards
-     * 
+     *
      * Full dataset files needed:
      * - wfa-boys-0-5-zscores.txt
      * - wfa-girls-0-5-zscores.txt
@@ -25,19 +25,19 @@ class WhoStandardSeeder extends Seeder
     public function run(): void
     {
         $this->command->info('Seeding WHO Growth Standards (Sample Data)...');
-        
+
         // Sample Weight-for-Age data for boys (0-60 months)
         $this->seedWeightForAgeBoys();
-        
+
         // Sample Weight-for-Age data for girls
         $this->seedWeightForAgeGirls();
-        
+
         // Sample Height-for-Age data
         $this->seedHeightForAge();
-        
+
         // Sample Weight-for-Height data
         $this->seedWeightForHeight();
-        
+
         $this->command->info('✅ Sample WHO data seeded successfully');
         $this->command->warn('⚠️  For production, import full WHO dataset from official sources');
     }
@@ -207,4 +207,3 @@ class WhoStandardSeeder extends Seeder
         }
     }
 }
-

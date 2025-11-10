@@ -19,11 +19,11 @@ return new class extends Migration
             $table->decimal('l', 10, 6)->comment('Box-Cox power for transformation');
             $table->decimal('m', 10, 6)->comment('Median');
             $table->decimal('s', 10, 6)->comment('Coefficient of variation');
-            
+
             // Indexes for fast lookups
             $table->index(['indicator', 'sex', 'age_or_length'], 'who_lookup_index');
             $table->unique(['indicator', 'sex', 'age_or_length'], 'who_unique_index');
-            
+
             $table->timestamps();
         });
     }

@@ -1,28 +1,41 @@
 import { Head, Link, useForm } from '@inertiajs/react';
-import { FormEventHandler } from 'react';
+import { FormEventHandler, useState } from 'react';
 import AppLayout from '@/layouts/app-layout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Info } from 'lucide-react';
+import { Info, WifiOff, Cloud } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { type BreadcrumbItem } from '@/types';
+import { useOnlineStatus } from '@/hooks/use-online-status';
+import { offlineDB } from '@/lib/offline-db';
+import {
+    Field,
+    FieldDescription,
+    FieldGroup,
+    FieldLabel,
+} from '@/components/ui/field';
 
 interface Child {
     id: string;
     full_name: string;
+    first_name: string;
+    last_name: string;
     sex: 'male' | 'female';
     date_of_birth: string;
     age_in_months: number;
 }
 
-interface Props {
+interface CreateMeasurementProps {
     child: Child;
 }
 
-export default function Create({ child }: Props) {
+export default function CreateMeasurement({ child }: CreateMeasurementProps) {
+    const isOnline = useOnlineStatus();
+    const [isSavingOffline, setIsSavingOffline] = useState(false);
+    const [offlineSaveSuccess, setOfflineSaveSuccess] = useState(false);
+
     const { data, setData, post, processing, errors } = useForm({
         measurement_date: new Date().toISOString().split('T')[0],
         weight_kg: '',
@@ -31,8 +44,38 @@ export default function Create({ child }: Props) {
         notes: '',
     });
 
-    const submit: FormEventHandler = (e) => {
+    const submit: FormEventHandler = async (e) => {
         e.preventDefault();
+
+        // If offline, save to IndexedDB
+        if (!isOnline) {
+            setIsSavingOffline(true);
+            try {
+                await offlineDB.addMeasurement({
+                    child_id: child.id,
+                    measurement_date: data.measurement_date,
+                    weight_kg: parseFloat(data.weight_kg),
+                    height_length_cm: parseFloat(data.height_length_cm),
+                    muac_cm: data.muac_cm ? parseFloat(data.muac_cm) : undefined,
+                    notes: data.notes || undefined,
+                });
+                
+                setOfflineSaveSuccess(true);
+                setIsSavingOffline(false);
+
+                // Reset form after 2 seconds and redirect
+                setTimeout(() => {
+                    window.location.href = `/children/${child.id}`;
+                }, 2000);
+            } catch (error) {
+                console.error('Failed to save offline:', error);
+                setIsSavingOffline(false);
+                alert('Failed to save measurement offline. Please try again.');
+            }
+            return;
+        }
+
+        // If online, use normal Inertia post
         post(`/children/${child.id}/measurements`);
     };
 
@@ -55,21 +98,22 @@ export default function Create({ child }: Props) {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={`Add Measurement - ${child.full_name}`} />
 
-            <div className="py-12">
-                <div className="mx-auto max-w-3xl sm:px-6 lg:px-8">
+            <div className="flex flex-col gap-6 p-6">
+                <div className="mx-auto max-w-3xl w-full">
                     {/* Header */}
-                    <div className="mb-6">
-                        <div>
-                            <h1 className="text-3xl font-bold text-gray-900">
-                                Add Measurement
-                            </h1>
-                            <p className="mt-1 text-sm text-gray-600">
-                                {child.full_name} •{' '}
-                                {child.sex === 'male' ? 'Male' : 'Female'} •{' '}
-                                {getAgeDisplay(child.age_in_months)}
-                            </p>
-                        </div>
+                    <div>
+                        <h1 className="text-3xl font-bold tracking-tight">
+                            Add Measurement
+                        </h1>
+                        <p className="text-muted-foreground mt-1">
+                            {child.full_name} •{' '}
+                            {child.sex === 'male' ? 'Male' : 'Female'} •{' '}
+                            {getAgeDisplay(child.age_in_months)}
+                        </p>
                     </div>
+                </div>
+
+                <div className="mx-auto max-w-3xl w-full">
 
                     {/* Info Alert */}
                     <Alert className="mb-6">
@@ -81,6 +125,28 @@ export default function Create({ child }: Props) {
                         </AlertDescription>
                     </Alert>
 
+                    {/* Offline Status Alert */}
+                    {!isOnline && (
+                        <Alert className="mb-6 border-amber-500 bg-amber-50">
+                            <WifiOff className="h-4 w-4 text-amber-600" />
+                            <AlertDescription className="text-amber-800">
+                                You are currently offline. This measurement will be saved
+                                locally and automatically synced when you reconnect to the internet.
+                            </AlertDescription>
+                        </Alert>
+                    )}
+
+                    {/* Offline Save Success */}
+                    {offlineSaveSuccess && (
+                        <Alert className="mb-6 border-green-500 bg-green-50">
+                            <Cloud className="h-4 w-4 text-green-600" />
+                            <AlertDescription className="text-green-800">
+                                ✓ Measurement saved offline successfully! It will be synced automatically
+                                when you're back online. Redirecting...
+                            </AlertDescription>
+                        </Alert>
+                    )}
+
                     {/* Form */}
                     <form onSubmit={submit}>
                         <div className="space-y-6">
@@ -90,45 +156,41 @@ export default function Create({ child }: Props) {
                                     <CardTitle>Measurement Data</CardTitle>
                                 </CardHeader>
                                 <CardContent className="space-y-4">
-                                    <div>
-                                        <Label htmlFor="measurement_date">
-                                            Measurement Date{' '}
-                                            <span className="text-red-500">
-                                                *
-                                            </span>
-                                        </Label>
-                                        <Input
-                                            id="measurement_date"
-                                            type="date"
-                                            value={data.measurement_date}
-                                            onChange={(e) =>
-                                                setData(
-                                                    'measurement_date',
-                                                    e.target.value
-                                                )
-                                            }
-                                            max={
-                                                new Date()
-                                                    .toISOString()
-                                                    .split('T')[0]
-                                            }
-                                            required
-                                        />
-                                        {errors.measurement_date && (
-                                            <p className="mt-1 text-sm text-red-500">
-                                                {errors.measurement_date}
-                                            </p>
-                                        )}
-                                    </div>
+                                    <FieldGroup>
+                                        <Field>
+                                            <FieldLabel htmlFor="measurement_date">
+                                                Measurement Date{' '}
+                                                <span className="text-red-500">*</span>
+                                            </FieldLabel>
+                                            <Input
+                                                id="measurement_date"
+                                                type="date"
+                                                value={data.measurement_date}
+                                                onChange={(e) =>
+                                                    setData(
+                                                        'measurement_date',
+                                                        e.target.value
+                                                    )
+                                                }
+                                                max={
+                                                    new Date()
+                                                        .toISOString()
+                                                        .split('T')[0]
+                                                }
+                                                required
+                                            />
+                                            {errors.measurement_date && (
+                                                <FieldDescription className="text-red-500">
+                                                    {errors.measurement_date}
+                                                </FieldDescription>
+                                            )}
+                                        </Field>
 
-                                    <div className="grid gap-4 md:grid-cols-3">
-                                        <div>
-                                            <Label htmlFor="weight_kg">
+                                        <Field>
+                                            <FieldLabel htmlFor="weight_kg">
                                                 Weight (kg){' '}
-                                                <span className="text-red-500">
-                                                    *
-                                                </span>
-                                            </Label>
+                                                <span className="text-red-500">*</span>
+                                            </FieldLabel>
                                             <Input
                                                 id="weight_kg"
                                                 type="number"
@@ -145,23 +207,21 @@ export default function Create({ child }: Props) {
                                                 placeholder="9.5"
                                                 required
                                             />
-                                            <p className="mt-1 text-xs text-gray-500">
+                                            <FieldDescription>
                                                 Range: 1-30 kg
-                                            </p>
+                                            </FieldDescription>
                                             {errors.weight_kg && (
-                                                <p className="mt-1 text-sm text-red-500">
+                                                <FieldDescription className="text-red-500">
                                                     {errors.weight_kg}
-                                                </p>
+                                                </FieldDescription>
                                             )}
-                                        </div>
+                                        </Field>
 
-                                        <div>
-                                            <Label htmlFor="height_length_cm">
+                                        <Field>
+                                            <FieldLabel htmlFor="height_length_cm">
                                                 Height/Length (cm){' '}
-                                                <span className="text-red-500">
-                                                    *
-                                                </span>
-                                            </Label>
+                                                <span className="text-red-500">*</span>
+                                            </FieldLabel>
                                             <Input
                                                 id="height_length_cm"
                                                 type="number"
@@ -178,20 +238,20 @@ export default function Create({ child }: Props) {
                                                 placeholder="75.0"
                                                 required
                                             />
-                                            <p className="mt-1 text-xs text-gray-500">
+                                            <FieldDescription>
                                                 Range: 40-125 cm
-                                            </p>
+                                            </FieldDescription>
                                             {errors.height_length_cm && (
-                                                <p className="mt-1 text-sm text-red-500">
+                                                <FieldDescription className="text-red-500">
                                                     {errors.height_length_cm}
-                                                </p>
+                                                </FieldDescription>
                                             )}
-                                        </div>
+                                        </Field>
 
-                                        <div>
-                                            <Label htmlFor="muac_cm">
+                                        <Field>
+                                            <FieldLabel htmlFor="muac_cm">
                                                 MUAC (cm)
-                                            </Label>
+                                            </FieldLabel>
                                             <Input
                                                 id="muac_cm"
                                                 type="number"
@@ -207,34 +267,34 @@ export default function Create({ child }: Props) {
                                                 }
                                                 placeholder="13.5"
                                             />
-                                            <p className="mt-1 text-xs text-gray-500">
-                                                Mid-Upper Arm
-                                            </p>
+                                            <FieldDescription>
+                                                Mid-Upper Arm Circumference
+                                            </FieldDescription>
                                             {errors.muac_cm && (
-                                                <p className="mt-1 text-sm text-red-500">
+                                                <FieldDescription className="text-red-500">
                                                     {errors.muac_cm}
-                                                </p>
+                                                </FieldDescription>
                                             )}
-                                        </div>
-                                    </div>
+                                        </Field>
 
-                                    <div>
-                                        <Label htmlFor="notes">Notes</Label>
-                                        <Textarea
-                                            id="notes"
-                                            value={data.notes}
-                                            onChange={(e) =>
-                                                setData('notes', e.target.value)
-                                            }
-                                            rows={3}
-                                            placeholder="Any observations or remarks..."
-                                        />
-                                        {errors.notes && (
-                                            <p className="mt-1 text-sm text-red-500">
-                                                {errors.notes}
-                                            </p>
-                                        )}
-                                    </div>
+                                        <Field>
+                                            <FieldLabel htmlFor="notes">Notes</FieldLabel>
+                                            <Textarea
+                                                id="notes"
+                                                value={data.notes}
+                                                onChange={(e) =>
+                                                    setData('notes', e.target.value)
+                                                }
+                                                rows={3}
+                                                placeholder="Any observations or remarks..."
+                                            />
+                                            {errors.notes && (
+                                                <FieldDescription className="text-red-500">
+                                                    {errors.notes}
+                                                </FieldDescription>
+                                            )}
+                                        </Field>
+                                    </FieldGroup>
                                 </CardContent>
                             </Card>
 
@@ -244,7 +304,7 @@ export default function Create({ child }: Props) {
                                     <CardTitle>Measurement Tips</CardTitle>
                                 </CardHeader>
                                 <CardContent>
-                                    <ul className="space-y-2 text-sm text-gray-700">
+                                    <ul className="space-y-2 text-sm text-muted-foreground">
                                         <li className="flex gap-2">
                                             <span className="font-semibold">
                                                 Weight:
@@ -287,10 +347,17 @@ export default function Create({ child }: Props) {
                                         Cancel
                                     </Button>
                                 </Link>
-                                <Button type="submit" disabled={processing}>
-                                    {processing
-                                        ? 'Saving...'
-                                        : 'Save Measurement'}
+                                <Button 
+                                    type="submit" 
+                                    disabled={processing || isSavingOffline || offlineSaveSuccess}
+                                >
+                                    {isSavingOffline && 'Saving Offline...'}
+                                    {offlineSaveSuccess && 'Saved ✓'}
+                                    {!isSavingOffline && !offlineSaveSuccess && (
+                                        processing ? 'Saving...' : (
+                                            !isOnline ? 'Save Offline' : 'Save Measurement'
+                                        )
+                                    )}
                                 </Button>
                             </div>
                         </div>

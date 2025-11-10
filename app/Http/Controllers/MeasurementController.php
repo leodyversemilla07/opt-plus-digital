@@ -57,19 +57,19 @@ class MeasurementController extends Controller
             'measurement_date' => 'required|date|before_or_equal:today',
             'weight_kg' => 'required|numeric|min:1|max:30',
             'height_length_cm' => 'required|numeric|min:40|max:125',
-            'measurement_type' => 'nullable|in:recumbent,standing',
+            'measurement_type' => 'nullable|in:length,height',
             'muac_cm' => 'nullable|numeric|min:10|max:20',
             'notes' => 'nullable|string|max:500',
         ]);
 
         // Additional custom validation
         $customErrors = $this->measurementService->validateMeasurement($validated);
-        if (!empty($customErrors)) {
+        if (! empty($customErrors)) {
             return back()->withErrors($customErrors)->withInput();
         }
 
         // Determine measurement type if not provided
-        if (!isset($validated['measurement_type'])) {
+        if (! isset($validated['measurement_type'])) {
             $validated['measurement_type'] = $this->measurementService->determineMeasurementType(
                 $child->age_in_months
             );
@@ -134,7 +134,7 @@ class MeasurementController extends Controller
             'measurement_date' => 'sometimes|date|before_or_equal:today',
             'weight_kg' => 'sometimes|numeric|min:1|max:30',
             'height_length_cm' => 'sometimes|numeric|min:40|max:125',
-            'measurement_type' => 'sometimes|in:recumbent,standing',
+            'measurement_type' => 'sometimes|in:length,height',
             'muac_cm' => 'nullable|numeric|min:10|max:20',
             'notes' => 'nullable|string|max:500',
         ]);

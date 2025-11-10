@@ -1,9 +1,6 @@
 <?php
 
-use App\Models\Barangay;
 use App\Models\Child;
-use App\Models\Measurement;
-use App\Models\User;
 
 test('child has fillable attributes', function () {
     $fillable = [
@@ -27,24 +24,24 @@ test('child has fillable attributes', function () {
         'created_by_user_id',
     ];
 
-    $child = new Child();
+    $child = new Child;
     expect($child->getFillable())->toBe($fillable);
 });
 
 test('child casts attributes correctly', function () {
-    $child = new Child();
+    $child = new Child;
     expect($child->getCasts())->toHaveKey('date_of_birth', 'date')
         ->and($child->getCasts())->toHaveKey('is_indigenous_people', 'boolean');
 });
 
 test('child uses uuid for primary key', function () {
-    $child = new Child();
+    $child = new Child;
     expect($child->getKeyType())->toBe('string')
         ->and($child->getIncrementing())->toBeFalse();
 });
 
 test('child uses soft deletes', function () {
-    $child = new Child();
+    $child = new Child;
     expect(in_array('Illuminate\Database\Eloquent\SoftDeletes', class_uses($child)))->toBeTrue();
 });
 
@@ -107,16 +104,16 @@ test('child is not eligible for OPT when age is 60+ months', function () {
 });
 
 test('child belongs to barangay', function () {
-    $child = new Child();
+    $child = new Child;
     expect($child->barangay())->toBeInstanceOf(Illuminate\Database\Eloquent\Relations\BelongsTo::class);
 });
 
 test('child has many measurements', function () {
-    $child = new Child();
+    $child = new Child;
     expect($child->measurements())->toBeInstanceOf(Illuminate\Database\Eloquent\Relations\HasMany::class);
 });
 
 test('child belongs to user who created it', function () {
-    $child = new Child();
+    $child = new Child;
     expect($child->createdBy())->toBeInstanceOf(Illuminate\Database\Eloquent\Relations\BelongsTo::class);
 });

@@ -1,6 +1,10 @@
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link } from '@inertiajs/react';
+import { dashboard } from '@/routes';
+import { barangay as analyticsBarangay } from '@/routes/analytics';
+import { index as childrenIndex, create as childrenCreate } from '@/routes/children';
+import { index as reportsIndex } from '@/routes/reports';
 import { StatCard, NutritionalStatusCard, HighRiskChildrenList } from '@/components/dashboard-cards';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -40,7 +44,7 @@ ChartJS.register(
 interface Barangay {
     id: string;
     name: string;
-    municipality: string;
+    municipality_city: string;
     psgc_code: string;
 }
 
@@ -61,10 +65,31 @@ interface MonthlyTrend {
     sam: number;
 }
 
+interface HighRiskChild {
+    child: {
+        id: string;
+        full_name: string;
+        sex: 'male' | 'female';
+        age_in_months: number;
+        barangay: {
+            name: string;
+            municipality_city: string;
+        };
+    };
+    measurement: {
+        opt_classification: string;
+        wfa_zscore: number | null;
+        hfa_zscore: number | null;
+        wfh_zscore: number | null;
+        measurement_date: string;
+    };
+    days_since_measurement: number;
+}
+
 interface BarangayAnalyticsProps {
     barangay: Barangay;
     nutritionalStatus: NutritionalStatus;
-    highRiskChildren: any[];
+    highRiskChildren: HighRiskChild[];
     monthlyTrends: MonthlyTrend[];
     totalChildren: number;
     measuredChildren: number;
@@ -81,7 +106,7 @@ export default function BarangayAnalytics({
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: 'Dashboard',
-            href: '/dashboard',
+            href: dashboard.url(),
         },
         {
             title: 'Analytics',
@@ -89,7 +114,7 @@ export default function BarangayAnalytics({
         },
         {
             title: barangay.name,
-            href: `/analytics/barangay/${barangay.id}`,
+            href: analyticsBarangay.url(barangay.id),
         },
     ];
 
@@ -186,7 +211,7 @@ export default function BarangayAnalytics({
                 <div className="flex items-center justify-between">
                     <div>
                         <div className="flex items-center gap-2">
-                            <Link href="/dashboard">
+                            <Link href={dashboard.url()}>
                                 <Button variant="ghost" size="sm">
                                     <ArrowLeft className="h-4 w-4 mr-2" />
                                     Back to Dashboard
@@ -197,10 +222,10 @@ export default function BarangayAnalytics({
                             {barangay.name} Analytics
                         </h1>
                         <p className="text-muted-foreground mt-1">
-                            {barangay.municipality} • PSGC: {barangay.psgc_code}
+                            {barangay.municipality_city} • PSGC: {barangay.psgc_code}
                         </p>
                     </div>
-                    <Link href={`/children?barangay=${barangay.id}`}>
+                    <Link href={childrenIndex.url({ query: { barangay_id: barangay.id } })}>
                         <Button>
                             <Users className="h-4 w-4 mr-2" />
                             View All Children
@@ -299,12 +324,12 @@ export default function BarangayAnalytics({
 
                 {/* Action Buttons */}
                 <div className="flex gap-4">
-                    <Link href={`/reports/barangay/${barangay.id}`}>
+                    <Link href={reportsIndex.url()}>
                         <Button variant="outline">
                             Generate Report
                         </Button>
                     </Link>
-                    <Link href={`/children/create?barangay=${barangay.id}`}>
+                    <Link href={childrenCreate.url({ query: { barangay: barangay.id } })}>
                         <Button>
                             Add Child
                         </Button>

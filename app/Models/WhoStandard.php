@@ -42,28 +42,29 @@ class WhoStandard extends Model
         $ceil = ceil($ageOrLength);
 
         if ($floor == $ceil) {
-            $standard = static::getStandard($indicator, $sex, (int)$floor);
+            $standard = static::getStandard($indicator, $sex, (int) $floor);
+
             return $standard ? [
-                'l' => (float)$standard->l,
-                'm' => (float)$standard->m,
-                's' => (float)$standard->s,
+                'l' => (float) $standard->l,
+                'm' => (float) $standard->m,
+                's' => (float) $standard->s,
             ] : null;
         }
 
-        $lower = static::getStandard($indicator, $sex, (int)$floor);
-        $upper = static::getStandard($indicator, $sex, (int)$ceil);
+        $lower = static::getStandard($indicator, $sex, (int) $floor);
+        $upper = static::getStandard($indicator, $sex, (int) $ceil);
 
-        if (!$lower || !$upper) {
+        if (! $lower || ! $upper) {
             return null;
         }
 
         // Linear interpolation
         $fraction = $ageOrLength - $floor;
-        
+
         return [
-            'l' => (float)$lower->l + ($upper->l - $lower->l) * $fraction,
-            'm' => (float)$lower->m + ($upper->m - $lower->m) * $fraction,
-            's' => (float)$lower->s + ($upper->s - $lower->s) * $fraction,
+            'l' => (float) $lower->l + ($upper->l - $lower->l) * $fraction,
+            'm' => (float) $lower->m + ($upper->m - $lower->m) * $fraction,
+            's' => (float) $lower->s + ($upper->s - $lower->s) * $fraction,
         ];
     }
 }

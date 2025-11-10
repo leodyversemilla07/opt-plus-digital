@@ -19,19 +19,19 @@ class DashboardController extends Controller
     public function index(Request $request): Response
     {
         $user = $request->user();
-        
+
         // Get overall statistics
         $overallStats = $this->analyticsService->getOverallStatistics();
-        
+
         // Get nutritional status breakdown
         $nutritionalStatus = $this->analyticsService->getLatestMeasurementsStatistics();
-        
+
         // Get high-risk children
         $highRiskChildren = $this->analyticsService->getHighRiskChildren(limit: 5);
-        
+
         // Get monthly trends
         $monthlyTrends = $this->analyticsService->getMonthlyTrends();
-        
+
         // Get barangay comparison (for municipal/admin users)
         $barangayComparison = [];
         if (in_array($user->role ?? 'bhw', ['municipal', 'admin'])) {
@@ -54,11 +54,11 @@ class DashboardController extends Controller
     public function barangay(Request $request, string $barangayId): Response
     {
         $barangay = \App\Models\Barangay::findOrFail($barangayId);
-        
+
         $nutritionalStatus = $this->analyticsService->getLatestMeasurementsStatistics($barangayId);
         $highRiskChildren = $this->analyticsService->getHighRiskChildren($barangayId, 10);
         $monthlyTrends = $this->analyticsService->getMonthlyTrends($barangayId);
-        
+
         $totalChildren = \App\Models\Child::where('barangay_id', $barangayId)->count();
         $measuredChildren = $nutritionalStatus['total'];
 

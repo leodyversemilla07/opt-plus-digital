@@ -1,8 +1,6 @@
 <?php
 
-use App\Models\Child;
 use App\Models\Measurement;
-use App\Models\User;
 
 test('measurement has fillable attributes', function () {
     $fillable = [
@@ -25,14 +23,14 @@ test('measurement has fillable attributes', function () {
         'synced_at',
     ];
 
-    $measurement = new Measurement();
+    $measurement = new Measurement;
     expect($measurement->getFillable())->toBe($fillable);
 });
 
 test('measurement casts attributes correctly', function () {
-    $measurement = new Measurement();
+    $measurement = new Measurement;
     $casts = $measurement->getCasts();
-    
+
     expect($casts)->toHaveKey('measurement_date', 'date')
         ->and($casts)->toHaveKey('age_in_months', 'integer')
         ->and($casts)->toHaveKey('weight_kg', 'decimal:2')
@@ -45,23 +43,23 @@ test('measurement casts attributes correctly', function () {
 });
 
 test('measurement uses uuid for primary key', function () {
-    $measurement = new Measurement();
+    $measurement = new Measurement;
     expect($measurement->getKeyType())->toBe('string')
         ->and($measurement->getIncrementing())->toBeFalse();
 });
 
 test('measurement uses soft deletes', function () {
-    $measurement = new Measurement();
+    $measurement = new Measurement;
     expect(in_array('Illuminate\Database\Eloquent\SoftDeletes', class_uses($measurement)))->toBeTrue();
 });
 
 test('measurement belongs to child', function () {
-    $measurement = new Measurement();
+    $measurement = new Measurement;
     expect($measurement->child())->toBeInstanceOf(Illuminate\Database\Eloquent\Relations\BelongsTo::class);
 });
 
 test('measurement belongs to user who measured', function () {
-    $measurement = new Measurement();
+    $measurement = new Measurement;
     expect($measurement->measuredBy())->toBeInstanceOf(Illuminate\Database\Eloquent\Relations\BelongsTo::class);
 });
 

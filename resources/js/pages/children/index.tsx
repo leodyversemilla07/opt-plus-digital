@@ -1,6 +1,7 @@
 import { Head, Link, router } from '@inertiajs/react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import AppLayout from '@/layouts/app-layout';
+import { create as childrenCreate, show as childrenShow } from '@/routes/children';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { type BreadcrumbItem } from '@/types';
@@ -20,7 +21,18 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Search } from 'lucide-react';
+import {
+    Pagination,
+    PaginationContent,
+    PaginationEllipsis,
+    PaginationItem,
+    PaginationLink,
+    PaginationNext,
+    PaginationPrevious,
+} from '@/components/ui/pagination';
+import { Plus, Search, Download } from 'lucide-react';
+import { offlineDB } from '@/lib/offline-db';
+import { useOnlineStatus } from '@/hooks/use-online-status';
 
 interface Child {
     id: string;
@@ -68,19 +80,68 @@ interface Props {
 }
 
 export default function Index({ children, filters, barangays }: Props) {
+    const isOnline = useOnlineStatus();
     const [search, setSearch] = useState(filters.search || '');
-    const [barangayId, setBarangayId] = useState(filters.barangay_id || '');
+    const [barangayId, setBarangayId] = useState(filters.barangay_id || 'all');
     const [isIndigenous, setIsIndigenous] = useState(
-        filters.is_indigenous_people?.toString() || ''
+        filters.is_indigenous_people?.toString() || 'all'
     );
+    const [cachedCount, setCachedCount] = useState(0);
+    const [isCaching, setIsCaching] = useState(false);
+
+    // Cache children data when loaded
+    useEffect(() => {
+        const cacheChildren = async () => {
+            if (isOnline && children.data.length > 0) {
+                try {
+                    // Children from backend include first_name, last_name, etc.
+                    await offlineDB.cacheChildren(children.data as unknown as Parameters<typeof offlineDB.cacheChildren>[0]);
+                    updateCachedCount();
+                } catch (error) {
+                    console.error('Failed to cache children:', error);
+                }
+            }
+        };
+
+        cacheChildren();
+    }, [children.data, isOnline]);
+
+    // Get cached count on mount
+    useEffect(() => {
+        updateCachedCount();
+    }, []);
+
+    const updateCachedCount = async () => {
+        try {
+            const cachedChildren = await offlineDB.getAllCachedChildren();
+            setCachedCount(cachedChildren.length);
+        } catch (error) {
+            console.error('Failed to get cached count:', error);
+        }
+    };
+
+    const handleCacheAll = async () => {
+        setIsCaching(true);
+        try {
+            // Children from backend include first_name, last_name, etc.
+            await offlineDB.cacheChildren(children.data as unknown as Parameters<typeof offlineDB.cacheChildren>[0]);
+            await updateCachedCount();
+            alert(`Successfully cached ${children.data.length} children for offline access`);
+        } catch (error) {
+            console.error('Failed to cache all children:', error);
+            alert('Failed to cache children. Please try again.');
+        } finally {
+            setIsCaching(false);
+        }
+    };
 
     const handleSearch = () => {
         router.get(
             '/children',
             {
                 search,
-                barangay_id: barangayId || undefined,
-                is_indigenous_people: isIndigenous || undefined,
+                barangay_id: barangayId !== 'all' ? barangayId : undefined,
+                is_indigenous_people: isIndigenous !== 'all' ? isIndigenous : undefined,
             },
             {
                 preserveState: true,
@@ -91,8 +152,8 @@ export default function Index({ children, filters, barangays }: Props) {
 
     const handleReset = () => {
         setSearch('');
-        setBarangayId('');
-        setIsIndigenous('');
+        setBarangayId('all');
+        setIsIndigenous('all');
         router.get('/children');
     };
 
@@ -114,203 +175,272 @@ export default function Index({ children, filters, barangays }: Props) {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Children Registry" />
 
-            <div className="py-12">
-                <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                    {/* Header */}
-                    <div className="mb-6 flex items-center justify-between">
-                        <div>
-                            <h1 className="text-3xl font-bold text-gray-900">
-                                Children Registry
-                            </h1>
-                            <p className="mt-1 text-sm text-gray-600">
-                                Total: {children.total} children registered
-                            </p>
-                        </div>
-                        <Link href="/children/create">
+            <div className="flex flex-col gap-6 p-6">
+                {/* Header */}
+                <div className="flex items-center justify-between">
+                    <div>
+                        <h1 className="text-3xl font-bold tracking-tight">
+                            Children Registry
+                        </h1>
+                        <p className="text-muted-foreground mt-1">
+                            Total: {children.total} children registered
+                            {cachedCount > 0 && (
+                                <span className="ml-2 text-blue-600 dark:text-blue-400">
+                                    • {cachedCount} cached offline
+                                </span>
+                            )}
+                        </p>
+                    </div>
+                    <div className="flex gap-2">
+                        {isOnline && (
+                            <Button
+                                variant="outline"
+                                onClick={handleCacheAll}
+                                disabled={isCaching}
+                            >
+                                <Download className="mr-2 h-4 w-4" />
+                                {isCaching ? 'Caching...' : 'Cache for Offline'}
+                            </Button>
+                        )}
+                        <Link href={childrenCreate.url()}>
                             <Button>
                                 <Plus className="mr-2 h-4 w-4" />
                                 Register New Child
                             </Button>
                         </Link>
                     </div>
+                </div>
 
-                    {/* Filters */}
-                    <div className="mb-6 rounded-lg bg-white p-4 shadow">
-                        <div className="grid gap-4 md:grid-cols-4">
-                            <div className="md:col-span-2">
-                                <Input
-                                    placeholder="Search by name, FSN, or QR code..."
-                                    value={search}
-                                    onChange={(e) => setSearch(e.target.value)}
-                                    onKeyDown={(e) =>
-                                        e.key === 'Enter' && handleSearch()
-                                    }
-                                />
-                            </div>
-                            <div>
-                                <Select
-                                    value={barangayId}
-                                    onValueChange={setBarangayId}
-                                >
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="All Barangays" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="">
-                                            All Barangays
-                                        </SelectItem>
-                                        {barangays.map((barangay) => (
-                                            <SelectItem
-                                                key={barangay.id}
-                                                value={barangay.id}
-                                            >
-                                                {barangay.name}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                            <div>
-                                <Select
-                                    value={isIndigenous}
-                                    onValueChange={setIsIndigenous}
-                                >
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Indigenous People" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="">All</SelectItem>
-                                        <SelectItem value="1">
-                                            Indigenous
-                                        </SelectItem>
-                                        <SelectItem value="0">
-                                            Non-Indigenous
-                                        </SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </div>
+                {/* Filters */}
+                <div className="rounded-lg border bg-card p-4 shadow-sm">
+                    <div className="grid gap-4 md:grid-cols-4">
+                        <div className="md:col-span-2">
+                            <Input
+                                placeholder="Search by name, FSN, or QR code..."
+                                value={search}
+                                onChange={(e) => setSearch(e.target.value)}
+                                onKeyDown={(e) =>
+                                    e.key === 'Enter' && handleSearch()
+                                }
+                            />
                         </div>
-                        <div className="mt-4 flex gap-2">
-                            <Button onClick={handleSearch}>
-                                <Search className="mr-2 h-4 w-4" />
-                                Search
-                            </Button>
-                            <Button variant="outline" onClick={handleReset}>
-                                Reset
-                            </Button>
+                        <div>
+                            <Select
+                                value={barangayId}
+                                onValueChange={setBarangayId}
+                            >
+                                <SelectTrigger>
+                                    <SelectValue placeholder="All Barangays" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="all">
+                                        All Barangays
+                                    </SelectItem>
+                                    {barangays.map((barangay) => (
+                                        <SelectItem
+                                            key={barangay.id}
+                                            value={barangay.id}
+                                        >
+                                            {barangay.name}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+                        <div>
+                            <Select
+                                value={isIndigenous}
+                                onValueChange={setIsIndigenous}
+                            >
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Indigenous People" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="all">All</SelectItem>
+                                    <SelectItem value="1">
+                                        Indigenous
+                                    </SelectItem>
+                                    <SelectItem value="0">
+                                        Non-Indigenous
+                                    </SelectItem>
+                                </SelectContent>
+                            </Select>
                         </div>
                     </div>
+                    <div className="mt-4 flex gap-2">
+                        <Button onClick={handleSearch}>
+                            <Search className="mr-2 h-4 w-4" />
+                            Search
+                        </Button>
+                        <Button variant="outline" onClick={handleReset}>
+                            Reset
+                        </Button>
+                    </div>
+                </div>
 
-                    {/* Table */}
-                    <div className="overflow-hidden rounded-lg bg-white shadow">
-                        <Table>
-                            <TableHeader>
+                {/* Table */}
+                <div className="overflow-hidden rounded-lg border bg-card shadow-sm">
+                    <Table>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead>Name</TableHead>
+                                <TableHead>Sex</TableHead>
+                                <TableHead>Age</TableHead>
+                                <TableHead>FSN</TableHead>
+                                <TableHead>Barangay</TableHead>
+                                <TableHead>Status</TableHead>
+                                <TableHead>Actions</TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            {children.data.length === 0 ? (
                                 <TableRow>
-                                    <TableHead>Name</TableHead>
-                                    <TableHead>Sex</TableHead>
-                                    <TableHead>Age</TableHead>
-                                    <TableHead>FSN</TableHead>
-                                    <TableHead>Barangay</TableHead>
-                                    <TableHead>Status</TableHead>
-                                    <TableHead>Actions</TableHead>
+                                    <TableCell
+                                        colSpan={7}
+                                        className="text-center text-muted-foreground"
+                                    >
+                                        No children found. Register a child
+                                        to get started.
+                                    </TableCell>
                                 </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {children.data.length === 0 ? (
-                                    <TableRow>
-                                        <TableCell
-                                            colSpan={7}
-                                            className="text-center text-gray-500"
-                                        >
-                                            No children found. Register a child
-                                            to get started.
+                            ) : (
+                                children.data.map((child) => (
+                                    <TableRow key={child.id}>
+                                        <TableCell className="font-medium">
+                                            {child.full_name}
+                                        </TableCell>
+                                        <TableCell>
+                                            <Badge
+                                                variant={
+                                                    child.sex === 'male'
+                                                        ? 'default'
+                                                        : 'secondary'
+                                                }
+                                            >
+                                                {child.sex === 'male'
+                                                    ? 'M'
+                                                    : 'F'}
+                                            </Badge>
+                                        </TableCell>
+                                        <TableCell>
+                                            {getAgeDisplay(
+                                                child.age_in_months
+                                            )}
+                                        </TableCell>
+                                        <TableCell className="font-mono text-sm">
+                                            {child.family_serial_number}
+                                        </TableCell>
+                                        <TableCell>
+                                            {child.barangay.name}
+                                        </TableCell>
+                                        <TableCell>
+                                            {child.is_indigenous_people && (
+                                                <Badge variant="outline">
+                                                    IP
+                                                </Badge>
+                                            )}
+                                        </TableCell>
+                                        <TableCell>
+                                            <Link
+                                                href={childrenShow.url(child.id)}
+                                            >
+                                                <Button
+                                                    variant="ghost"
+                                                    size="sm"
+                                                >
+                                                    View
+                                                </Button>
+                                            </Link>
                                         </TableCell>
                                     </TableRow>
-                                ) : (
-                                    children.data.map((child) => (
-                                        <TableRow key={child.id}>
-                                            <TableCell className="font-medium">
-                                                {child.full_name}
-                                            </TableCell>
-                                            <TableCell>
-                                                <Badge
-                                                    variant={
-                                                        child.sex === 'male'
-                                                            ? 'default'
-                                                            : 'secondary'
-                                                    }
-                                                >
-                                                    {child.sex === 'male'
-                                                        ? 'M'
-                                                        : 'F'}
-                                                </Badge>
-                                            </TableCell>
-                                            <TableCell>
-                                                {getAgeDisplay(
-                                                    child.age_in_months
-                                                )}
-                                            </TableCell>
-                                            <TableCell className="font-mono text-sm">
-                                                {child.family_serial_number}
-                                            </TableCell>
-                                            <TableCell>
-                                                {child.barangay.name}
-                                            </TableCell>
-                                            <TableCell>
-                                                {child.is_indigenous_people && (
-                                                    <Badge variant="outline">
-                                                        IP
-                                                    </Badge>
-                                                )}
-                                            </TableCell>
-                                            <TableCell>
-                                                <Link
-                                                    href={`/children/${child.id}`}
-                                                >
-                                                    <Button
-                                                        variant="ghost"
-                                                        size="sm"
-                                                    >
-                                                        View
-                                                    </Button>
-                                                </Link>
-                                            </TableCell>
-                                        </TableRow>
-                                    ))
-                                )}
-                            </TableBody>
-                        </Table>
+                                ))
+                            )}
+                        </TableBody>
+                    </Table>
 
-                        {/* Pagination */}
-                        {children.last_page > 1 && (
-                            <div className="flex items-center justify-between border-t px-6 py-3">
-                                <div className="text-sm text-gray-700">
-                                    Showing {children.data.length} of{' '}
-                                    {children.total} results
-                                </div>
-                                <div className="flex gap-2">
-                                    {children.links.map((link, index) => (
-                                        <Button
-                                            key={index}
-                                            variant={
-                                                link.active
-                                                    ? 'default'
-                                                    : 'outline'
-                                            }
-                                            size="sm"
-                                            disabled={!link.url}
-                                            onClick={() =>
-                                                link.url && router.visit(link.url)
-                                            }
-                                            dangerouslySetInnerHTML={{
-                                                __html: link.label,
-                                            }}
-                                        />
-                                    ))}
-                                </div>
+                    {/* Pagination */}
+                    {children.last_page > 1 && (
+                        <div className="flex items-center justify-between border-t px-6 py-3">
+                            <div className="text-sm text-muted-foreground">
+                                Showing {children.data.length} of{' '}
+                                {children.total} results
                             </div>
-                        )}
-                    </div>
+                            <Pagination>
+                                <PaginationContent>
+                                    {/* Previous Button */}
+                                    <PaginationItem>
+                                        <PaginationPrevious
+                                            href={children.links[0]?.url || '#'}
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                if (children.links[0]?.url) {
+                                                    router.visit(children.links[0].url);
+                                                }
+                                            }}
+                                            className={!children.links[0]?.url ? 'pointer-events-none opacity-50' : ''}
+                                        />
+                                    </PaginationItem>
+
+                                    {/* Page Numbers */}
+                                    {children.links.slice(1, -1).map((link, index) => {
+                                        // Show first page, last page, current page, and pages around current
+                                        const pageNum = index + 1;
+                                        const currentPage = children.current_page;
+                                        const lastPage = children.last_page;
+                                        
+                                        // Show ellipsis logic
+                                        if (
+                                            pageNum === 1 || 
+                                            pageNum === lastPage ||
+                                            (pageNum >= currentPage - 1 && pageNum <= currentPage + 1)
+                                        ) {
+                                            return (
+                                                <PaginationItem key={index}>
+                                                    <PaginationLink
+                                                        href={link.url || '#'}
+                                                        isActive={link.active}
+                                                        onClick={(e) => {
+                                                            e.preventDefault();
+                                                            if (link.url) {
+                                                                router.visit(link.url);
+                                                            }
+                                                        }}
+                                                    >
+                                                        {pageNum}
+                                                    </PaginationLink>
+                                                </PaginationItem>
+                                            );
+                                        } else if (
+                                            pageNum === currentPage - 2 ||
+                                            pageNum === currentPage + 2
+                                        ) {
+                                            return (
+                                                <PaginationItem key={index}>
+                                                    <PaginationEllipsis />
+                                                </PaginationItem>
+                                            );
+                                        }
+                                        return null;
+                                    })}
+
+                                    {/* Next Button */}
+                                    <PaginationItem>
+                                        <PaginationNext
+                                            href={children.links[children.links.length - 1]?.url || '#'}
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                const lastLink = children.links[children.links.length - 1];
+                                                if (lastLink?.url) {
+                                                    router.visit(lastLink.url);
+                                                }
+                                            }}
+                                            className={!children.links[children.links.length - 1]?.url ? 'pointer-events-none opacity-50' : ''}
+                                        />
+                                    </PaginationItem>
+                                </PaginationContent>
+                            </Pagination>
+                        </div>
+                    )}
                 </div>
             </div>
         </AppLayout>

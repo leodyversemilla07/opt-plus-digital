@@ -13,17 +13,15 @@ class MeasurementService
 
     /**
      * Create a measurement with automatic z-score calculation
-     * 
-     * @param Child $child
-     * @param array $data Measurement data (date, weight, height, etc.)
-     * @return Measurement
+     *
+     * @param  array  $data  Measurement data (date, weight, height, etc.)
      */
     public function createMeasurement(Child $child, array $data): Measurement
     {
         // Calculate age in days at measurement date
         $measurementDate = $data['measurement_date'] ?? now();
         $ageInDays = $child->date_of_birth->diffInDays($measurementDate);
-        
+
         // Calculate all z-scores
         $zscores = $this->whoCalculator->calculateAll(
             $child->sex,
@@ -43,42 +41,37 @@ class MeasurementService
 
     /**
      * Update a measurement and recalculate z-scores
-     * 
-     * @param Measurement $measurement
-     * @param array $data
-     * @return Measurement
      */
     public function updateMeasurement(Measurement $measurement, array $data): Measurement
     {
         $child = $measurement->child;
-        
+
         // Recalculate if weight or height changed
         if (isset($data['weight_kg']) || isset($data['height_length_cm'])) {
             $measurementDate = $data['measurement_date'] ?? $measurement->measurement_date;
             $ageInDays = $child->date_of_birth->diffInDays($measurementDate);
-            
+
             $weight = $data['weight_kg'] ?? $measurement->weight_kg;
             $height = $data['height_length_cm'] ?? $measurement->height_length_cm;
-            
+
             $zscores = $this->whoCalculator->calculateAll(
                 $child->sex,
                 $ageInDays,
                 $weight,
                 $height
             );
-            
+
             $data = array_merge($data, $zscores);
         }
 
         $measurement->update($data);
-        
+
         return $measurement->fresh();
     }
 
     /**
      * Validate measurement data
-     * 
-     * @param array $data
+     *
      * @return array Validation errors (empty if valid)
      */
     public function validateMeasurement(array $data): array
@@ -111,9 +104,7 @@ class MeasurementService
 
     /**
      * Check if measurement is flagged (significant change from previous)
-     * 
-     * @param Child $child
-     * @param float $weightKg
+     *
      * @return bool True if flagged for review
      */
     public function isFlagged(Child $child, float $weightKg): bool
@@ -122,7 +113,7 @@ class MeasurementService
             ->latest('measurement_date')
             ->first();
 
-        if (!$previousMeasurement) {
+        if (! $previousMeasurement) {
             return false;
         }
 
@@ -135,20 +126,16 @@ class MeasurementService
 
     /**
      * Determine measurement type based on age
-     * 
-     * @param int $ageInMonths
+     *
      * @return string 'recumbent' or 'standing'
      */
     public function determineMeasurementType(int $ageInMonths): string
     {
-        return $ageInMonths < 24 ? 'recumbent' : 'standing';
+        return $ageInMonths < 24 ? 'length' : 'height';
     }
 
     /**
      * Get measurement statistics for a child
-     * 
-     * @param Child $child
-     * @return array
      */
     public function getChildStatistics(Child $child): array
     {

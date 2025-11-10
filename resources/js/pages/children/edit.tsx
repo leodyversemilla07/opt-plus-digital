@@ -1,9 +1,9 @@
 import { Head, Link, useForm } from '@inertiajs/react';
 import { FormEventHandler } from 'react';
+import { show as childrenShow } from '@/routes/children';
 import AppLayout from '@/layouts/app-layout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
     Card,
@@ -18,6 +18,12 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import {
+    Field,
+    FieldDescription,
+    FieldGroup,
+    FieldLabel,
+} from '@/components/ui/field';
 import { type BreadcrumbItem } from '@/types';
 
 interface Child {
@@ -44,7 +50,7 @@ interface Child {
 interface Barangay {
     id: string;
     name: string;
-    municipality: string;
+    municipality_city: string;
 }
 
 interface Props {
@@ -90,18 +96,19 @@ export default function Edit({ child, barangays }: Props) {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={`Edit Child - ${child.first_name} ${child.last_name}`} />
 
-            <div className="py-12">
-                <div className="mx-auto max-w-4xl sm:px-6 lg:px-8">
-                    <div className="mb-6">
-                        <div>
-                            <h1 className="text-3xl font-bold text-gray-900">
-                                Edit Child Information
-                            </h1>
-                            <p className="mt-1 text-sm text-gray-600">
-                                Update child registration details
-                            </p>
-                        </div>
+            <div className="flex flex-col gap-6 p-6">
+                <div className="mx-auto max-w-4xl w-full">
+                    <div>
+                        <h1 className="text-3xl font-bold tracking-tight">
+                            Edit Child Information
+                        </h1>
+                        <p className="text-muted-foreground mt-1">
+                            Update child registration details
+                        </p>
                     </div>
+                </div>
+
+                <div className="mx-auto max-w-4xl w-full">
 
                     <form onSubmit={submit}>
                         <div className="space-y-6">
@@ -111,39 +118,39 @@ export default function Edit({ child, barangays }: Props) {
                                     <CardTitle>Child Information</CardTitle>
                                 </CardHeader>
                                 <CardContent className="space-y-4">
-                                    <div>
-                                        <Label htmlFor="family_serial_number">
-                                            Family Serial Number{' '}
-                                            <span className="text-red-500">
-                                                *
-                                            </span>
-                                        </Label>
-                                        <Input
-                                            id="family_serial_number"
-                                            value={data.family_serial_number}
-                                            onChange={(e) =>
-                                                setData(
-                                                    'family_serial_number',
-                                                    e.target.value
-                                                )
-                                            }
-                                            required
-                                        />
-                                        {errors.family_serial_number && (
-                                            <p className="mt-1 text-sm text-red-500">
-                                                {errors.family_serial_number}
-                                            </p>
-                                        )}
-                                    </div>
+                                    <FieldGroup>
+                                        <Field>
+                                            <FieldLabel htmlFor="family_serial_number">
+                                                Family Serial Number{' '}
+                                                <span className="text-red-500">
+                                                    *
+                                                </span>
+                                            </FieldLabel>
+                                            <Input
+                                                id="family_serial_number"
+                                                value={data.family_serial_number}
+                                                onChange={(e) =>
+                                                    setData(
+                                                        'family_serial_number',
+                                                        e.target.value
+                                                    )
+                                                }
+                                                required
+                                            />
+                                            {errors.family_serial_number && (
+                                                <FieldDescription className="text-red-500">
+                                                    {errors.family_serial_number}
+                                                </FieldDescription>
+                                            )}
+                                        </Field>
 
-                                    <div className="grid gap-4 md:grid-cols-2">
-                                        <div>
-                                            <Label htmlFor="last_name">
+                                        <Field>
+                                            <FieldLabel htmlFor="last_name">
                                                 Last Name{' '}
                                                 <span className="text-red-500">
                                                     *
                                                 </span>
-                                            </Label>
+                                            </FieldLabel>
                                             <Input
                                                 id="last_name"
                                                 value={data.last_name}
@@ -156,19 +163,19 @@ export default function Edit({ child, barangays }: Props) {
                                                 required
                                             />
                                             {errors.last_name && (
-                                                <p className="mt-1 text-sm text-red-500">
+                                                <FieldDescription className="text-red-500">
                                                     {errors.last_name}
-                                                </p>
+                                                </FieldDescription>
                                             )}
-                                        </div>
+                                        </Field>
 
-                                        <div>
-                                            <Label htmlFor="first_name">
+                                        <Field>
+                                            <FieldLabel htmlFor="first_name">
                                                 First Name{' '}
                                                 <span className="text-red-500">
                                                     *
                                                 </span>
-                                            </Label>
+                                            </FieldLabel>
                                             <Input
                                                 id="first_name"
                                                 value={data.first_name}
@@ -181,16 +188,16 @@ export default function Edit({ child, barangays }: Props) {
                                                 required
                                             />
                                             {errors.first_name && (
-                                                <p className="mt-1 text-sm text-red-500">
+                                                <FieldDescription className="text-red-500">
                                                     {errors.first_name}
-                                                </p>
+                                                </FieldDescription>
                                             )}
-                                        </div>
+                                        </Field>
 
-                                        <div>
-                                            <Label htmlFor="middle_name">
+                                        <Field>
+                                            <FieldLabel htmlFor="middle_name">
                                                 Middle Name
-                                            </Label>
+                                            </FieldLabel>
                                             <Input
                                                 id="middle_name"
                                                 value={data.middle_name}
@@ -201,12 +208,12 @@ export default function Edit({ child, barangays }: Props) {
                                                     )
                                                 }
                                             />
-                                        </div>
+                                        </Field>
 
-                                        <div>
-                                            <Label htmlFor="name_extension">
+                                        <Field>
+                                            <FieldLabel htmlFor="name_extension">
                                                 Name Extension
-                                            </Label>
+                                            </FieldLabel>
                                             <Input
                                                 id="name_extension"
                                                 value={data.name_extension}
@@ -218,17 +225,15 @@ export default function Edit({ child, barangays }: Props) {
                                                 }
                                                 placeholder="Jr., Sr., III"
                                             />
-                                        </div>
-                                    </div>
+                                        </Field>
 
-                                    <div className="grid gap-4 md:grid-cols-2">
-                                        <div>
-                                            <Label htmlFor="sex">
+                                        <Field>
+                                            <FieldLabel htmlFor="sex">
                                                 Sex{' '}
                                                 <span className="text-red-500">
                                                     *
                                                 </span>
-                                            </Label>
+                                            </FieldLabel>
                                             <Select
                                                 value={data.sex}
                                                 onValueChange={(value) =>
@@ -240,7 +245,7 @@ export default function Edit({ child, barangays }: Props) {
                                                     )
                                                 }
                                             >
-                                                <SelectTrigger>
+                                                <SelectTrigger id="sex">
                                                     <SelectValue />
                                                 </SelectTrigger>
                                                 <SelectContent>
@@ -253,19 +258,19 @@ export default function Edit({ child, barangays }: Props) {
                                                 </SelectContent>
                                             </Select>
                                             {errors.sex && (
-                                                <p className="mt-1 text-sm text-red-500">
+                                                <FieldDescription className="text-red-500">
                                                     {errors.sex}
-                                                </p>
+                                                </FieldDescription>
                                             )}
-                                        </div>
+                                        </Field>
 
-                                        <div>
-                                            <Label htmlFor="date_of_birth">
+                                        <Field>
+                                            <FieldLabel htmlFor="date_of_birth">
                                                 Date of Birth{' '}
                                                 <span className="text-red-500">
                                                     *
                                                 </span>
-                                            </Label>
+                                            </FieldLabel>
                                             <Input
                                                 id="date_of_birth"
                                                 type="date"
@@ -284,28 +289,28 @@ export default function Edit({ child, barangays }: Props) {
                                                 required
                                             />
                                             {errors.date_of_birth && (
-                                                <p className="mt-1 text-sm text-red-500">
+                                                <FieldDescription className="text-red-500">
                                                     {errors.date_of_birth}
-                                                </p>
+                                                </FieldDescription>
                                             )}
-                                        </div>
-                                    </div>
+                                        </Field>
 
-                                    <div>
-                                        <Label htmlFor="place_of_birth">
-                                            Place of Birth
-                                        </Label>
-                                        <Input
-                                            id="place_of_birth"
-                                            value={data.place_of_birth}
-                                            onChange={(e) =>
-                                                setData(
-                                                    'place_of_birth',
-                                                    e.target.value
-                                                )
-                                            }
-                                        />
-                                    </div>
+                                        <Field>
+                                            <FieldLabel htmlFor="place_of_birth">
+                                                Place of Birth
+                                            </FieldLabel>
+                                            <Input
+                                                id="place_of_birth"
+                                                value={data.place_of_birth}
+                                                onChange={(e) =>
+                                                    setData(
+                                                        'place_of_birth',
+                                                        e.target.value
+                                                    )
+                                                }
+                                            />
+                                        </Field>
+                                    </FieldGroup>
                                 </CardContent>
                             </Card>
 
@@ -316,12 +321,12 @@ export default function Edit({ child, barangays }: Props) {
                                 </CardHeader>
                                 <CardContent className="space-y-4">
                                     <div>
-                                        <Label htmlFor="barangay_id">
+                                        <FieldLabel htmlFor="barangay_id">
                                             Barangay{' '}
                                             <span className="text-red-500">
                                                 *
                                             </span>
-                                        </Label>
+                                        </FieldLabel>
                                         <Select
                                             value={data.barangay_id}
                                             onValueChange={(value) =>
@@ -343,9 +348,9 @@ export default function Edit({ child, barangays }: Props) {
                                             </SelectContent>
                                         </Select>
                                         {selectedBarangay && (
-                                            <p className="mt-1 text-sm text-gray-500">
+                                            <p className="mt-1 text-sm text-muted-foreground">
                                                 Municipality:{' '}
-                                                {selectedBarangay.municipality}
+                                                {selectedBarangay.municipality_city}
                                             </p>
                                         )}
                                         {errors.barangay_id && (
@@ -357,7 +362,7 @@ export default function Edit({ child, barangays }: Props) {
 
                                     <div className="grid gap-4 md:grid-cols-2">
                                         <div>
-                                            <Label htmlFor="purok">Purok</Label>
+                                            <FieldLabel htmlFor="purok">Purok</FieldLabel>
                                             <Input
                                                 id="purok"
                                                 value={data.purok}
@@ -371,9 +376,9 @@ export default function Edit({ child, barangays }: Props) {
                                         </div>
 
                                         <div>
-                                            <Label htmlFor="address_details">
+                                            <FieldLabel htmlFor="address_details">
                                                 Address Details
-                                            </Label>
+                                            </FieldLabel>
                                             <Input
                                                 id="address_details"
                                                 value={data.address_details}
@@ -398,9 +403,9 @@ export default function Edit({ child, barangays }: Props) {
                                 <CardContent className="space-y-4">
                                     <div className="grid gap-4 md:grid-cols-2">
                                         <div>
-                                            <Label htmlFor="mother_name">
+                                            <FieldLabel htmlFor="mother_name">
                                                 Mother's Full Name
-                                            </Label>
+                                            </FieldLabel>
                                             <Input
                                                 id="mother_name"
                                                 value={data.mother_name}
@@ -414,9 +419,9 @@ export default function Edit({ child, barangays }: Props) {
                                         </div>
 
                                         <div>
-                                            <Label htmlFor="father_name">
+                                            <FieldLabel htmlFor="father_name">
                                                 Father's Full Name
-                                            </Label>
+                                            </FieldLabel>
                                             <Input
                                                 id="father_name"
                                                 value={data.father_name}
@@ -431,10 +436,10 @@ export default function Edit({ child, barangays }: Props) {
                                     </div>
 
                                     <div>
-                                        <Label htmlFor="guardian_name">
+                                        <FieldLabel htmlFor="guardian_name">
                                             Guardian's Full Name (if
                                             applicable)
-                                        </Label>
+                                        </FieldLabel>
                                         <Input
                                             id="guardian_name"
                                             value={data.guardian_name}
@@ -468,19 +473,19 @@ export default function Edit({ child, barangays }: Props) {
                                                 )
                                             }
                                         />
-                                        <Label htmlFor="is_indigenous_people">
+                                        <FieldLabel htmlFor="is_indigenous_people">
                                             Indigenous People
-                                        </Label>
+                                        </FieldLabel>
                                     </div>
 
                                     {data.is_indigenous_people && (
                                         <div>
-                                            <Label htmlFor="indigenous_people_group">
+                                            <FieldLabel htmlFor="indigenous_people_group">
                                                 Indigenous People Group{' '}
                                                 <span className="text-red-500">
                                                     *
                                                 </span>
-                                            </Label>
+                                            </FieldLabel>
                                             <Input
                                                 id="indigenous_people_group"
                                                 value={
@@ -508,7 +513,7 @@ export default function Edit({ child, barangays }: Props) {
                                     )}
 
                                     <div>
-                                        <Label htmlFor="qr_code">QR Code</Label>
+                                        <FieldLabel htmlFor="qr_code">QR Code</FieldLabel>
                                         <Input
                                             id="qr_code"
                                             value={data.qr_code}
@@ -517,7 +522,7 @@ export default function Edit({ child, barangays }: Props) {
                                             }
                                             placeholder="Auto-generated or manual"
                                         />
-                                        <p className="mt-1 text-xs text-gray-500">
+                                        <p className="mt-1 text-xs text-muted-foreground">
                                             Leave blank to auto-generate
                                         </p>
                                     </div>
@@ -526,7 +531,7 @@ export default function Edit({ child, barangays }: Props) {
 
                             {/* Actions */}
                             <div className="flex justify-end gap-2">
-                                <Link href={`/children/${child.id}`}>
+                                <Link href={childrenShow.url(child.id)}>
                                     <Button variant="outline" type="button">
                                         Cancel
                                     </Button>

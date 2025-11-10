@@ -30,7 +30,7 @@ return new class extends Migration
             $table->unsignedBigInteger('permission_id');
             $table->string('model_type');
             $table->unsignedBigInteger('model_id');
-            
+
             $table->index(['model_id', 'model_type'], 'model_has_permissions_model_id_model_type_index');
 
             $table->foreign('permission_id')
@@ -45,7 +45,7 @@ return new class extends Migration
             $table->unsignedBigInteger('role_id');
             $table->string('model_type');
             $table->unsignedBigInteger('model_id');
-            
+
             $table->index(['model_id', 'model_type'], 'model_has_roles_model_id_model_type_index');
 
             $table->foreign('role_id')

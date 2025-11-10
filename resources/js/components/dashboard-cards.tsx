@@ -198,7 +198,7 @@ interface HighRiskChild {
         age_in_months: number;
         barangay: {
             name: string;
-            municipality: string;
+            municipality_city: string;
         };
     };
     measurement: {

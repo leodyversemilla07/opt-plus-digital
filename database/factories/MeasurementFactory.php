@@ -19,7 +19,7 @@ class MeasurementFactory extends Factory
     public function definition(): array
     {
         $ageInMonths = fake()->numberBetween(0, 59);
-        
+
         // Realistic weight ranges by age (in kg)
         $weightRanges = [
             [3, 5],    // 0-2 months
@@ -30,7 +30,7 @@ class MeasurementFactory extends Factory
             [11, 16],  // 36-47 months
             [13, 18],  // 48-59 months
         ];
-        
+
         // Realistic height ranges by age (in cm)
         $heightRanges = [
             [50, 60],  // 0-2 months
@@ -41,32 +41,32 @@ class MeasurementFactory extends Factory
             [92, 105], // 36-47 months
             [98, 112], // 48-59 months
         ];
-        
+
         $ageGroup = min(6, floor($ageInMonths / 6));
-        
+
         $weight = fake()->randomFloat(2, $weightRanges[$ageGroup][0], $weightRanges[$ageGroup][1]);
         $height = fake()->randomFloat(2, $heightRanges[$ageGroup][0], $heightRanges[$ageGroup][1]);
-        
+
         // Generate z-scores (normally distributed around 0)
         $wfaZscore = fake()->randomFloat(2, -3, 2);
         $hfaZscore = fake()->randomFloat(2, -3, 2);
         $wfhZscore = fake()->randomFloat(2, -3, 2);
-        
+
         // Determine statuses based on z-scores
         $wfaStatus = $this->getWeightForAgeStatus($wfaZscore);
         $hfaStatus = $this->getHeightForAgeStatus($hfaZscore);
         $wfhStatus = $this->getWeightForHeightStatus($wfhZscore);
-        
+
         // Determine OPT classification
         $optClassification = $this->getOptClassification($wfaZscore, $hfaZscore, $wfhZscore);
-        
+
         return [
             'child_id' => Child::factory(),
             'measurement_date' => fake()->dateTimeBetween('-6 months', 'now'),
             'age_in_months' => $ageInMonths,
             'weight_kg' => $weight,
             'height_length_cm' => $height,
-            'measurement_type' => $ageInMonths < 24 ? 'recumbent' : 'standing',
+            'measurement_type' => $ageInMonths < 24 ? 'length' : 'height',
             'weight_for_age_zscore' => $wfaZscore,
             'height_for_age_zscore' => $hfaZscore,
             'weight_for_height_zscore' => $wfhZscore,
@@ -83,26 +83,49 @@ class MeasurementFactory extends Factory
 
     private function getWeightForAgeStatus(float $zscore): string
     {
-        if ($zscore < -3) return 'severely_underweight';
-        if ($zscore < -2) return 'underweight';
-        if ($zscore > 2) return 'overweight';
+        if ($zscore < -3) {
+            return 'severely_underweight';
+        }
+        if ($zscore < -2) {
+            return 'underweight';
+        }
+        if ($zscore > 2) {
+            return 'overweight';
+        }
+
         return 'normal';
     }
 
     private function getHeightForAgeStatus(float $zscore): string
     {
-        if ($zscore < -3) return 'severely_stunted';
-        if ($zscore < -2) return 'stunted';
-        if ($zscore > 2) return 'tall';
+        if ($zscore < -3) {
+            return 'severely_stunted';
+        }
+        if ($zscore < -2) {
+            return 'stunted';
+        }
+        if ($zscore > 2) {
+            return 'tall';
+        }
+
         return 'normal';
     }
 
     private function getWeightForHeightStatus(float $zscore): string
     {
-        if ($zscore < -3) return 'severely_wasted';
-        if ($zscore < -2) return 'wasted';
-        if ($zscore > 2) return 'overweight';
-        if ($zscore > 3) return 'obese';
+        if ($zscore < -3) {
+            return 'severely_wasted';
+        }
+        if ($zscore < -2) {
+            return 'wasted';
+        }
+        if ($zscore > 2) {
+            return 'overweight';
+        }
+        if ($zscore > 3) {
+            return 'obese';
+        }
+
         return 'normal';
     }
 
@@ -112,17 +135,17 @@ class MeasurementFactory extends Factory
         if ($wfa < -3 || $hfa < -3 || $wfh < -3) {
             return 'severely_malnourished';
         }
-        
+
         // Moderately malnourished: any z-score between -3 and -2
         if ($wfa < -2 || $hfa < -2 || $wfh < -2) {
             return 'moderately_malnourished';
         }
-        
+
         // Overweight/obese
         if ($wfh > 2) {
             return $wfh > 3 ? 'obese' : 'overweight';
         }
-        
+
         return 'normal';
     }
 

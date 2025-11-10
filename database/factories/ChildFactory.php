@@ -22,20 +22,20 @@ class ChildFactory extends Factory
         $middleName = fake()->lastName();
         $lastName = fake()->lastName();
         $sex = fake()->randomElement(['male', 'female']);
-        
+
         // Generate date of birth for children 0-59 months old
         $dateOfBirth = fake()->dateTimeBetween('-59 months', 'now');
-        
+
         // Generate Filipino contact number format
         $contactNumber = fake()->optional()->numerify('09#########');
-        
+
         // Indigenous people (approximately 10-15% of population)
         $isIndigenousPeople = fake()->boolean(12);
         $ipTribes = [
-            'Aeta', 'Igorot', 'Lumad', 'Manobo', 'T\'boli', 
-            'Mangyan', 'Badjao', 'Tagbanwa', 'B\'laan', 'Subanen'
+            'Aeta', 'Igorot', 'Lumad', 'Manobo', 'T\'boli',
+            'Mangyan', 'Badjao', 'Tagbanwa', 'B\'laan', 'Subanen',
         ];
-        
+
         return [
             'family_serial_number' => fake()->unique()->numerify('FSN-####-####'),
             'first_name' => $firstName,
@@ -45,8 +45,8 @@ class ChildFactory extends Factory
             'date_of_birth' => $dateOfBirth,
             'address' => fake()->streetAddress(),
             'purok_sitio' => fake()->optional()->randomElement([
-                'Purok 1', 'Purok 2', 'Purok 3', 'Purok 4', 
-                'Sitio San Jose', 'Sitio San Miguel', 'Sitio Rizal'
+                'Purok 1', 'Purok 2', 'Purok 3', 'Purok 4',
+                'Sitio San Jose', 'Sitio San Miguel', 'Sitio Rizal',
             ]),
             'barangay_id' => Barangay::factory(),
             'mother_caregiver_name' => fake()->name('female'),
@@ -80,7 +80,7 @@ class ChildFactory extends Factory
         return $this->state(fn (array $attributes) => [
             'is_indigenous_people' => true,
             'ip_tribe_name' => fake()->randomElement([
-                'Aeta', 'Igorot', 'Lumad', 'Manobo', 'T\'boli'
+                'Aeta', 'Igorot', 'Lumad', 'Manobo', 'T\'boli',
             ]),
         ]);
     }
@@ -88,7 +88,7 @@ class ChildFactory extends Factory
     public function ageInMonths(int $months): static
     {
         $dateOfBirth = now()->subMonths($months);
-        
+
         return $this->state(fn (array $attributes) => [
             'date_of_birth' => $dateOfBirth,
         ]);

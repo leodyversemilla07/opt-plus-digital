@@ -20,29 +20,29 @@ class RolePermissionSeeder extends Seeder
             'create children',
             'edit children',
             'delete children',
-            
+
             // Measurement Management
             'view measurements',
             'create measurements',
             'edit measurements',
             'delete measurements',
-            
+
             // Reports
             'view reports',
             'export reports',
-            
+
             // Analytics
             'view analytics',
             'view barangay analytics',
             'view municipal analytics',
-            
+
             // User Management
             'view users',
             'create users',
             'edit users',
             'delete users',
             'manage roles',
-            
+
             // Settings
             'manage settings',
         ];
@@ -52,7 +52,7 @@ class RolePermissionSeeder extends Seeder
         }
 
         // Create roles and assign permissions
-        
+
         // Admin - Full access
         $admin = Role::create(['name' => 'admin']);
         $admin->givePermissionTo(Permission::all());

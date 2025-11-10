@@ -1,9 +1,8 @@
 import { Head, Link, useForm } from '@inertiajs/react';
-import { FormEventHandler } from 'react';
-import AuthenticatedLayout from '@/layouts/authenticated-layout';
+import AppLayout from '@/layouts/app-layout';
+import { index as usersIndex, update as usersUpdate } from '@/routes/users/index';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
@@ -14,6 +13,12 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { UserCog, ArrowLeft } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
+import {
+  Field,
+  FieldDescription,
+  FieldGroup,
+  FieldLabel,
+} from '@/components/ui/field';
 
 interface User {
   id: number;
@@ -27,7 +32,7 @@ interface User {
 interface Barangay {
   id: number;
   name: string;
-  municipality: string;
+  municipality_city: string;
 }
 
 interface Props {
@@ -49,17 +54,17 @@ export default function Edit({ user, currentRole, roles, barangays }: Props) {
     is_active: user.is_active,
   });
 
-  const submit: FormEventHandler = (e) => {
+  const submit = (e: React.FormEvent) => {
     e.preventDefault();
-    put(route('users.update', user.id));
+    put(usersUpdate.url(user.id));
   };
 
   return (
-    <AuthenticatedLayout>
+    <AppLayout>
       <Head title="Edit User" />
 
-      <div className="py-12">
-        <div className="max-w-3xl mx-auto sm:px-6 lg:px-8">
+      <div className="flex flex-col gap-6 p-6">
+        <div className="max-w-3xl w-full mx-auto">
           <Card>
             <CardHeader>
               <div className="flex items-center justify-between">
@@ -70,7 +75,7 @@ export default function Edit({ user, currentRole, roles, barangays }: Props) {
                   </CardTitle>
                   <CardDescription>Update user information and permissions</CardDescription>
                 </div>
-                <Link href={route('users.index')}>
+                <Link href={usersIndex.url()}>
                   <Button variant="outline">
                     <ArrowLeft className="mr-2 h-4 w-4" />
                     Back
@@ -80,36 +85,40 @@ export default function Edit({ user, currentRole, roles, barangays }: Props) {
             </CardHeader>
             <CardContent>
               <form onSubmit={submit} className="space-y-6">
-                {/* Name */}
-                <div className="space-y-2">
-                  <Label htmlFor="name">Full Name *</Label>
-                  <Input
-                    id="name"
-                    type="text"
-                    value={data.name}
-                    onChange={(e) => setData('name', e.target.value)}
-                    required
-                  />
-                  {errors.name && <p className="text-sm text-red-500">{errors.name}</p>}
-                </div>
+                <FieldGroup>
+                  {/* Name */}
+                  <Field>
+                    <FieldLabel htmlFor="name">Full Name *</FieldLabel>
+                    <Input
+                      id="name"
+                      type="text"
+                      value={data.name}
+                      onChange={(e) => setData('name', e.target.value)}
+                      required
+                    />
+                    {errors.name && (
+                      <FieldDescription className="text-red-500">{errors.name}</FieldDescription>
+                    )}
+                  </Field>
 
-                {/* Email */}
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email Address *</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    value={data.email}
-                    onChange={(e) => setData('email', e.target.value)}
-                    required
-                  />
-                  {errors.email && <p className="text-sm text-red-500">{errors.email}</p>}
-                </div>
+                  {/* Email */}
+                  <Field>
+                    <FieldLabel htmlFor="email">Email Address *</FieldLabel>
+                    <Input
+                      id="email"
+                      type="email"
+                      value={data.email}
+                      onChange={(e) => setData('email', e.target.value)}
+                      required
+                    />
+                    {errors.email && (
+                      <FieldDescription className="text-red-500">{errors.email}</FieldDescription>
+                    )}
+                  </Field>
 
-                {/* Password */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="password">New Password (Optional)</Label>
+                  {/* Password */}
+                  <Field>
+                    <FieldLabel htmlFor="password">New Password (Optional)</FieldLabel>
                     <Input
                       id="password"
                       type="password"
@@ -117,11 +126,16 @@ export default function Edit({ user, currentRole, roles, barangays }: Props) {
                       onChange={(e) => setData('password', e.target.value)}
                       placeholder="Leave blank to keep current password"
                     />
-                    {errors.password && <p className="text-sm text-red-500">{errors.password}</p>}
-                  </div>
+                    <FieldDescription>
+                      Leave blank to keep the current password
+                    </FieldDescription>
+                    {errors.password && (
+                      <FieldDescription className="text-red-500">{errors.password}</FieldDescription>
+                    )}
+                  </Field>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="password_confirmation">Confirm New Password</Label>
+                  <Field>
+                    <FieldLabel htmlFor="password_confirmation">Confirm New Password</FieldLabel>
                     <Input
                       id="password_confirmation"
                       type="password"
@@ -129,92 +143,99 @@ export default function Edit({ user, currentRole, roles, barangays }: Props) {
                       onChange={(e) => setData('password_confirmation', e.target.value)}
                       placeholder="Confirm new password"
                     />
-                  </div>
-                </div>
+                  </Field>
 
-                {/* Phone */}
-                <div className="space-y-2">
-                  <Label htmlFor="phone">Phone Number</Label>
-                  <Input
-                    id="phone"
-                    type="tel"
-                    value={data.phone}
-                    onChange={(e) => setData('phone', e.target.value)}
-                    placeholder="09XX XXX XXXX"
-                  />
-                  {errors.phone && <p className="text-sm text-red-500">{errors.phone}</p>}
-                </div>
+                  {/* Phone */}
+                  <Field>
+                    <FieldLabel htmlFor="phone">Phone Number</FieldLabel>
+                    <Input
+                      id="phone"
+                      type="tel"
+                      value={data.phone}
+                      onChange={(e) => setData('phone', e.target.value)}
+                      placeholder="09XX XXX XXXX"
+                    />
+                    {errors.phone && (
+                      <FieldDescription className="text-red-500">{errors.phone}</FieldDescription>
+                    )}
+                  </Field>
 
-                {/* Role */}
-                <div className="space-y-2">
-                  <Label htmlFor="role">Role *</Label>
-                  <Select value={data.role} onValueChange={(value) => setData('role', value)}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a role" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {Object.entries(roles).map(([id, name]) => (
-                        <SelectItem key={id} value={name}>
-                          {name.toUpperCase()}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  {errors.role && <p className="text-sm text-red-500">{errors.role}</p>}
-                </div>
+                  {/* Role */}
+                  <Field>
+                    <FieldLabel htmlFor="role">Role *</FieldLabel>
+                    <Select value={data.role} onValueChange={(value) => setData('role', value)}>
+                      <SelectTrigger id="role">
+                        <SelectValue placeholder="Select a role" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {Object.entries(roles).map(([id, name]) => (
+                          <SelectItem key={id} value={name}>
+                            {name.toUpperCase()}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    {errors.role && (
+                      <FieldDescription className="text-red-500">{errors.role}</FieldDescription>
+                    )}
+                  </Field>
 
-                {/* Barangay */}
-                <div className="space-y-2">
-                  <Label htmlFor="barangay_id">Barangay (Optional)</Label>
-                  <Select
-                    value={data.barangay_id}
-                    onValueChange={(value) => setData('barangay_id', value)}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a barangay" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="">None</SelectItem>
-                      {barangays.map((barangay) => (
-                        <SelectItem key={barangay.id} value={barangay.id.toString()}>
-                          {barangay.name} - {barangay.municipality}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  {errors.barangay_id && (
-                    <p className="text-sm text-red-500">{errors.barangay_id}</p>
-                  )}
-                </div>
+                  {/* Barangay */}
+                  <Field>
+                    <FieldLabel htmlFor="barangay_id">Barangay (Optional)</FieldLabel>
+                    <Select
+                      value={data.barangay_id || 'none'}
+                      onValueChange={(value) => setData('barangay_id', value === 'none' ? '' : value)}
+                    >
+                      <SelectTrigger id="barangay_id">
+                        <SelectValue placeholder="Select a barangay" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="none">None</SelectItem>
+                        {barangays.map((barangay) => (
+                          <SelectItem key={barangay.id} value={barangay.id.toString()}>
+                            {barangay.name} - {barangay.municipality_city}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FieldDescription>
+                      Assign a barangay if user role requires it
+                    </FieldDescription>
+                    {errors.barangay_id && (
+                      <FieldDescription className="text-red-500">{errors.barangay_id}</FieldDescription>
+                    )}
+                  </Field>
 
-                {/* Active Status */}
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="is_active"
-                    checked={data.is_active}
-                    onCheckedChange={(checked) => setData('is_active', checked as boolean)}
-                  />
-                  <Label htmlFor="is_active" className="cursor-pointer">
-                    Account is active
-                  </Label>
-                </div>
+                  {/* Active Status */}
+                  <Field orientation="horizontal">
+                    <Checkbox
+                      id="is_active"
+                      checked={data.is_active}
+                      onCheckedChange={(checked) => setData('is_active', checked as boolean)}
+                    />
+                    <FieldLabel htmlFor="is_active" className="font-normal cursor-pointer">
+                      Account is active
+                    </FieldLabel>
+                  </Field>
+                </FieldGroup>
 
                 {/* Submit Buttons */}
-                <div className="flex items-center gap-4">
+                <Field orientation="horizontal">
                   <Button type="submit" disabled={processing}>
                     {processing ? 'Updating...' : 'Update User'}
                   </Button>
-                  <Link href={route('users.index')}>
-                    <Button type="button" variant="outline">
+                  <Link href={usersIndex.url()}>
+                    <Button variant="outline" type="button">
                       Cancel
                     </Button>
                   </Link>
-                </div>
+                </Field>
               </form>
             </CardContent>
           </Card>
         </div>
       </div>
-    </AuthenticatedLayout>
+    </AppLayout>
   );
 }

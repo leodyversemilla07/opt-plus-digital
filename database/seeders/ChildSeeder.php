@@ -36,9 +36,10 @@ class ChildSeeder extends Seeder
 
         // Get all barangays
         $barangays = Barangay::all();
-        
+
         if ($barangays->isEmpty()) {
             $this->command->warn('No barangays found. Run BarangaySeeder first.');
+
             return;
         }
 
@@ -49,7 +50,7 @@ class ChildSeeder extends Seeder
         foreach ($barangays as $barangay) {
             // Estimate children per barangay: 15-30
             $childrenCount = rand(15, 30);
-            
+
             for ($i = 0; $i < $childrenCount; $i++) {
                 // Create child
                 $child = Child::factory()
@@ -62,15 +63,15 @@ class ChildSeeder extends Seeder
 
                 // Create 1-3 measurements per child
                 $measurementCount = rand(1, 3);
-                
+
                 for ($j = 0; $j < $measurementCount; $j++) {
                     // Date progression (oldest to newest)
                     $daysAgo = ($measurementCount - $j) * 90; // 90 days apart
-                    
+
                     // Determine nutritional status distribution:
                     // 70% normal, 20% moderately malnourished, 10% severely malnourished
                     $rand = rand(1, 100);
-                    
+
                     if ($rand <= 70) {
                         // Normal
                         $measurement = Measurement::factory()
@@ -102,7 +103,7 @@ class ChildSeeder extends Seeder
                                 'measured_by_user_id' => rand(0, 1) ? $bhw->id : $bns->id,
                             ]);
                     }
-                    
+
                     $totalMeasurements++;
                 }
             }

@@ -11,29 +11,48 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
+import children from '@/routes/children';
+import users from '@/routes/users';
+import reports from '@/routes/reports';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid } from 'lucide-react';
+import { 
+    LayoutDashboard, 
+    Baby, 
+    FileBarChart,
+    UserCog,
+    Settings
+} from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
     {
         title: 'Dashboard',
         href: dashboard(),
-        icon: LayoutGrid,
+        icon: LayoutDashboard,
+    },
+    {
+        title: 'Children Registry',
+        href: children.index(),
+        icon: Baby,
+    },
+    {
+        title: 'Reports',
+        href: reports.index(),
+        icon: FileBarChart,
+    },
+    {
+        title: 'User Management',
+        href: users.index(),
+        icon: UserCog,
     },
 ];
 
 const footerNavItems: NavItem[] = [
     {
-        title: 'Repository',
-        href: 'https://github.com/laravel/react-starter-kit',
-        icon: Folder,
-    },
-    {
-        title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits#react',
-        icon: BookOpen,
+        title: 'Settings',
+        href: '/settings',
+        icon: Settings,
     },
 ];
 

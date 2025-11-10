@@ -56,7 +56,7 @@ class ChildController extends Controller
     public function create(): Response
     {
         return Inertia::render('children/create', [
-            'barangays' => Barangay::select('id', 'name', 'municipality', 'province')
+            'barangays' => Barangay::select('id', 'name', 'municipality_city', 'province')
                 ->orderBy('name')
                 ->get(),
         ]);
@@ -93,7 +93,7 @@ class ChildController extends Controller
         $validated['created_by_user_id'] = $request->user()->id;
 
         // Generate QR code (simple UUID-based for now)
-        $validated['qr_code'] = 'OPT-' . strtoupper(substr(md5(uniqid()), 0, 8));
+        $validated['qr_code'] = 'OPT-'.strtoupper(substr(md5(uniqid()), 0, 8));
 
         $child = Child::create($validated);
 
@@ -109,7 +109,7 @@ class ChildController extends Controller
     {
         $child->load([
             'barangay',
-            'measurements' => fn($q) => $q->latest('measurement_date')->take(10),
+            'measurements' => fn ($q) => $q->latest('measurement_date')->take(10),
             'measurements.measuredBy:id,name',
             'createdBy:id,name',
         ]);
@@ -127,7 +127,7 @@ class ChildController extends Controller
     {
         return Inertia::render('children/edit', [
             'child' => $child->load('barangay'),
-            'barangays' => Barangay::select('id', 'name', 'municipality', 'province')
+            'barangays' => Barangay::select('id', 'name', 'municipality_city', 'province')
                 ->orderBy('name')
                 ->get(),
         ]);
@@ -139,7 +139,7 @@ class ChildController extends Controller
     public function update(Request $request, Child $child): RedirectResponse
     {
         $validated = $request->validate([
-            'family_serial_number' => 'required|string|max:50|unique:children,family_serial_number,' . $child->id,
+            'family_serial_number' => 'required|string|max:50|unique:children,family_serial_number,'.$child->id,
             'first_name' => 'required|string|max:100',
             'middle_name' => 'nullable|string|max:100',
             'last_name' => 'required|string|max:100',
@@ -192,8 +192,8 @@ class ChildController extends Controller
 
         // Find potential duplicates based on name and DOB similarity
         $potentialDuplicates = Child::query()
-            ->where('first_name', 'like', '%' . $request->first_name . '%')
-            ->where('last_name', 'like', '%' . $request->last_name . '%')
+            ->where('first_name', 'like', '%'.$request->first_name.'%')
+            ->where('last_name', 'like', '%'.$request->last_name.'%')
             ->whereRaw('ABS(DATEDIFF(date_of_birth, ?)) <= 30', [$request->date_of_birth])
             ->with('barangay:id,name')
             ->get();
@@ -204,4 +204,3 @@ class ChildController extends Controller
         ]);
     }
 }
-

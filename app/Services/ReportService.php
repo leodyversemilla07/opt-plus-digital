@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Models\Barangay;
 use App\Models\Child;
-use App\Models\Measurement;
 use Illuminate\Support\Collection;
 
 class ReportService
@@ -153,7 +152,7 @@ class ReportService
 
         foreach ($children as $child) {
             $age = $child->age_in_months;
-            
+
             if ($age < 12) {
                 $groups['0-11 months']++;
             } elseif ($age < 24) {
@@ -197,7 +196,7 @@ class ReportService
             'total_children' => $totalChildren,
             'measured_children' => $measuredChildren,
             'unmeasured_children' => $totalChildren - $measuredChildren,
-            'coverage_rate' => $totalChildren > 0 
+            'coverage_rate' => $totalChildren > 0
                 ? round(($measuredChildren / $totalChildren) * 100, 1)
                 : 0,
         ];
@@ -208,18 +207,18 @@ class ReportService
      */
     private function formatPeriod(?string $startDate, ?string $endDate): string
     {
-        if (!$startDate && !$endDate) {
+        if (! $startDate && ! $endDate) {
             return 'All Time';
         }
 
         if ($startDate && $endDate) {
-            return date('M d, Y', strtotime($startDate)) . ' - ' . date('M d, Y', strtotime($endDate));
+            return date('M d, Y', strtotime($startDate)).' - '.date('M d, Y', strtotime($endDate));
         }
 
         if ($startDate) {
-            return 'From ' . date('M d, Y', strtotime($startDate));
+            return 'From '.date('M d, Y', strtotime($startDate));
         }
 
-        return 'Until ' . date('M d, Y', strtotime($endDate));
+        return 'Until '.date('M d, Y', strtotime($endDate));
     }
 }

@@ -31,3 +31,17 @@ createInertiaApp({
 
 // This will set light / dark mode on load...
 initializeTheme();
+
+// Register Service Worker for PWA support
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker
+            .register('/sw.js', { scope: '/' })
+            .then((registration) => {
+                console.log('[SW] Service Worker registered:', registration.scope);
+            })
+            .catch((error) => {
+                console.error('[SW] Service Worker registration failed:', error);
+            });
+    });
+}

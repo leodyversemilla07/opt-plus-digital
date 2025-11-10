@@ -19,7 +19,8 @@ return new class extends Migration
             $table->string('region');
             $table->string('psgc_code', 10)->unique()->comment('Philippine Standard Geographic Code');
             $table->integer('estimated_population_0_59_months')->nullable();
-            $table->point('geographic_coordinates')->nullable()->comment('Latitude and Longitude');
+            $table->decimal('latitude', 10, 8)->nullable()->comment('Geographic latitude');
+            $table->decimal('longitude', 11, 8)->nullable()->comment('Geographic longitude');
             $table->timestamps();
 
             // Indexes for efficient querying
