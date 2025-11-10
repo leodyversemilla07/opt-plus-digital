@@ -39,12 +39,27 @@ Complete guide to building the OPT Plus system:
 
 **[ROADMAP.md](ROADMAP.md)** - Development Roadmap  
 Detailed sprint-by-sprint implementation plan:
-- 24 sprints over 12 months
+- 24 sprints over 12 months (6 of 7 MVP sprints complete!)
 - Task breakdowns per sprint
 - Acceptance criteria
 - Testing requirements
 - Resource planning
 - Risk management
+
+**[OFFLINE-INTEGRATION.md](OFFLINE-INTEGRATION.md)** - Offline Features Guide ✨ NEW  
+Complete guide to PWA and offline functionality:
+- Service Worker architecture
+- IndexedDB storage patterns
+- Offline measurement entry
+- Background sync implementation
+- Security considerations
+
+**[TESTING-OFFLINE.md](TESTING-OFFLINE.md)** - Offline Testing Guide ✨ NEW  
+Step-by-step guide for testing offline features:
+- Test scenarios (5 comprehensive scenarios)
+- Chrome DevTools usage
+- Common issues and solutions
+- Browser compatibility matrix
 
 **[CONTRIBUTING.md](../CONTRIBUTING.md)** - Contribution Guidelines  
 How to contribute to the project:
@@ -108,6 +123,19 @@ High-level overview for decision-makers:
 | [DEVELOPMENT.md](DEVELOPMENT.md) | Architecture & coding standards | Developers | 18 pages |
 | [ROADMAP.md](ROADMAP.md) | Sprint plans & timeline | Dev team, PM | 18 pages |
 | [CONTRIBUTING.md](../CONTRIBUTING.md) | Contribution guidelines | Contributors | 13 pages |
+| [OFFLINE-INTEGRATION.md](OFFLINE-INTEGRATION.md) | PWA & offline features | Developers | 15 pages ✨ |
+| [TESTING-OFFLINE.md](TESTING-OFFLINE.md) | Offline testing guide | Developers, QA | 12 pages ✨ |
+
+### Sprint Reports
+| Document | Sprint Focus | Status | Completion Date |
+|----------|-------------|--------|-----------------|
+| [SPRINT-1-COMPLETE.md](SPRINT-1-COMPLETE.md) | Database & Models | ✅ Complete | Oct 31, 2025 |
+| [SPRINT-2-COMPLETE.md](SPRINT-2-COMPLETE.md) | WHO Standards Engine | ✅ Complete | Oct 31, 2025 |
+| [SPRINT-3-COMPLETE.md](SPRINT-3-COMPLETE.md) | Child Registration & UI | ✅ Complete | Oct 31, 2025 |
+| [SPRINT-4-COMPLETE.md](SPRINT-4-COMPLETE.md) | Analytics & Reporting | ✅ Complete | Oct 31, 2025 |
+| [SPRINT-5-COMPLETE.md](SPRINT-5-COMPLETE.md) | Reports Export & Users | ✅ Complete | Nov 2025 |
+| [SPRINT-6-COMPLETE.md](SPRINT-6-COMPLETE.md) | Offline & Performance | ✅ Complete | Nov 10, 2025 ✨ |
+| [SPRINT-7-ACTION-PLAN.md](SPRINT-7-ACTION-PLAN.md) | Alpha Testing Plan | 🎯 Next | Nov 11-24, 2025 ✨ |
 
 ### Planning & Requirements
 | Document | Purpose | Audience | Length |
@@ -157,14 +185,18 @@ High-level overview for decision-makers:
 
 | Document | Status | Last Updated | Next Review |
 |----------|--------|--------------|-------------|
-| START-HERE.md | ✅ Current | Oct 31, 2025 | Nov 12, 2025 |
-| README.md | ✅ Current | Oct 31, 2025 | Sprint milestones |
+| START-HERE.md | ✅ Current | Nov 10, 2025 | Sprint 7 completion |
+| README.md | ✅ Current | Nov 10, 2025 | Sprint milestones |
 | GETTING-STARTED.md | ✅ Current | Oct 31, 2025 | As needed |
 | DEVELOPMENT.md | ✅ Current | Oct 31, 2025 | Monthly |
-| ROADMAP.md | ✅ Current | Oct 31, 2025 | Bi-weekly |
+| ROADMAP.md | ✅ Current | Nov 10, 2025 | Bi-weekly |
 | CONTRIBUTING.md | ✅ Current | Oct 31, 2025 | Quarterly |
-| PROJECT-SUMMARY.md | ✅ Current | Oct 31, 2025 | Monthly |
+| PROJECT-SUMMARY.md | ✅ Current | Nov 10, 2025 | Sprint completions |
 | OPT-Plus-Digital-System.md | ✅ Current | Oct 28, 2025 | Quarterly |
+| OFFLINE-INTEGRATION.md | ✅ Current | Nov 10, 2025 | As needed ✨ |
+| TESTING-OFFLINE.md | ✅ Current | Nov 10, 2025 | As needed ✨ |
+| SPRINT-6-COMPLETE.md | ✅ Current | Nov 10, 2025 | N/A ✨ |
+| SPRINT-7-ACTION-PLAN.md | ✅ Current | Nov 10, 2025 | Sprint 7 start ✨ |
 
 ---
 
@@ -172,7 +204,9 @@ High-level overview for decision-makers:
 
 ### Key Dates
 - **Project Start:** November 12, 2025 (Sprint 1)
-- **MVP Complete:** February 17, 2026
+- **Sprint 6 Complete:** November 10, 2025 ✨
+- **Sprint 7 Start:** November 11, 2025 (Alpha Testing)
+- **MVP Complete:** February 17, 2026 (Target)
 - **Production Launch:** December 31, 2026
 
 ### Key Links
@@ -221,5 +255,9 @@ Every line of code, every test, every documentation update contributes to better
 
 **Ready to start?** Go to **[START-HERE.md](../START-HERE.md)** →
 
-**Last Updated:** October 31, 2025  
+---
+
+**Last Updated:** November 10, 2025  
 **Maintained by:** Development Team
+
+**🎉 Sprint 6 Complete!** 86% progress to MVP. PWA and offline features now fully operational!
