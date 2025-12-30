@@ -53,4 +53,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('users.toggle-status');
 });
 
+Route::get('/design-system', function () {
+    return Inertia::render('design-system');
+})->middleware(['auth'])->name('design-system');
+
 require __DIR__.'/settings.php';

@@ -177,14 +177,14 @@ class WHOCalculatorService
         if (($wfaZscore !== null && $wfaZscore < -3) ||
             ($hfaZscore !== null && $hfaZscore < -3) ||
             ($wfhZscore !== null && $wfhZscore < -3)) {
-            return 'severely_malnourished';
+            return 'sam';
         }
 
         // Moderately malnourished: any z-score between -3 and -2
         if (($wfaZscore !== null && $wfaZscore < -2) ||
             ($hfaZscore !== null && $hfaZscore < -2) ||
             ($wfhZscore !== null && $wfhZscore < -2)) {
-            return 'moderately_malnourished';
+            return 'mam';
         }
 
         // Overweight/obese

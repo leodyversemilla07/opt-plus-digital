@@ -8,10 +8,12 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
+    $this->seed(\Database\Seeders\RolePermissionSeeder::class);
     $this->barangay = Barangay::factory()->create();
     $this->user = User::factory()->create([
         'barangay_id' => $this->barangay->id,
     ]);
+    $this->user->assignRole('admin');
 });
 
 test('children index page loads successfully', function () {
@@ -186,10 +188,8 @@ test('unauthorized user cannot view child details', function () {
     $response = $this->actingAs($otherUser)
         ->get("/children/{$child->id}");
 
-    // TODO: Implement authorization policies in Sprint 7
-    // For now, all authenticated users can view children
-    $response->assertOk();
-})->skip('Authorization policies not yet implemented');
+    $response->assertForbidden();
+});
 
 test('children index has search functionality', function () {
     $response = $this->actingAs($this->user)

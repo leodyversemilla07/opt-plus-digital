@@ -1,21 +1,21 @@
-import { Head, Link, useForm } from '@inertiajs/react';
-import { FormEventHandler, useState } from 'react';
-import AppLayout from '@/layouts/app-layout';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Info, WifiOff, Cloud } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { type BreadcrumbItem } from '@/types';
-import { useOnlineStatus } from '@/hooks/use-online-status';
-import { offlineDB } from '@/lib/offline-db';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
     Field,
     FieldDescription,
     FieldGroup,
     FieldLabel,
 } from '@/components/ui/field';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { useOnlineStatus } from '@/hooks/use-online-status';
+import AppLayout from '@/layouts/app-layout';
+import { offlineDB } from '@/lib/offline-db';
+import { type BreadcrumbItem } from '@/types';
+import { Head, Link, useForm } from '@inertiajs/react';
+import { Cloud, Info, WifiOff } from 'lucide-react';
+import { FormEventHandler, useState } from 'react';
 
 interface Child {
     id: string;
@@ -56,10 +56,12 @@ export default function CreateMeasurement({ child }: CreateMeasurementProps) {
                     measurement_date: data.measurement_date,
                     weight_kg: parseFloat(data.weight_kg),
                     height_length_cm: parseFloat(data.height_length_cm),
-                    muac_cm: data.muac_cm ? parseFloat(data.muac_cm) : undefined,
+                    muac_cm: data.muac_cm
+                        ? parseFloat(data.muac_cm)
+                        : undefined,
                     notes: data.notes || undefined,
                 });
-                
+
                 setOfflineSaveSuccess(true);
                 setIsSavingOffline(false);
 
@@ -91,7 +93,10 @@ export default function CreateMeasurement({ child }: CreateMeasurementProps) {
     const breadcrumbs: BreadcrumbItem[] = [
         { title: 'Children', href: '/children' },
         { title: child.full_name, href: `/children/${child.id}` },
-        { title: 'Add Measurement', href: `/children/${child.id}/measurements/create` },
+        {
+            title: 'Add Measurement',
+            href: `/children/${child.id}/measurements/create`,
+        },
     ];
 
     return (
@@ -99,13 +104,13 @@ export default function CreateMeasurement({ child }: CreateMeasurementProps) {
             <Head title={`Add Measurement - ${child.full_name}`} />
 
             <div className="flex flex-col gap-6 p-6">
-                <div className="mx-auto max-w-3xl w-full">
+                <div className="mx-auto w-full max-w-3xl">
                     {/* Header */}
                     <div>
                         <h1 className="text-3xl font-bold tracking-tight">
                             Add Measurement
                         </h1>
-                        <p className="text-muted-foreground mt-1">
+                        <p className="mt-1 text-muted-foreground">
                             {child.full_name} •{' '}
                             {child.sex === 'male' ? 'Male' : 'Female'} •{' '}
                             {getAgeDisplay(child.age_in_months)}
@@ -113,8 +118,7 @@ export default function CreateMeasurement({ child }: CreateMeasurementProps) {
                     </div>
                 </div>
 
-                <div className="mx-auto max-w-3xl w-full">
-
+                <div className="mx-auto w-full max-w-3xl">
                     {/* Info Alert */}
                     <Alert className="mb-6">
                         <Info className="h-4 w-4" />
@@ -130,8 +134,9 @@ export default function CreateMeasurement({ child }: CreateMeasurementProps) {
                         <Alert className="mb-6 border-amber-500 bg-amber-50">
                             <WifiOff className="h-4 w-4 text-amber-600" />
                             <AlertDescription className="text-amber-800">
-                                You are currently offline. This measurement will be saved
-                                locally and automatically synced when you reconnect to the internet.
+                                You are currently offline. This measurement will
+                                be saved locally and automatically synced when
+                                you reconnect to the internet.
                             </AlertDescription>
                         </Alert>
                     )}
@@ -141,8 +146,9 @@ export default function CreateMeasurement({ child }: CreateMeasurementProps) {
                         <Alert className="mb-6 border-green-500 bg-green-50">
                             <Cloud className="h-4 w-4 text-green-600" />
                             <AlertDescription className="text-green-800">
-                                ✓ Measurement saved offline successfully! It will be synced automatically
-                                when you're back online. Redirecting...
+                                ✓ Measurement saved offline successfully! It
+                                will be synced automatically when you're back
+                                online. Redirecting...
                             </AlertDescription>
                         </Alert>
                     )}
@@ -160,7 +166,9 @@ export default function CreateMeasurement({ child }: CreateMeasurementProps) {
                                         <Field>
                                             <FieldLabel htmlFor="measurement_date">
                                                 Measurement Date{' '}
-                                                <span className="text-red-500">*</span>
+                                                <span className="text-red-500">
+                                                    *
+                                                </span>
                                             </FieldLabel>
                                             <Input
                                                 id="measurement_date"
@@ -169,7 +177,7 @@ export default function CreateMeasurement({ child }: CreateMeasurementProps) {
                                                 onChange={(e) =>
                                                     setData(
                                                         'measurement_date',
-                                                        e.target.value
+                                                        e.target.value,
                                                     )
                                                 }
                                                 max={
@@ -189,7 +197,9 @@ export default function CreateMeasurement({ child }: CreateMeasurementProps) {
                                         <Field>
                                             <FieldLabel htmlFor="weight_kg">
                                                 Weight (kg){' '}
-                                                <span className="text-red-500">*</span>
+                                                <span className="text-red-500">
+                                                    *
+                                                </span>
                                             </FieldLabel>
                                             <Input
                                                 id="weight_kg"
@@ -201,7 +211,7 @@ export default function CreateMeasurement({ child }: CreateMeasurementProps) {
                                                 onChange={(e) =>
                                                     setData(
                                                         'weight_kg',
-                                                        e.target.value
+                                                        e.target.value,
                                                     )
                                                 }
                                                 placeholder="9.5"
@@ -220,7 +230,9 @@ export default function CreateMeasurement({ child }: CreateMeasurementProps) {
                                         <Field>
                                             <FieldLabel htmlFor="height_length_cm">
                                                 Height/Length (cm){' '}
-                                                <span className="text-red-500">*</span>
+                                                <span className="text-red-500">
+                                                    *
+                                                </span>
                                             </FieldLabel>
                                             <Input
                                                 id="height_length_cm"
@@ -232,7 +244,7 @@ export default function CreateMeasurement({ child }: CreateMeasurementProps) {
                                                 onChange={(e) =>
                                                     setData(
                                                         'height_length_cm',
-                                                        e.target.value
+                                                        e.target.value,
                                                     )
                                                 }
                                                 placeholder="75.0"
@@ -262,7 +274,7 @@ export default function CreateMeasurement({ child }: CreateMeasurementProps) {
                                                 onChange={(e) =>
                                                     setData(
                                                         'muac_cm',
-                                                        e.target.value
+                                                        e.target.value,
                                                     )
                                                 }
                                                 placeholder="13.5"
@@ -278,12 +290,17 @@ export default function CreateMeasurement({ child }: CreateMeasurementProps) {
                                         </Field>
 
                                         <Field>
-                                            <FieldLabel htmlFor="notes">Notes</FieldLabel>
+                                            <FieldLabel htmlFor="notes">
+                                                Notes
+                                            </FieldLabel>
                                             <Textarea
                                                 id="notes"
                                                 value={data.notes}
                                                 onChange={(e) =>
-                                                    setData('notes', e.target.value)
+                                                    setData(
+                                                        'notes',
+                                                        e.target.value,
+                                                    )
                                                 }
                                                 rows={3}
                                                 placeholder="Any observations or remarks..."
@@ -347,17 +364,23 @@ export default function CreateMeasurement({ child }: CreateMeasurementProps) {
                                         Cancel
                                     </Button>
                                 </Link>
-                                <Button 
-                                    type="submit" 
-                                    disabled={processing || isSavingOffline || offlineSaveSuccess}
+                                <Button
+                                    type="submit"
+                                    disabled={
+                                        processing ||
+                                        isSavingOffline ||
+                                        offlineSaveSuccess
+                                    }
                                 >
                                     {isSavingOffline && 'Saving Offline...'}
                                     {offlineSaveSuccess && 'Saved ✓'}
-                                    {!isSavingOffline && !offlineSaveSuccess && (
-                                        processing ? 'Saving...' : (
-                                            !isOnline ? 'Save Offline' : 'Save Measurement'
-                                        )
-                                    )}
+                                    {!isSavingOffline &&
+                                        !offlineSaveSuccess &&
+                                        (processing
+                                            ? 'Saving...'
+                                            : !isOnline
+                                              ? 'Save Offline'
+                                              : 'Save Measurement')}
                                 </Button>
                             </div>
                         </div>

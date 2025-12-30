@@ -57,11 +57,11 @@ class Measurement extends Model
 
     public function isMalnourished(): bool
     {
-        return in_array($this->opt_classification, ['severely_malnourished', 'moderately_malnourished']);
+        return in_array($this->opt_classification, ['sam', 'mam']);
     }
 
     public function isSeverelyMalnourished(): bool
     {
-        return $this->opt_classification === 'severely_malnourished';
+        return $this->opt_classification === 'sam';
     }
 }

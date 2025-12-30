@@ -8,10 +8,12 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
+    $this->seed(\Database\Seeders\RolePermissionSeeder::class);
     $this->barangay = Barangay::factory()->create();
     $this->user = User::factory()->create([
         'barangay_id' => $this->barangay->id,
     ]);
+    $this->user->assignRole('admin');
     $this->child = Child::factory()->create([
         'barangay_id' => $this->barangay->id,
         'created_by_user_id' => $this->user->id,
@@ -132,10 +134,8 @@ test('unauthorized user cannot create measurement', function () {
             'height_length_cm' => 85.0,
         ]);
 
-    // TODO: Implement authorization policies in Sprint 7
-    // For now, all authenticated users can create measurements
-    $response->assertRedirect(); // Currently allows, should be 403 later
-})->skip('Authorization policies not yet implemented');
+    $response->assertForbidden();
+});
 
 test('measurement stores correct user who measured', function () {
     $measurementData = [

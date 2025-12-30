@@ -1,14 +1,7 @@
-import { Head, Link } from '@inertiajs/react';
-import AppLayout from '@/layouts/app-layout';
-import { create as measurementsCreate } from '@/routes/children/measurements';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import {
-    Card,
-    CardContent,
-    CardHeader,
-    CardTitle,
-} from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { NutritionalStatusBadge } from '@/components/ui/nutritional-status-badge';
 import {
     Table,
     TableBody,
@@ -17,8 +10,11 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-import { Plus, TrendingDown, TrendingUp } from 'lucide-react';
+import AppLayout from '@/layouts/app-layout';
+import { create as measurementsCreate } from '@/routes/children/measurements';
 import { type BreadcrumbItem } from '@/types';
+import { Head, Link } from '@inertiajs/react';
+import { Plus, TrendingDown, TrendingUp } from 'lucide-react';
 
 interface Measurement {
     id: string;
@@ -61,22 +57,7 @@ export default function Index({ child, measurements }: Props) {
     ];
 
     const getStatusBadge = (classification: string) => {
-        const variants: Record<
-            string,
-            'default' | 'destructive' | 'secondary'
-        > = {
-            normal: 'default',
-            severely_malnourished: 'destructive',
-            moderately_malnourished: 'destructive',
-            overweight: 'secondary',
-            obese: 'destructive',
-        };
-
-        return (
-            <Badge variant={variants[classification] || 'default'}>
-                {classification.replace(/_/g, ' ').toUpperCase()}
-            </Badge>
-        );
+        return <NutritionalStatusBadge status={classification} />;
     };
 
     const getZScoreColor = (zscore: number | null) => {
@@ -110,23 +91,20 @@ export default function Index({ child, measurements }: Props) {
             <Head title={`Measurements - ${child.full_name}`} />
 
             <div className="flex flex-col gap-6 p-6">
-                <div className="mx-auto max-w-7xl w-full">
-                    {/* Header */}
+                <div className="mx-auto w-full max-w-7xl">
                     <div className="flex items-center justify-between">
                         <div>
                             <h1 className="text-3xl font-bold tracking-tight">
                                 Measurement History
                             </h1>
-                            <p className="text-muted-foreground mt-1">
+                            <p className="mt-1 text-muted-foreground">
                                 {child.full_name} •{' '}
                                 {getAgeDisplay(child.age_in_months)} •{' '}
                                 {measurements.length} measurement
                                 {measurements.length !== 1 ? 's' : ''}
                             </p>
                         </div>
-                        <Link
-                            href={measurementsCreate.url(child.id)}
-                        >
+                        <Link href={measurementsCreate.url(child.id)}>
                             <Button>
                                 <Plus className="mr-2 h-4 w-4" />
                                 Add Measurement
@@ -135,9 +113,7 @@ export default function Index({ child, measurements }: Props) {
                     </div>
                 </div>
 
-                <div className="mx-auto max-w-7xl w-full">
-
-                    {/* Latest Measurement Summary */}
+                <div className="mx-auto w-full max-w-7xl">
                     {measurements.length > 0 && (
                         <div className="mb-6 grid gap-4 md:grid-cols-4">
                             <Card>
@@ -153,12 +129,16 @@ export default function Index({ child, measurements }: Props) {
                                     <p
                                         className={`text-sm ${getZScoreColor(
                                             measurements[0]
-                                                .weight_for_age_zscore
+                                                .weight_for_age_zscore,
                                         )}`}
                                     >
                                         Z-score:{' '}
-                                        {measurements[0].weight_for_age_zscore != null
-                                            ? Number(measurements[0].weight_for_age_zscore).toFixed(2)
+                                        {measurements[0]
+                                            .weight_for_age_zscore != null
+                                            ? Number(
+                                                  measurements[0]
+                                                      .weight_for_age_zscore,
+                                              ).toFixed(2)
                                             : 'N/A'}
                                     </p>
                                 </CardContent>
@@ -177,12 +157,16 @@ export default function Index({ child, measurements }: Props) {
                                     <p
                                         className={`text-sm ${getZScoreColor(
                                             measurements[0]
-                                                .height_for_age_zscore
+                                                .height_for_age_zscore,
                                         )}`}
                                     >
                                         Z-score:{' '}
-                                        {measurements[0].height_for_age_zscore != null
-                                            ? Number(measurements[0].height_for_age_zscore).toFixed(2)
+                                        {measurements[0]
+                                            .height_for_age_zscore != null
+                                            ? Number(
+                                                  measurements[0]
+                                                      .height_for_age_zscore,
+                                              ).toFixed(2)
                                             : 'N/A'}
                                     </p>
                                 </CardContent>
@@ -196,7 +180,7 @@ export default function Index({ child, measurements }: Props) {
                                 </CardHeader>
                                 <CardContent>
                                     {getStatusBadge(
-                                        measurements[0].opt_classification
+                                        measurements[0].opt_classification,
                                     )}
                                 </CardContent>
                             </Card>
@@ -210,7 +194,7 @@ export default function Index({ child, measurements }: Props) {
                                 <CardContent>
                                     <div className="text-lg font-semibold">
                                         {new Date(
-                                            measurements[0].measurement_date
+                                            measurements[0].measurement_date,
                                         ).toLocaleDateString()}
                                     </div>
                                     <p className="text-sm text-muted-foreground">
@@ -221,7 +205,6 @@ export default function Index({ child, measurements }: Props) {
                         </div>
                     )}
 
-                    {/* Measurements Table */}
                     <Card>
                         <CardHeader>
                             <CardTitle>All Measurements</CardTitle>
@@ -269,13 +252,13 @@ export default function Index({ child, measurements }: Props) {
                                                             key={measurement.id}
                                                             className={
                                                                 measurement.is_flagged
-                                                                    ? 'bg-yellow-50'
+                                                                    ? 'bg-yellow-50 dark:bg-yellow-900/10'
                                                                     : ''
                                                             }
                                                         >
                                                             <TableCell className="font-medium">
                                                                 {new Date(
-                                                                    measurement.measurement_date
+                                                                    measurement.measurement_date,
                                                                 ).toLocaleDateString()}
                                                                 {measurement.is_flagged && (
                                                                     <Badge
@@ -311,9 +294,9 @@ export default function Index({ child, measurements }: Props) {
                                                                                 <TrendingDown className="inline h-3 w-3" />
                                                                             )}
                                                                             {Math.abs(
-                                                                                weightChange
+                                                                                weightChange,
                                                                             ).toFixed(
-                                                                                2
+                                                                                2,
                                                                             )}
                                                                         </span>
                                                                     )}
@@ -331,34 +314,49 @@ export default function Index({ child, measurements }: Props) {
                                                             </TableCell>
                                                             <TableCell
                                                                 className={getZScoreColor(
-                                                                    measurement.weight_for_age_zscore
+                                                                    measurement.weight_for_age_zscore,
                                                                 )}
                                                             >
-                                                                {measurement.weight_for_age_zscore != null
-                                                                    ? Number(measurement.weight_for_age_zscore).toFixed(2)
+                                                                {measurement.weight_for_age_zscore !=
+                                                                null
+                                                                    ? Number(
+                                                                          measurement.weight_for_age_zscore,
+                                                                      ).toFixed(
+                                                                          2,
+                                                                      )
                                                                     : 'N/A'}
                                                             </TableCell>
                                                             <TableCell
                                                                 className={getZScoreColor(
-                                                                    measurement.height_for_age_zscore
+                                                                    measurement.height_for_age_zscore,
                                                                 )}
                                                             >
-                                                                {measurement.height_for_age_zscore != null
-                                                                    ? Number(measurement.height_for_age_zscore).toFixed(2)
+                                                                {measurement.height_for_age_zscore !=
+                                                                null
+                                                                    ? Number(
+                                                                          measurement.height_for_age_zscore,
+                                                                      ).toFixed(
+                                                                          2,
+                                                                      )
                                                                     : 'N/A'}
                                                             </TableCell>
                                                             <TableCell
                                                                 className={getZScoreColor(
-                                                                    measurement.weight_for_height_zscore
+                                                                    measurement.weight_for_height_zscore,
                                                                 )}
                                                             >
-                                                                {measurement.weight_for_height_zscore != null
-                                                                    ? Number(measurement.weight_for_height_zscore).toFixed(2)
+                                                                {measurement.weight_for_height_zscore !=
+                                                                null
+                                                                    ? Number(
+                                                                          measurement.weight_for_height_zscore,
+                                                                      ).toFixed(
+                                                                          2,
+                                                                      )
                                                                     : 'N/A'}
                                                             </TableCell>
                                                             <TableCell>
                                                                 {getStatusBadge(
-                                                                    measurement.opt_classification
+                                                                    measurement.opt_classification,
                                                                 )}
                                                             </TableCell>
                                                             <TableCell className="text-sm text-muted-foreground">
@@ -370,7 +368,7 @@ export default function Index({ child, measurements }: Props) {
                                                             </TableCell>
                                                         </TableRow>
                                                     );
-                                                }
+                                                },
                                             )}
                                         </TableBody>
                                     </Table>
@@ -379,7 +377,6 @@ export default function Index({ child, measurements }: Props) {
                         </CardContent>
                     </Card>
 
-                    {/* Legend */}
                     <Card className="mt-6">
                         <CardHeader>
                             <CardTitle>Z-Score Interpretation</CardTitle>
@@ -387,25 +384,27 @@ export default function Index({ child, measurements }: Props) {
                         <CardContent>
                             <div className="grid gap-2 text-sm md:grid-cols-3">
                                 <div className="flex items-center gap-2">
-                                    <span className="text-green-600">●</span>
-                                    <span>
-                                        Normal: -2 to +2 SD
+                                    <span className="text-lg leading-none font-bold text-green-600">
+                                        •
                                     </span>
+                                    <span>Normal: -2 to +2 SD</span>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <span className="text-orange-600">●</span>
+                                    <span className="text-lg leading-none font-bold text-orange-600">
+                                        •
+                                    </span>
                                     <span>
                                         Moderate: -3 to -2 or +2 to +3 SD
                                     </span>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <span className="text-red-600">●</span>
-                                    <span>
-                                        Severe: &lt;-3 or &gt;+3 SD
+                                    <span className="text-lg leading-none font-bold text-red-600">
+                                        •
                                     </span>
+                                    <span>Severe: &lt;-3 or &gt;+3 SD</span>
                                 </div>
                             </div>
-                            <p className="mt-4 text-xs text-muted-foreground">
+                            <p className="mt-4 text-xs text-muted-foreground italic">
                                 WFA = Weight-for-Age | HFA = Height-for-Age |
                                 WFH = Weight-for-Height | MUAC = Mid-Upper Arm
                                 Circumference

@@ -3,12 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Services\AnalyticsService;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class DashboardController extends Controller
 {
+    use AuthorizesRequests;
+
     public function __construct(
         private AnalyticsService $analyticsService
     ) {}
@@ -18,6 +21,7 @@ class DashboardController extends Controller
      */
     public function index(Request $request): Response
     {
+        $this->authorize('view analytics');
         $user = $request->user();
 
         // Get overall statistics
@@ -53,6 +57,7 @@ class DashboardController extends Controller
      */
     public function barangay(Request $request, string $barangayId): Response
     {
+        $this->authorize('view barangay analytics');
         $barangay = \App\Models\Barangay::findOrFail($barangayId);
 
         $nutritionalStatus = $this->analyticsService->getLatestMeasurementsStatistics($barangayId);

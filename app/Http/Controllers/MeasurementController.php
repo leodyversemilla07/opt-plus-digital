@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Child;
 use App\Models\Measurement;
 use App\Services\MeasurementService;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -12,9 +13,13 @@ use Inertia\Response;
 
 class MeasurementController extends Controller
 {
+    use AuthorizesRequests;
+
     public function __construct(
         protected MeasurementService $measurementService
-    ) {}
+    ) {
+        $this->authorizeResource(Measurement::class, 'measurement');
+    }
 
     /**
      * Display a listing of measurements for a child

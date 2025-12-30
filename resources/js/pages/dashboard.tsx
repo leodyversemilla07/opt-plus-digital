@@ -1,23 +1,39 @@
+import {
+    HighRiskChildrenList,
+    NutritionalStatusCard,
+    StatCard,
+} from '@/components/dashboard-cards';
+import { Button } from '@/components/ui/button';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
+import {
+    ChartContainer,
+    ChartTooltip,
+    ChartTooltipContent,
+} from '@/components/ui/chart';
 import AppLayout from '@/layouts/app-layout';
-import { dashboard } from '@/routes';
-import { type BreadcrumbItem } from '@/types';
-import { Head } from '@inertiajs/react';
-import { StatCard, NutritionalStatusCard, HighRiskChildrenList } from '@/components/dashboard-cards';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { 
-    Users, 
-    Activity, 
-    MapPin, 
+import { type BreadcrumbItem, type SharedData } from '@/types';
+import { Head, Link, usePage } from '@inertiajs/react';
+import {
+    Activity,
+    ArrowRight,
+    BarChart3,
+    Plus,
+    TrendingDown,
     TrendingUp,
-    Percent
+    Users,
 } from 'lucide-react';
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from 'recharts';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Dashboard',
-        href: dashboard().url,
+        href: '/dashboard',
     },
 ];
 
@@ -97,29 +113,51 @@ export default function Dashboard({
     monthlyTrends,
     barangayComparison,
 }: DashboardProps) {
+    const { auth } = usePage<SharedData>().props;
+
     // Chart data for monthly trends
-    const trendChartData = monthlyTrends.map(t => ({
+    const trendChartData = monthlyTrends.map((t) => ({
         month: t.label,
         measurements: t.measurements,
     }));
 
     const chartConfig = {
         measurements: {
-            label: "Measurements",
-            color: "hsl(var(--chart-1))",
+            label: 'Measurements',
+            color: 'hsl(var(--chart-1))',
         },
     };
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
-            <div className="flex flex-col gap-6 p-6">
-                {/* Header */}
-                <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-                    <p className="text-muted-foreground mt-1">
-                        Overview of child nutrition monitoring system
-                    </p>
+            <div className="flex flex-col gap-6 p-6 pb-20 md:pb-6">
+                {/* Welcome Header */}
+                <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
+                    <div>
+                        <h1 className="text-3xl font-extrabold tracking-tight text-foreground underline decoration-primary/30 underline-offset-8">
+                            Mabuhay, {auth.user.name}!
+                        </h1>
+                        <p className="mt-3 text-muted-foreground">
+                            Nutrition monitoring overview for{' '}
+                            <span className="font-bold text-primary">
+                                Barangay{' '}
+                                {(auth.user as any).barangay?.name ||
+                                    'Assigned Area'}
+                            </span>
+                        </p>
+                    </div>
+                    <div className="flex gap-2">
+                        <Button
+                            size="sm"
+                            className="rounded-full px-6 shadow-lg shadow-primary/20"
+                            asChild
+                        >
+                            <Link href="/children/create">
+                                <Plus className="mr-2 h-4 w-4" /> Add Child
+                            </Link>
+                        </Button>
+                    </div>
                 </div>
 
                 {/* Statistics Cards */}
@@ -127,55 +165,73 @@ export default function Dashboard({
                     <StatCard
                         title="Total Children"
                         value={overallStats.total_children.toLocaleString()}
-                        description="Registered in the system"
-                        icon={<Users className="h-4 w-4" />}
+                        description="Target population"
+                        icon={<Users className="h-5 w-5 text-primary" />}
+                        className="border-l-4 border-l-primary shadow-md"
                     />
                     <StatCard
                         title="Coverage Rate"
                         value={`${overallStats.coverage_rate}%`}
-                        description="Children with measurements"
-                        icon={<Percent className="h-4 w-4" />}
+                        description="Registered children measured"
+                        icon={
+                            <BarChart3 className="h-5 w-5 text-secondary-foreground" />
+                        }
+                        className="border-l-4 border-l-secondary-foreground shadow-md"
                     />
                     <StatCard
-                        title="Measurements This Month"
-                        value={overallStats.measurements_this_month.toLocaleString()}
-                        description={`${overallStats.children_measured_this_month} children measured`}
-                        icon={<Activity className="h-4 w-4" />}
+                        title="Measured (Month)"
+                        value={overallStats.children_measured_this_month.toLocaleString()}
+                        description="Progress this month"
+                        icon={<TrendingUp className="h-5 w-5 text-green-600" />}
+                        className="border-l-4 border-l-green-600 shadow-md"
                     />
                     <StatCard
-                        title="Active Barangays"
-                        value={overallStats.total_barangays}
-                        description="With registered children"
-                        icon={<MapPin className="h-4 w-4" />}
+                        title="High Risk"
+                        value={nutritionalStatus.mam + nutritionalStatus.sam}
+                        description="Children needing attention"
+                        icon={<Activity className="h-5 w-5 text-destructive" />}
+                        className="border-l-4 border-l-destructive shadow-md"
                     />
                 </div>
 
                 {/* Main Content Grid */}
-                <div className="grid gap-4 md:grid-cols-2">
+                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                     {/* Nutritional Status */}
-                    <NutritionalStatusCard
-                        normal={nutritionalStatus.normal}
-                        mam={nutritionalStatus.mam}
-                        sam={nutritionalStatus.sam}
-                        overweight={nutritionalStatus.overweight}
-                        total={nutritionalStatus.total}
-                    />
+                    <div className="lg:col-span-1">
+                        <NutritionalStatusCard
+                            normal={nutritionalStatus.normal}
+                            mam={nutritionalStatus.mam}
+                            sam={nutritionalStatus.sam}
+                            overweight={nutritionalStatus.overweight}
+                            total={nutritionalStatus.total}
+                        />
+                    </div>
 
                     {/* Monthly Trends Chart */}
-                    <Card>
-                        <CardHeader>
-                            <CardTitle className="flex items-center gap-2">
-                                <TrendingUp className="h-5 w-5" />
-                                Measurement Trends
-                            </CardTitle>
-                            <CardDescription>Last 6 months</CardDescription>
+                    <Card className="lg:col-span-2">
+                        <CardHeader className="flex flex-row items-center justify-between">
+                            <div>
+                                <CardTitle className="flex items-center gap-2 text-foreground">
+                                    <TrendingUp className="h-5 w-5 text-primary" />
+                                    Measurement Trends
+                                </CardTitle>
+                                <CardDescription>
+                                    Activity logs for the last 6 months
+                                </CardDescription>
+                            </div>
                         </CardHeader>
                         <CardContent>
-                            <ChartContainer config={chartConfig} className="h-[300px] w-full">
+                            <ChartContainer
+                                config={chartConfig}
+                                className="h-[240px] w-full text-foreground"
+                            >
                                 <AreaChart data={trendChartData}>
-                                    <CartesianGrid strokeDasharray="3 3" />
-                                    <XAxis 
-                                        dataKey="month" 
+                                    <CartesianGrid
+                                        strokeDasharray="3 3"
+                                        vertical={false}
+                                    />
+                                    <XAxis
+                                        dataKey="month"
                                         tickLine={false}
                                         axisLine={false}
                                         tickMargin={8}
@@ -185,14 +241,16 @@ export default function Dashboard({
                                         axisLine={false}
                                         tickMargin={8}
                                     />
-                                    <ChartTooltip content={<ChartTooltipContent />} />
+                                    <ChartTooltip
+                                        content={<ChartTooltipContent />}
+                                    />
                                     <Area
                                         type="monotone"
                                         dataKey="measurements"
-                                        stroke="hsl(var(--chart-1))"
-                                        fill="hsl(var(--chart-1))"
-                                        fillOpacity={0.2}
-                                        strokeWidth={2}
+                                        stroke="var(--primary)"
+                                        fill="var(--primary)"
+                                        fillOpacity={0.1}
+                                        strokeWidth={3}
                                     />
                                 </AreaChart>
                             </ChartContainer>
@@ -201,67 +259,75 @@ export default function Dashboard({
                 </div>
 
                 {/* High-Risk Children */}
-                <HighRiskChildrenList children={highRiskChildren} />
+                <div className="grid gap-6 lg:grid-cols-3">
+                    <div className="lg:col-span-2">
+                        <HighRiskChildrenList children={highRiskChildren} />
+                    </div>
 
-                {/* Barangay Comparison Table (for municipal/admin users) */}
-                {barangayComparison.length > 0 && (
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>Barangay Comparison</CardTitle>
-                            <CardDescription>
-                                Malnutrition rates across barangays (sorted by highest rate)
-                            </CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="overflow-x-auto">
-                                <table className="w-full text-sm">
-                                    <thead>
-                                        <tr className="border-b">
-                                            <th className="text-left p-2">Barangay</th>
-                                            <th className="text-left p-2">Municipality</th>
-                                            <th className="text-right p-2">Total Children</th>
-                                            <th className="text-right p-2">Coverage</th>
-                                            <th className="text-right p-2">Normal</th>
-                                            <th className="text-right p-2">MAM</th>
-                                            <th className="text-right p-2">SAM</th>
-                                            <th className="text-right p-2">Malnutrition Rate</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {barangayComparison.map((barangay) => (
-                                            <tr key={barangay.barangay_id} className="border-b hover:bg-accent/50">
-                                                <td className="p-2 font-medium">{barangay.barangay_name}</td>
-                                                <td className="p-2 text-muted-foreground">{barangay.municipality_city}</td>
-                                                <td className="p-2 text-right">{barangay.total_children}</td>
-                                                <td className="p-2 text-right">{barangay.coverage_rate}%</td>
-                                                <td className="p-2 text-right text-green-600 dark:text-green-400">
-                                                    {barangay.normal}
-                                                </td>
-                                                <td className="p-2 text-right text-orange-600 dark:text-orange-400">
-                                                    {barangay.mam}
-                                                </td>
-                                                <td className="p-2 text-right text-red-600 dark:text-red-400">
-                                                    {barangay.sam}
-                                                </td>
-                                                <td className="p-2 text-right font-semibold">
-                                                    <span className={
-                                                        barangay.malnutrition_rate > 20 
-                                                            ? 'text-red-600 dark:text-red-400'
-                                                            : barangay.malnutrition_rate > 10
-                                                            ? 'text-orange-600 dark:text-orange-400'
-                                                            : 'text-green-600 dark:text-green-400'
-                                                    }>
-                                                        {barangay.malnutrition_rate}%
-                                                    </span>
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </CardContent>
-                    </Card>
-                )}
+                    {/* Barangay Rankings (Only for Admin/Municipal) */}
+                    {barangayComparison && barangayComparison.length > 0 && (
+                        <Card className="lg:col-span-1">
+                            <CardHeader className="flex flex-row items-center justify-between">
+                                <div>
+                                    <CardTitle className="text-lg text-foreground">
+                                        Area Performance
+                                    </CardTitle>
+                                    <CardDescription>
+                                        Top malnutrition rates
+                                    </CardDescription>
+                                </div>
+                                <Button variant="ghost" size="icon" asChild>
+                                    <Link href="/reports/barangay-comparison">
+                                        <ArrowRight className="h-4 w-4" />
+                                    </Link>
+                                </Button>
+                            </CardHeader>
+                            <CardContent className="p-0 text-foreground">
+                                <div className="overflow-x-auto text-xs">
+                                    <table className="w-full">
+                                        <tbody className="divide-y">
+                                            {barangayComparison
+                                                .slice(0, 5)
+                                                .map((b) => (
+                                                    <tr
+                                                        key={b.barangay_id}
+                                                        className="transition-colors hover:bg-muted/50"
+                                                    >
+                                                        <td className="px-4 py-3 font-bold">
+                                                            {b.barangay_name}
+                                                        </td>
+                                                        <td className="px-4 py-3 text-right">
+                                                            <span
+                                                                className={
+                                                                    b.malnutrition_rate >
+                                                                    10
+                                                                        ? 'font-bold text-destructive'
+                                                                        : 'font-medium text-primary'
+                                                                }
+                                                            >
+                                                                {
+                                                                    b.malnutrition_rate
+                                                                }
+                                                                %
+                                                            </span>
+                                                        </td>
+                                                        <td className="px-4 py-3 text-right">
+                                                            {b.malnutrition_rate >
+                                                            10 ? (
+                                                                <TrendingUp className="h-3 w-3 text-destructive" />
+                                                            ) : (
+                                                                <TrendingDown className="h-3 w-3 text-primary" />
+                                                            )}
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    )}
+                </div>
             </div>
         </AppLayout>
     );

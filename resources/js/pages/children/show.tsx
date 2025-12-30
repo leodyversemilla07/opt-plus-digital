@@ -1,21 +1,19 @@
-import { Head, Link } from '@inertiajs/react';
-import { useEffect, useState } from 'react';
-import AppLayout from '@/layouts/app-layout';
-import { index as childrenIndex, edit as childrenEdit } from '@/routes/children';
-import { create as measurementsCreate, index as measurementsIndex } from '@/routes/children/measurements';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { type BreadcrumbItem } from '@/types';
-import {
-    Card,
-    CardContent,
-    CardHeader,
-    CardTitle,
-} from '@/components/ui/card';
-import { ArrowLeft, Edit, Plus, QrCode, Download, Cloud } from 'lucide-react';
-import { offlineDB } from '@/lib/offline-db';
-import { useOnlineStatus } from '@/hooks/use-online-status';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { NutritionalStatusBadge } from '@/components/ui/nutritional-status-badge';
+import { useOnlineStatus } from '@/hooks/use-online-status';
+import AppLayout from '@/layouts/app-layout';
+import { offlineDB } from '@/lib/offline-db';
+import {
+    edit as childrenEdit,
+    index as childrenIndex,
+} from '@/routes/children';
+import { create as measurementsCreate } from '@/routes/children/measurements';
+import { type BreadcrumbItem } from '@/types';
+import { Head, Link } from '@inertiajs/react';
+import { ArrowLeft, Cloud, Download, Edit, Plus, QrCode } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 interface Measurement {
     id: string;
@@ -85,13 +83,16 @@ export default function Show({ child, latestMeasurement }: Props) {
         { title: child.full_name, href: `/children/${child.id}` },
     ];
 
-    // Cache child data when loaded
     useEffect(() => {
         const checkCacheStatus = async () => {
             try {
                 const cachedChild = await offlineDB.getCachedChild(child.id);
                 setIsCached(!!cachedChild);
-                if (cachedChild && cachedChild.cachedAt && typeof cachedChild.cachedAt === 'string') {
+                if (
+                    cachedChild &&
+                    cachedChild.cachedAt &&
+                    typeof cachedChild.cachedAt === 'string'
+                ) {
                     setCacheTimestamp(new Date(cachedChild.cachedAt));
                 }
             } catch (error) {
@@ -102,18 +103,16 @@ export default function Show({ child, latestMeasurement }: Props) {
         const cacheChildData = async () => {
             if (isOnline) {
                 try {
-                    // Child from backend includes all required fields for offline storage
-                    await offlineDB.cacheChild({ 
-                        ...child, 
-                        cachedAt: new Date().toISOString() 
-                    } as Parameters<typeof offlineDB.cacheChild>[0]);
+                    await offlineDB.cacheChild({
+                        ...child,
+                        cachedAt: new Date().toISOString(),
+                    } as any);
                     setIsCached(true);
                     setCacheTimestamp(new Date());
                 } catch (error) {
                     console.error('Failed to cache child:', error);
                 }
             } else {
-                // Check if child is cached
                 await checkCacheStatus();
             }
         };
@@ -124,11 +123,10 @@ export default function Show({ child, latestMeasurement }: Props) {
     const handleCacheForOffline = async () => {
         setIsCaching(true);
         try {
-            // Child from backend includes all required fields for offline storage
-            await offlineDB.cacheChild({ 
-                ...child, 
-                cachedAt: new Date().toISOString() 
-            } as Parameters<typeof offlineDB.cacheChild>[0]);
+            await offlineDB.cacheChild({
+                ...child,
+                cachedAt: new Date().toISOString(),
+            } as any);
             setIsCached(true);
             setCacheTimestamp(new Date());
             alert('Child data cached for offline access');
@@ -145,38 +143,20 @@ export default function Show({ child, latestMeasurement }: Props) {
         const now = new Date();
         const diff = now.getTime() - cacheTimestamp.getTime();
         const minutes = Math.floor(diff / 60000);
+        if (minutes < 1) return 'just now';
+        if (minutes < 60) return `${minutes}m ago`;
         const hours = Math.floor(minutes / 60);
-        const days = Math.floor(hours / 24);
-
-        if (days > 0) return `${days} day${days > 1 ? 's' : ''} ago`;
-        if (hours > 0) return `${hours} hour${hours > 1 ? 's' : ''} ago`;
-        if (minutes > 0) return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
-        return 'just now';
+        if (hours < 24) return `${hours}h ago`;
+        return `${Math.floor(hours / 24)}d ago`;
     };
 
     const getAgeDisplay = (ageInMonths: number) => {
         const years = Math.floor(ageInMonths / 12);
         const months = ageInMonths % 12;
         if (years > 0) {
-            return `${years} year${years > 1 ? 's' : ''} and ${months} month${months > 1 ? 's' : ''}`;
+            return `${years}y ${months}m`;
         }
-        return `${months} month${months > 1 ? 's' : ''}`;
-    };
-
-    const getStatusBadge = (classification: string) => {
-        const variants: Record<string, 'default' | 'destructive' | 'secondary'> = {
-            normal: 'default',
-            severely_malnourished: 'destructive',
-            moderately_malnourished: 'destructive',
-            overweight: 'secondary',
-            obese: 'destructive',
-        };
-
-        return (
-            <Badge variant={variants[classification] || 'default'}>
-                {classification.replace(/_/g, ' ').toUpperCase()}
-            </Badge>
-        );
+        return `${months}m`;
     };
 
     return (
@@ -184,28 +164,17 @@ export default function Show({ child, latestMeasurement }: Props) {
             <Head title={child.full_name} />
 
             <div className="flex flex-col gap-6 p-6">
-                {/* Cache Status Alert */}
                 {!isOnline && isCached && (
-                    <Alert className="border-blue-500 bg-blue-50 dark:border-blue-400 dark:bg-blue-950">
-                        <Cloud className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-                        <AlertDescription className="text-blue-800 dark:text-blue-200">
-                            Viewing cached data from {getCacheFreshness()}. 
-                            Changes will sync when you're back online.
+                    <Alert className="border-blue-500 bg-blue-50 dark:bg-blue-950/20">
+                        <Cloud className="h-4 w-4 text-blue-600" />
+                        <AlertDescription>
+                            Viewing cached data from {getCacheFreshness()}.
+                            Changes will sync when online.
                         </AlertDescription>
                     </Alert>
                 )}
 
-                {!isOnline && !isCached && (
-                    <Alert className="border-amber-500 bg-amber-50 dark:border-amber-400 dark:bg-amber-950">
-                        <Download className="h-4 w-4 text-amber-600 dark:text-amber-400" />
-                        <AlertDescription className="text-amber-800 dark:text-amber-200">
-                            This child's data is not cached. Some information may be unavailable offline.
-                        </AlertDescription>
-                    </Alert>
-                )}
-
-                {/* Header */}
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
                     <div className="flex items-center gap-4">
                         <Link href={childrenIndex.url()}>
                             <Button variant="ghost" size="icon">
@@ -216,409 +185,244 @@ export default function Show({ child, latestMeasurement }: Props) {
                             <h1 className="text-3xl font-bold tracking-tight">
                                 {child.full_name}
                             </h1>
-                            <p className="text-muted-foreground mt-1">
-                                {child.sex === 'male' ? 'Male' : 'Female'} •{' '}
+                            <p className="mt-1 text-sm font-bold tracking-wider text-muted-foreground uppercase">
+                                {child.sex} •{' '}
                                 {getAgeDisplay(child.age_in_months)}
                                 {isCached && (
-                                    <span className="ml-2 text-blue-600 dark:text-blue-400">
-                                        • Cached {getCacheFreshness()}
+                                    <span className="ml-2 tracking-normal text-primary">
+                                        • CACHED {getCacheFreshness()}
                                     </span>
                                 )}
                             </p>
                         </div>
                     </div>
-                    <div className="flex gap-2">
-                        {isOnline && !isCached && (
-                            <Button
-                                variant="outline"
-                                onClick={handleCacheForOffline}
-                                disabled={isCaching}
-                            >
-                                <Download className="mr-2 h-4 w-4" />
-                                {isCaching ? 'Caching...' : 'Cache Offline'}
-                            </Button>
-                        )}
+                    <div className="flex flex-wrap gap-2">
                         <Link href={childrenEdit.url(child.id)}>
-                            <Button variant="outline">
-                                <Edit className="mr-2 h-4 w-4" />
-                                Edit
+                            <Button variant="outline" size="sm">
+                                <Edit className="mr-2 h-4 w-4" /> Edit
                             </Button>
                         </Link>
-                        <Link
-                            href={measurementsCreate.url(child.id)}
-                        >
-                            <Button>
-                                <Plus className="mr-2 h-4 w-4" />
-                                Add Measurement
+                        <Link href={measurementsCreate.url(child.id)}>
+                            <Button size="sm">
+                                <Plus className="mr-2 h-4 w-4" /> Add
+                                Measurement
                             </Button>
                         </Link>
                     </div>
                 </div>
 
-                    <div className="grid gap-6 md:grid-cols-3">
-                        {/* Left Column */}
-                        <div className="space-y-6 md:col-span-2">
-                            {/* Latest Status */}
-                            {latestMeasurement && (
-                                <Card>
-                                    <CardHeader>
-                                        <CardTitle>
-                                            Current Nutritional Status
-                                        </CardTitle>
-                                    </CardHeader>
-                                    <CardContent>
-                                        <div className="space-y-4">
-                                            <div>
-                                                <p className="text-sm text-muted-foreground">
-                                                    OPT Classification
-                                                </p>
-                                                <div className="mt-1">
-                                                    {getStatusBadge(
-                                                        latestMeasurement.opt_classification
-                                                    )}
-                                                </div>
-                                            </div>
-                                            <div className="grid grid-cols-3 gap-4">
-                                                <div>
-                                                    <p className="text-sm text-muted-foreground">
-                                                        Weight
-                                                    </p>
-                                                    <p className="text-lg font-semibold">
-                                                        {latestMeasurement.weight_kg}{' '}
-                                                        kg
-                                                    </p>
-                                                    <p className="text-xs text-muted-foreground">
-                                                        Z-score:{' '}
-                                                        {latestMeasurement.weight_for_age_zscore != null
-                                                            ? Number(latestMeasurement.weight_for_age_zscore).toFixed(2)
-                                                            : 'N/A'}
-                                                    </p>
-                                                </div>
-                                                <div>
-                                                    <p className="text-sm text-muted-foreground">
-                                                        Height
-                                                    </p>
-                                                    <p className="text-lg font-semibold">
-                                                        {
-                                                            latestMeasurement.height_length_cm
-                                                        }{' '}
-                                                        cm
-                                                    </p>
-                                                    <p className="text-xs text-muted-foreground">
-                                                        Z-score:{' '}
-                                                        {latestMeasurement.height_for_age_zscore != null
-                                                            ? Number(latestMeasurement.height_for_age_zscore).toFixed(2)
-                                                            : 'N/A'}
-                                                    </p>
-                                                </div>
-                                                <div>
-                                                    <p className="text-sm text-muted-foreground">
-                                                        Last Measured
-                                                    </p>
-                                                    <p className="text-lg font-semibold">
-                                                        {new Date(
-                                                            latestMeasurement.measurement_date
-                                                        ).toLocaleDateString()}
-                                                    </p>
-                                                    <p className="text-xs text-muted-foreground">
-                                                        by{' '}
-                                                        {
-                                                            latestMeasurement
-                                                                .measured_by.name
-                                                        }
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </CardContent>
-                                </Card>
-                            )}
-
-                            {/* Personal Information */}
-                            <Card>
-                                <CardHeader>
-                                    <CardTitle>Personal Information</CardTitle>
-                                </CardHeader>
-                                <CardContent>
-                                    <dl className="grid grid-cols-2 gap-4">
-                                        <div>
-                                            <dt className="text-sm font-medium text-muted-foreground">
-                                                Date of Birth
-                                            </dt>
-                                            <dd className="mt-1 text-sm">
-                                                {new Date(
-                                                    child.date_of_birth
-                                                ).toLocaleDateString()}
-                                            </dd>
-                                        </div>
-                                        <div>
-                                            <dt className="text-sm font-medium text-muted-foreground">
-                                                Sex
-                                            </dt>
-                                            <dd className="mt-1 text-sm">
-                                                {child.sex === 'male'
-                                                    ? 'Male'
-                                                    : 'Female'}
-                                            </dd>
-                                        </div>
-                                        {child.birth_weight_kg && (
-                                            <div>
-                                                <dt className="text-sm font-medium text-muted-foreground">
-                                                    Birth Weight
-                                                </dt>
-                                                <dd className="mt-1 text-sm">
-                                                    {child.birth_weight_kg} kg
-                                                </dd>
-                                            </div>
-                                        )}
-                                        {child.birth_length_cm && (
-                                            <div>
-                                                <dt className="text-sm font-medium text-muted-foreground">
-                                                    Birth Length
-                                                </dt>
-                                                <dd className="mt-1 text-sm">
-                                                    {child.birth_length_cm} cm
-                                                </dd>
-                                            </div>
-                                        )}
-                                    </dl>
-                                </CardContent>
-                            </Card>
-
-                            {/* Address */}
-                            <Card>
-                                <CardHeader>
-                                    <CardTitle>Address</CardTitle>
-                                </CardHeader>
-                                <CardContent>
-                                    <p className="text-sm">
-                                        {child.purok_sitio && (
-                                            <>{child.purok_sitio}, </>
-                                        )}
-                                        {child.barangay.name},{' '}
-                                        {child.barangay.municipality_city},{' '}
-                                        {child.barangay.province}
-                                    </p>
-                                </CardContent>
-                            </Card>
-
-                            {/* Parents/Guardian */}
-                            <Card>
-                                <CardHeader>
-                                    <CardTitle>
-                                        Parents/Guardian Information
+                <div className="grid gap-6 md:grid-cols-3">
+                    <div className="space-y-6 md:col-span-2">
+                        {latestMeasurement && (
+                            <Card className="border-primary/20 shadow-lg shadow-primary/5">
+                                <CardHeader className="border-b bg-primary/5 pb-4">
+                                    <CardTitle className="text-lg">
+                                        Latest Nutritional Status
                                     </CardTitle>
                                 </CardHeader>
-                                <CardContent>
-                                    <dl className="space-y-3">
-                                        {child.mother_name && (
-                                            <div>
-                                                <dt className="text-sm font-medium text-muted-foreground">
-                                                    Mother's Name
-                                                </dt>
-                                                <dd className="mt-1 text-sm">
-                                                    {child.mother_name}
-                                                </dd>
-                                            </div>
-                                        )}
-                                        {child.father_name && (
-                                            <div>
-                                                <dt className="text-sm font-medium text-muted-foreground">
-                                                    Father's Name
-                                                </dt>
-                                                <dd className="mt-1 text-sm">
-                                                    {child.father_name}
-                                                </dd>
-                                            </div>
-                                        )}
-                                        {child.guardian_name && (
-                                            <div>
-                                                <dt className="text-sm font-medium text-muted-foreground">
-                                                    Guardian's Name
-                                                </dt>
-                                                <dd className="mt-1 text-sm">
-                                                    {child.guardian_name}
-                                                    {child.guardian_relationship && (
-                                                        <span className="text-muted-foreground">
-                                                            {' '}
-                                                            (
-                                                            {
-                                                                child.guardian_relationship
-                                                            }
-                                                            )
-                                                        </span>
-                                                    )}
-                                                </dd>
-                                            </div>
-                                        )}
-                                        {child.contact_number && (
-                                            <div>
-                                                <dt className="text-sm font-medium text-muted-foreground">
-                                                    Contact Number
-                                                </dt>
-                                                <dd className="mt-1 text-sm">
-                                                    {child.contact_number}
-                                                </dd>
-                                            </div>
-                                        )}
-                                    </dl>
-                                </CardContent>
-                            </Card>
-
-                            {/* Recent Measurements */}
-                            {child.measurements.length > 0 && (
-                                <Card>
-                                    <CardHeader className="flex flex-row items-center justify-between">
-                                        <CardTitle>
-                                            Recent Measurements
-                                        </CardTitle>
-                                        <Link
-                                            href={measurementsIndex.url(child.id)}
-                                        >
-                                            <Button variant="ghost" size="sm">
-                                                View All
-                                            </Button>
-                                        </Link>
-                                    </CardHeader>
-                                    <CardContent>
-                                        <div className="space-y-3">
-                                            {child.measurements
-                                                .slice(0, 5)
-                                                .map((measurement) => (
-                                                    <div
-                                                        key={measurement.id}
-                                                        className="flex items-center justify-between border-b pb-3 last:border-0"
-                                                    >
-                                                        <div>
-                                                            <p className="text-sm font-medium">
-                                                                {new Date(
-                                                                    measurement.measurement_date
-                                                                ).toLocaleDateString()}
-                                                            </p>
-                                                            <p className="text-xs text-muted-foreground">
-                                                                {
-                                                                    measurement.weight_kg
-                                                                }{' '}
-                                                                kg •{' '}
-                                                                {
-                                                                    measurement.height_length_cm
-                                                                }{' '}
-                                                                cm
-                                                            </p>
-                                                        </div>
-                                                        {getStatusBadge(
-                                                            measurement.opt_classification
-                                                        )}
-                                                    </div>
-                                                ))}
+                                <CardContent className="pt-6">
+                                    <div className="flex flex-col justify-between gap-6 sm:flex-row sm:items-center">
+                                        <div className="space-y-2">
+                                            <p className="text-xs font-bold text-muted-foreground uppercase">
+                                                Classification
+                                            </p>
+                                            <NutritionalStatusBadge
+                                                status={
+                                                    latestMeasurement.opt_classification
+                                                }
+                                                className="px-4 py-1 text-lg"
+                                            />
                                         </div>
-                                    </CardContent>
-                                </Card>
-                            )}
-                        </div>
-
-                        {/* Right Column */}
-                        <div className="space-y-6">
-                            {/* QR Code */}
-                            <Card>
-                                <CardHeader>
-                                    <CardTitle>QR Code</CardTitle>
-                                </CardHeader>
-                                <CardContent>
-                                    <div className="flex flex-col items-center">
-                                        <div className="rounded-lg border p-4">
-                                            <QrCode className="h-32 w-32 text-muted-foreground" />
+                                        <div className="grid grid-cols-2 gap-8">
+                                            <div>
+                                                <p className="text-xs font-bold text-muted-foreground uppercase">
+                                                    Weight
+                                                </p>
+                                                <p className="text-2xl font-bold">
+                                                    {
+                                                        latestMeasurement.weight_kg
+                                                    }{' '}
+                                                    kg
+                                                </p>
+                                                <p className="text-xs text-muted-foreground">
+                                                    WFA Z:{' '}
+                                                    {latestMeasurement.weight_for_age_zscore?.toFixed(
+                                                        2,
+                                                    ) || 'N/A'}
+                                                </p>
+                                            </div>
+                                            <div>
+                                                <p className="text-xs font-bold text-muted-foreground uppercase">
+                                                    Height
+                                                </p>
+                                                <p className="text-2xl font-bold">
+                                                    {
+                                                        latestMeasurement.height_length_cm
+                                                    }{' '}
+                                                    cm
+                                                </p>
+                                                <p className="text-xs text-muted-foreground">
+                                                    HFA Z:{' '}
+                                                    {latestMeasurement.height_for_age_zscore?.toFixed(
+                                                        2,
+                                                    ) || 'N/A'}
+                                                </p>
+                                            </div>
                                         </div>
-                                        <p className="mt-2 font-mono text-sm">
-                                            {child.qr_code}
-                                        </p>
-                                        <Button
-                                            variant="outline"
-                                            size="sm"
-                                            className="mt-4"
-                                        >
-                                            Download QR Code
-                                        </Button>
+                                    </div>
+                                    <div className="mt-6 flex items-center justify-between border-t pt-6 text-xs text-muted-foreground italic">
+                                        <span>
+                                            Measured:{' '}
+                                            {new Date(
+                                                latestMeasurement.measurement_date,
+                                            ).toLocaleDateString()}
+                                        </span>
+                                        <span>
+                                            By:{' '}
+                                            {latestMeasurement.measured_by.name}
+                                        </span>
                                     </div>
                                 </CardContent>
                             </Card>
+                        )}
 
-                            {/* Identifiers */}
-                            <Card>
+                        <Card>
+                            <CardHeader>
+                                <CardTitle className="text-lg">
+                                    Personal Information
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent className="grid gap-6 text-sm sm:grid-cols-2">
+                                <div className="space-y-1">
+                                    <p className="text-[10px] font-medium text-muted-foreground uppercase">
+                                        Date of Birth
+                                    </p>
+                                    <p className="font-bold">
+                                        {new Date(
+                                            child.date_of_birth,
+                                        ).toLocaleDateString('en-US', {
+                                            dateStyle: 'long',
+                                        })}
+                                    </p>
+                                </div>
+                                <div className="space-y-1">
+                                    <p className="text-[10px] font-medium text-muted-foreground uppercase">
+                                        Sex
+                                    </p>
+                                    <p className="font-bold tracking-wide uppercase">
+                                        {child.sex}
+                                    </p>
+                                </div>
+                                <div className="space-y-1">
+                                    <p className="text-[10px] font-medium text-muted-foreground uppercase">
+                                        Family Serial Number
+                                    </p>
+                                    <p className="font-mono font-bold text-primary">
+                                        {child.family_serial_number}
+                                    </p>
+                                </div>
+                                <div className="space-y-1">
+                                    <p className="text-[10px] font-medium text-muted-foreground uppercase">
+                                        Address (Purok/Sitio)
+                                    </p>
+                                    <p className="font-bold">
+                                        {child.purok_sitio || 'Not specified'}
+                                    </p>
+                                </div>
+                            </CardContent>
+                        </Card>
+
+                        <Card>
+                            <CardHeader>
+                                <CardTitle className="text-lg">
+                                    Parents / Guardian
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent className="grid gap-6 text-sm sm:grid-cols-2">
+                                <div className="space-y-1">
+                                    <p className="text-[10px] font-medium text-muted-foreground uppercase">
+                                        Mother
+                                    </p>
+                                    <p className="font-bold">
+                                        {child.mother_name || 'N/A'}
+                                    </p>
+                                </div>
+                                <div className="space-y-1">
+                                    <p className="text-[10px] font-medium text-muted-foreground uppercase">
+                                        Father
+                                    </p>
+                                    <p className="font-bold">
+                                        {child.father_name || 'N/A'}
+                                    </p>
+                                </div>
+                                <div className="space-y-1">
+                                    <p className="text-[10px] font-medium text-muted-foreground uppercase">
+                                        Contact Number
+                                    </p>
+                                    <p className="font-bold">
+                                        {child.contact_number || 'N/A'}
+                                    </p>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </div>
+
+                    <div className="space-y-6">
+                        <Card className="text-center">
+                            <CardHeader>
+                                <CardTitle className="text-sm font-bold tracking-widest text-muted-foreground uppercase">
+                                    Child QR Identity
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent className="flex flex-col items-center gap-4">
+                                <div className="rounded-2xl border-2 border-primary/20 bg-white p-4 shadow-inner">
+                                    <QrCode className="h-40 w-40 text-primary" />
+                                </div>
+                                <p className="rounded-full bg-muted px-4 py-1 font-mono text-sm font-bold">
+                                    {child.qr_code}
+                                </p>
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    className="w-full font-bold"
+                                >
+                                    <Download className="mr-2 h-4 w-4" />{' '}
+                                    Download QR Card
+                                </Button>
+                            </CardContent>
+                        </Card>
+
+                        {child.is_indigenous_people && (
+                            <Card className="border-accent/50 bg-accent/5">
                                 <CardHeader>
-                                    <CardTitle>Identifiers</CardTitle>
+                                    <CardTitle className="flex items-center gap-2 text-sm font-bold tracking-widest text-accent-foreground uppercase">
+                                        <div className="h-2 w-2 animate-pulse rounded-full bg-accent-foreground" />
+                                        Indigenous People
+                                    </CardTitle>
                                 </CardHeader>
                                 <CardContent>
-                                    <dl className="space-y-3">
-                                        <div>
-                                            <dt className="text-sm font-medium text-muted-foreground">
-                                                Family Serial Number
-                                            </dt>
-                                            <dd className="mt-1 font-mono text-sm">
-                                                {child.family_serial_number}
-                                            </dd>
-                                        </div>
-                                        <div>
-                                            <dt className="text-sm font-medium text-muted-foreground">
-                                                QR Code
-                                            </dt>
-                                            <dd className="mt-1 font-mono text-sm">
-                                                {child.qr_code}
-                                            </dd>
-                                        </div>
-                                    </dl>
-                                </CardContent>
-                            </Card>
-
-                            {/* Indigenous People */}
-                            {child.is_indigenous_people && (
-                                <Card>
-                                    <CardHeader>
-                                        <CardTitle>
-                                            Indigenous People Information
-                                        </CardTitle>
-                                    </CardHeader>
-                                    <CardContent>
-                                        <Badge variant="outline">
-                                            Indigenous People
-                                        </Badge>
-                                        {child.indigenous_group && (
-                                            <p className="mt-2 text-sm">
-                                                Group: {child.indigenous_group}
-                                            </p>
-                                        )}
-                                    </CardContent>
-                                </Card>
-                            )}
-
-                            {/* Notes */}
-                            {child.notes && (
-                                <Card>
-                                    <CardHeader>
-                                        <CardTitle>Notes</CardTitle>
-                                    </CardHeader>
-                                    <CardContent>
-                                        <p className="text-sm text-foreground">
-                                            {child.notes}
-                                        </p>
-                                    </CardContent>
-                                </Card>
-                            )}
-
-                            {/* Metadata */}
-                            <Card>
-                                <CardHeader>
-                                    <CardTitle>Record Information</CardTitle>
-                                </CardHeader>
-                                <CardContent>
-                                    <p className="text-xs text-muted-foreground">
-                                        Registered by {child.created_by.name}
+                                    <p className="text-lg font-bold">
+                                        {child.indigenous_group ||
+                                            'Verified IP member'}
                                     </p>
                                 </CardContent>
                             </Card>
-                        </div>
+                        )}
+
+                        <Card>
+                            <CardHeader>
+                                <CardTitle className="text-xs font-bold text-muted-foreground uppercase">
+                                    Audit Log
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent className="space-y-1 text-[10px] font-medium">
+                                <p>Created by: {child.created_by.name}</p>
+                                <p>Barangay: {child.barangay.name}</p>
+                            </CardContent>
+                        </Card>
                     </div>
                 </div>
+            </div>
         </AppLayout>
     );
 }
