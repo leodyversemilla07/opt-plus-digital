@@ -14,16 +14,13 @@ class ChildController extends Controller
 {
     use AuthorizesRequests;
 
-    public function __construct()
-    {
-        $this->authorizeResource(Child::class, 'child');
-    }
-
     /**
      * Display a listing of children
      */
     public function index(Request $request): Response
     {
+        $this->authorize('viewAny', Child::class);
+
         $query = Child::query()
             ->with(['barangay:id,name'])
             ->latest();
@@ -49,11 +46,16 @@ class ChildController extends Controller
             $query->where('is_indigenous_people', $request->boolean('is_indigenous_people'));
         }
 
+        // Filter by F1K (0-23 months)
+        if ($request->filled('f1k') && $request->boolean('f1k')) {
+            $query->whereRaw('TIMESTAMPDIFF(MONTH, date_of_birth, NOW()) <= 23');
+        }
+
         $children = $query->paginate(15)->withQueryString();
 
         return Inertia::render('children/index', [
             'children' => $children,
-            'filters' => $request->only(['search', 'barangay_id', 'is_indigenous_people']),
+            'filters' => $request->only(['search', 'barangay_id', 'is_indigenous_people', 'f1k']),
             'barangays' => Barangay::select('id', 'name')->orderBy('name')->get(),
         ]);
     }
@@ -63,6 +65,8 @@ class ChildController extends Controller
      */
     public function create(): Response
     {
+        $this->authorize('create', Child::class);
+
         return Inertia::render('children/create', [
             'barangays' => Barangay::select('id', 'name', 'municipality_city', 'province')
                 ->orderBy('name')
@@ -75,6 +79,8 @@ class ChildController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+        $this->authorize('create', Child::class);
+
         $validated = $request->validate([
             'family_serial_number' => 'required|string|max:50|unique:children',
             'first_name' => 'required|string|max:100',
@@ -115,6 +121,8 @@ class ChildController extends Controller
      */
     public function show(Child $child): Response
     {
+        $this->authorize('view', $child);
+
         $child->load([
             'barangay',
             'measurements' => fn ($q) => $q->latest('measurement_date')->take(10),
@@ -133,6 +141,8 @@ class ChildController extends Controller
      */
     public function edit(Child $child): Response
     {
+        $this->authorize('update', $child);
+
         return Inertia::render('children/edit', [
             'child' => $child->load('barangay'),
             'barangays' => Barangay::select('id', 'name', 'municipality_city', 'province')
@@ -146,6 +156,8 @@ class ChildController extends Controller
      */
     public function update(Request $request, Child $child): RedirectResponse
     {
+        $this->authorize('update', $child);
+
         $validated = $request->validate([
             'family_serial_number' => 'required|string|max:50|unique:children,family_serial_number,'.$child->id,
             'first_name' => 'required|string|max:100',
@@ -180,6 +192,8 @@ class ChildController extends Controller
      */
     public function destroy(Child $child): RedirectResponse
     {
+        $this->authorize('delete', $child);
+
         $child->delete();
 
         return redirect()

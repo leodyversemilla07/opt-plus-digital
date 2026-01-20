@@ -18,13 +18,10 @@ class UserController extends Controller
 {
     use AuthorizesRequests;
 
-    public function __construct()
-    {
-        $this->authorizeResource(User::class, 'user');
-    }
-
     public function index(Request $request): Response
     {
+        $this->authorize('viewAny', User::class);
+
         $query = User::with(['roles', 'barangay']);
 
         // Search filter
@@ -56,6 +53,8 @@ class UserController extends Controller
 
     public function create(): Response
     {
+        $this->authorize('create', User::class);
+
         $roles = Role::all()->pluck('name', 'id');
         $barangays = Barangay::orderBy('name')->get(['id', 'name', 'municipality']);
 
@@ -67,6 +66,8 @@ class UserController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
+        $this->authorize('create', User::class);
+
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
@@ -94,6 +95,8 @@ class UserController extends Controller
 
     public function show(User $user): Response
     {
+        $this->authorize('view', $user);
+
         $user->load(['roles', 'barangay']);
 
         return Inertia::render('users/show', [
@@ -104,6 +107,8 @@ class UserController extends Controller
 
     public function edit(User $user): Response
     {
+        $this->authorize('update', $user);
+
         $user->load(['roles', 'barangay']);
         $roles = Role::all()->pluck('name', 'id');
         $barangays = Barangay::orderBy('name')->get(['id', 'name', 'municipality']);
@@ -118,6 +123,8 @@ class UserController extends Controller
 
     public function update(Request $request, User $user): RedirectResponse
     {
+        $this->authorize('update', $user);
+
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
@@ -148,6 +155,8 @@ class UserController extends Controller
 
     public function destroy(User $user): RedirectResponse
     {
+        $this->authorize('delete', $user);
+
         $user->delete();
 
         return redirect()->route('users.index')
@@ -156,6 +165,8 @@ class UserController extends Controller
 
     public function toggleStatus(User $user): RedirectResponse
     {
+        $this->authorize('update', $user);
+
         $user->update(['is_active' => ! $user->is_active]);
 
         $status = $user->is_active ? 'activated' : 'deactivated';

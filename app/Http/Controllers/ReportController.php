@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\AnalyticsService;
 use App\Services\ExportService;
 use App\Services\ReportService;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -16,7 +17,8 @@ class ReportController extends Controller
 
     public function __construct(
         private ReportService $reportService,
-        private ExportService $exportService
+        private ExportService $exportService,
+        private AnalyticsService $analyticsService
     ) {}
 
     /**
@@ -85,6 +87,94 @@ class ReportController extends Controller
 
         return Inertia::render('reports/barangay-comparison', [
             'report' => $report,
+        ]);
+    }
+
+    /**
+     * Generate F1K (First 1000 Days) list - children 0-23 months
+     */
+    public function f1kList(Request $request): Response
+    {
+        $this->authorize('view reports');
+        $barangayId = $request->query('barangay');
+
+        $f1kStats = $this->analyticsService->getF1KStatistics($barangayId);
+        $children = $this->reportService->generateF1KList($barangayId);
+
+        return Inertia::render('reports/f1k-list', [
+            'children' => $children,
+            'statistics' => $f1kStats,
+            'barangayId' => $barangayId,
+        ]);
+    }
+
+    /**
+     * Generate monitoring list by status (SAM, MAM, stunted, overweight)
+     */
+    public function monitoringList(Request $request, string $type): Response
+    {
+        $this->authorize('view reports');
+        $barangayId = $request->query('barangay');
+
+        $validTypes = ['sam', 'mam', 'stunted', 'overweight', 'obese'];
+        if (!in_array($type, $validTypes)) {
+            abort(404, 'Invalid monitoring list type');
+        }
+
+        $children = $this->reportService->generateMonitoringList($type, $barangayId);
+
+        return Inertia::render('reports/monitoring-list', [
+            'type' => $type,
+            'children' => $children,
+            'barangayId' => $barangayId,
+        ]);
+    }
+
+    /**
+     * Generate NutStatusBrgy - Sex-disaggregated report
+     */
+    public function nutStatusBrgy(Request $request): Response
+    {
+        $this->authorize('view reports');
+        $barangayId = $request->query('barangay');
+
+        $report = $this->reportService->generateNutStatusBrgy($barangayId);
+
+        return Inertia::render('reports/nut-status-brgy', [
+            'report' => $report,
+            'barangayId' => $barangayId,
+        ]);
+    }
+
+    /**
+     * Generate MUAC monitoring list
+     */
+    public function muacList(Request $request): Response
+    {
+        $this->authorize('view reports');
+        $barangayId = $request->query('barangay');
+
+        $children = $this->reportService->generateMUACList($barangayId);
+
+        return Inertia::render('reports/muac-list', [
+            'children' => $children,
+            'barangayId' => $barangayId,
+        ]);
+    }
+
+    /**
+     * Generate OPT Form 1C - Affected/At-risk children
+     */
+    public function form1C(Request $request): Response
+    {
+        $this->authorize('view reports');
+        $barangayId = $request->query('barangay');
+
+        $report = $this->reportService->generateForm1C($barangayId);
+
+        return Inertia::render('reports/form-1c', [
+            'report' => $report,
+            'barangayId' => $barangayId,
         ]);
     }
 

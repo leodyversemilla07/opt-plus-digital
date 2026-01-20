@@ -28,7 +28,7 @@ The OPT Plus Digital System is a mobile-first web application designed to stream
 
 ### 4. Reports & Analytics
 
-- **BNS and Municipal users** can access the **Reports** section.
+- **BNS users** can access the **Reports** section.
 - Generate **OPT Plus Summary Reports**, **Master Lists**, and **Target Lists**.
 - Export any report to **PDF** for printing or **Excel** (eOPT compatible) for official submission.
 
@@ -41,4 +41,4 @@ The OPT Plus Digital System is a mobile-first web application designed to stream
 
 ## Support
 
-For technical issues, contact your Municipal Health Office or the system administrator.
+For technical issues, contact your Barangay Health Center or the system administrator.

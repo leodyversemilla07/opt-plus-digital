@@ -15,11 +15,14 @@ class Measurement extends Model
 
     protected $fillable = [
         'child_id',
+        'opt_session_id',
         'measurement_date',
         'age_in_months',
+        'age_in_days',
         'weight_kg',
         'height_length_cm',
         'measurement_type',
+        'measurement_method',
         'weight_for_age_zscore',
         'height_for_age_zscore',
         'weight_for_height_zscore',
@@ -28,6 +31,13 @@ class Measurement extends Model
         'weight_for_height_status',
         'opt_classification',
         'muac_cm',
+        'has_edema',
+        'edema_grade',
+        'has_disability',
+        'disability_notes',
+        'is_flagged',
+        'flag_reason',
+        'is_overaged',
         'notes',
         'measured_by_user_id',
         'synced_at',
@@ -36,12 +46,17 @@ class Measurement extends Model
     protected $casts = [
         'measurement_date' => 'date',
         'age_in_months' => 'integer',
+        'age_in_days' => 'integer',
         'weight_kg' => 'decimal:2',
         'height_length_cm' => 'decimal:2',
         'weight_for_age_zscore' => 'decimal:2',
         'height_for_age_zscore' => 'decimal:2',
         'weight_for_height_zscore' => 'decimal:2',
         'muac_cm' => 'decimal:2',
+        'has_edema' => 'boolean',
+        'has_disability' => 'boolean',
+        'is_flagged' => 'boolean',
+        'is_overaged' => 'boolean',
         'synced_at' => 'datetime',
     ];
 
@@ -53,6 +68,11 @@ class Measurement extends Model
     public function measuredBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'measured_by_user_id');
+    }
+
+    public function optSession(): BelongsTo
+    {
+        return $this->belongsTo(OptSession::class);
     }
 
     public function isMalnourished(): bool

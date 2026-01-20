@@ -11,12 +11,19 @@ import { type BreadcrumbItem } from '@/types';
 import { Head, Link } from '@inertiajs/react';
 import {
     AlertTriangle,
+    Baby,
     Calendar,
+    ClipboardList,
     Download,
     FileDown,
     FileSpreadsheet,
     FileText,
+    Heart,
     MapPin,
+    Ruler,
+    Scale,
+    TrendingDown,
+    TrendingUp,
     Users,
 } from 'lucide-react';
 
@@ -61,10 +68,77 @@ export default function ReportsIndex() {
             bgColor: 'bg-red-100 dark:bg-red-900/20',
         },
         {
+            title: 'First 1000 Days (F1K)',
+            description: 'Priority list for children 0-23 months requiring early intervention',
+            icon: Baby,
+            href: '/reports/f1k-list',
+            color: 'text-pink-600 dark:text-pink-400',
+            bgColor: 'bg-pink-100 dark:bg-pink-900/20',
+        },
+        {
             title: 'Barangay Comparison',
             description: 'Compare nutritional status across all barangays',
             icon: MapPin,
             href: '/reports/barangay-comparison',
+            color: 'text-purple-600 dark:text-purple-400',
+            bgColor: 'bg-purple-100 dark:bg-purple-900/20',
+        },
+        {
+            title: 'Form 1C - At-Risk Children',
+            description: 'Comprehensive list of affected and at-risk children by category',
+            icon: ClipboardList,
+            href: '/reports/form-1c',
+            color: 'text-red-600 dark:text-red-400',
+            bgColor: 'bg-red-100 dark:bg-red-900/20',
+        },
+        {
+            title: 'NutStatusBrgy',
+            description: 'Sex-disaggregated nutritional status summary',
+            icon: Users,
+            href: '/reports/nut-status-brgy',
+            color: 'text-indigo-600 dark:text-indigo-400',
+            bgColor: 'bg-indigo-100 dark:bg-indigo-900/20',
+        },
+        {
+            title: 'MUAC Monitoring',
+            description: 'Mid-Upper Arm Circumference list for children 6-59 months',
+            icon: Ruler,
+            href: '/reports/muac-list',
+            color: 'text-teal-600 dark:text-teal-400',
+            bgColor: 'bg-teal-100 dark:bg-teal-900/20',
+        },
+    ];
+
+    const monitoringLists = [
+        {
+            title: 'SAM (Severe Acute Malnutrition)',
+            description: 'Children with severe wasting requiring therapeutic feeding',
+            icon: AlertTriangle,
+            href: '/reports/monitoring/sam',
+            color: 'text-red-600 dark:text-red-400',
+            bgColor: 'bg-red-100 dark:bg-red-900/20',
+        },
+        {
+            title: 'MAM (Moderate Acute Malnutrition)',
+            description: 'Children with moderate wasting requiring supplementary feeding',
+            icon: TrendingDown,
+            href: '/reports/monitoring/mam',
+            color: 'text-orange-600 dark:text-orange-400',
+            bgColor: 'bg-orange-100 dark:bg-orange-900/20',
+        },
+        {
+            title: 'Stunted Children',
+            description: 'Children with chronic malnutrition (low height-for-age)',
+            icon: Scale,
+            href: '/reports/monitoring/stunted',
+            color: 'text-yellow-600 dark:text-yellow-400',
+            bgColor: 'bg-yellow-100 dark:bg-yellow-900/20',
+        },
+        {
+            title: 'Overweight/Obese Children',
+            description: 'Children with elevated weight-for-height',
+            icon: TrendingUp,
+            href: '/reports/monitoring/overweight',
             color: 'text-purple-600 dark:text-purple-400',
             bgColor: 'bg-purple-100 dark:bg-purple-900/20',
         },
@@ -158,6 +232,54 @@ export default function ReportsIndex() {
                             </Card>
                         );
                     })}
+                </div>
+
+                {/* Monitoring Lists Section */}
+                <div>
+                    <h2 className="mb-4 text-xl font-semibold flex items-center gap-2">
+                        <Heart className="h-5 w-5 text-red-500" />
+                        Monitoring Lists
+                    </h2>
+                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                        {monitoringLists.map((list) => {
+                            const Icon = list.icon;
+                            return (
+                                <Card
+                                    key={list.href}
+                                    className="transition-colors hover:border-primary"
+                                >
+                                    <CardHeader className="pb-2">
+                                        <div className="flex items-center gap-3">
+                                            <div
+                                                className={`rounded-lg p-2 ${list.bgColor}`}
+                                            >
+                                                <Icon
+                                                    className={`h-5 w-5 ${list.color}`}
+                                                />
+                                            </div>
+                                            <CardTitle className="text-base">
+                                                {list.title}
+                                            </CardTitle>
+                                        </div>
+                                    </CardHeader>
+                                    <CardContent>
+                                        <CardDescription className="mb-3 text-xs">
+                                            {list.description}
+                                        </CardDescription>
+                                        <Link href={list.href}>
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                className="w-full"
+                                            >
+                                                View List
+                                            </Button>
+                                        </Link>
+                                    </CardContent>
+                                </Card>
+                            );
+                        })}
+                    </div>
                 </div>
 
                 {/* Quick Actions */}

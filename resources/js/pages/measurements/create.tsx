@@ -1,6 +1,7 @@
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
     Field,
     FieldDescription,
@@ -8,6 +9,14 @@ import {
     FieldLabel,
 } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { useOnlineStatus } from '@/hooks/use-online-status';
 import AppLayout from '@/layouts/app-layout';
@@ -41,6 +50,11 @@ export default function CreateMeasurement({ child }: CreateMeasurementProps) {
         weight_kg: '',
         height_length_cm: '',
         muac_cm: '',
+        measurement_method: 'weight_height',
+        has_edema: false,
+        edema_grade: '',
+        has_disability: false,
+        disability_notes: '',
         notes: '',
     });
 
@@ -290,8 +304,150 @@ export default function CreateMeasurement({ child }: CreateMeasurementProps) {
                                         </Field>
 
                                         <Field>
+                                            <FieldLabel htmlFor="measurement_method">
+                                                Measurement Method
+                                            </FieldLabel>
+                                            <Select
+                                                value={data.measurement_method}
+                                                onValueChange={(value) =>
+                                                    setData(
+                                                        'measurement_method',
+                                                        value,
+                                                    )
+                                                }
+                                            >
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder="Select method" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="weight_height">
+                                                        Weight & Height
+                                                    </SelectItem>
+                                                    <SelectItem value="muac_only">
+                                                        MUAC Only
+                                                    </SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                            <FieldDescription>
+                                                How measurements were taken
+                                            </FieldDescription>
+                                        </Field>
+                                    </FieldGroup>
+                                </CardContent>
+                            </Card>
+
+                            {/* Clinical Observations */}
+                            <Card>
+                                <CardHeader>
+                                    <CardTitle>Clinical Observations</CardTitle>
+                                </CardHeader>
+                                <CardContent className="space-y-4">
+                                    <FieldGroup>
+                                        <div className="space-y-4">
+                                            <div className="flex items-center space-x-2">
+                                                <Checkbox
+                                                    id="has_edema"
+                                                    checked={data.has_edema}
+                                                    onCheckedChange={(checked) =>
+                                                        setData(
+                                                            'has_edema',
+                                                            checked === true,
+                                                        )
+                                                    }
+                                                />
+                                                <Label
+                                                    htmlFor="has_edema"
+                                                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                                >
+                                                    Bilateral Pitting Edema Present
+                                                </Label>
+                                            </div>
+                                            {data.has_edema && (
+                                                <Field>
+                                                    <FieldLabel htmlFor="edema_grade">
+                                                        Edema Grade
+                                                    </FieldLabel>
+                                                    <Select
+                                                        value={data.edema_grade}
+                                                        onValueChange={(value) =>
+                                                            setData(
+                                                                'edema_grade',
+                                                                value,
+                                                            )
+                                                        }
+                                                    >
+                                                        <SelectTrigger>
+                                                            <SelectValue placeholder="Select grade" />
+                                                        </SelectTrigger>
+                                                        <SelectContent>
+                                                            <SelectItem value="+1">
+                                                                +1 (Mild - feet/ankles)
+                                                            </SelectItem>
+                                                            <SelectItem value="+2">
+                                                                +2 (Moderate - lower legs)
+                                                            </SelectItem>
+                                                            <SelectItem value="+3">
+                                                                +3 (Severe - generalized)
+                                                            </SelectItem>
+                                                        </SelectContent>
+                                                    </Select>
+                                                    {errors.edema_grade && (
+                                                        <FieldDescription className="text-red-500">
+                                                            {errors.edema_grade}
+                                                        </FieldDescription>
+                                                    )}
+                                                </Field>
+                                            )}
+                                        </div>
+
+                                        <div className="space-y-4 pt-4 border-t">
+                                            <div className="flex items-center space-x-2">
+                                                <Checkbox
+                                                    id="has_disability"
+                                                    checked={data.has_disability}
+                                                    onCheckedChange={(checked) =>
+                                                        setData(
+                                                            'has_disability',
+                                                            checked === true,
+                                                        )
+                                                    }
+                                                />
+                                                <Label
+                                                    htmlFor="has_disability"
+                                                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                                >
+                                                    Child has Disability
+                                                </Label>
+                                            </div>
+                                            {data.has_disability && (
+                                                <Field>
+                                                    <FieldLabel htmlFor="disability_notes">
+                                                        Disability Details
+                                                    </FieldLabel>
+                                                    <Textarea
+                                                        id="disability_notes"
+                                                        value={data.disability_notes}
+                                                        onChange={(e) =>
+                                                            setData(
+                                                                'disability_notes',
+                                                                e.target.value,
+                                                            )
+                                                        }
+                                                        rows={2}
+                                                        placeholder="Describe the disability..."
+                                                    />
+                                                    {errors.disability_notes && (
+                                                        <FieldDescription className="text-red-500">
+                                                            {errors.disability_notes}
+                                                        </FieldDescription>
+                                                    )}
+                                                </Field>
+                                            )}
+                                        </div>
+
+                                        <Field className="pt-4 border-t">
                                             <FieldLabel htmlFor="notes">
-                                                Notes
+                                                Additional Notes
                                             </FieldLabel>
                                             <Textarea
                                                 id="notes"

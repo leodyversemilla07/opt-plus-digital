@@ -1,6 +1,9 @@
 <?php
 
 use App\Services\WHOCalculatorService;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+
+uses(RefreshDatabase::class)->in(__FILE__);
 
 test('calculates z-score correctly using LMS method', function () {
     $calculator = new WHOCalculatorService;
@@ -66,19 +69,19 @@ test('classifies weight-for-height status correctly', function () {
 test('determines OPT classification as severely malnourished', function () {
     $calculator = new WHOCalculatorService;
 
-    // Any z-score < -3 should be severely malnourished
-    expect($calculator->determineOptClassification(-3.5, -2.0, -1.0))->toBe('severely_malnourished')
-        ->and($calculator->determineOptClassification(-2.0, -3.5, -1.0))->toBe('severely_malnourished')
-        ->and($calculator->determineOptClassification(-2.0, -1.0, -3.5))->toBe('severely_malnourished');
+    // Any z-score < -3 should be SAM (Severe Acute Malnutrition)
+    expect($calculator->determineOptClassification(-3.5, -2.0, -1.0))->toBe('sam')
+        ->and($calculator->determineOptClassification(-2.0, -3.5, -1.0))->toBe('sam')
+        ->and($calculator->determineOptClassification(-2.0, -1.0, -3.5))->toBe('sam');
 });
 
 test('determines OPT classification as moderately malnourished', function () {
     $calculator = new WHOCalculatorService;
 
-    // Any z-score between -3 and -2 (but none < -3)
-    expect($calculator->determineOptClassification(-2.5, -1.0, -1.0))->toBe('moderately_malnourished')
-        ->and($calculator->determineOptClassification(-1.0, -2.5, -1.0))->toBe('moderately_malnourished')
-        ->and($calculator->determineOptClassification(-1.0, -1.0, -2.5))->toBe('moderately_malnourished');
+    // Any z-score between -3 and -2 (but none < -3) = MAM (Moderate Acute Malnutrition)
+    expect($calculator->determineOptClassification(-2.5, -1.0, -1.0))->toBe('mam')
+        ->and($calculator->determineOptClassification(-1.0, -2.5, -1.0))->toBe('mam')
+        ->and($calculator->determineOptClassification(-1.0, -1.0, -2.5))->toBe('mam');
 });
 
 test('determines OPT classification as normal', function () {
@@ -107,8 +110,9 @@ test('determines OPT classification as obese', function () {
 test('calculateAll returns all z-scores and classifications', function () {
     $calculator = new WHOCalculatorService;
 
-    // This test requires WHO data to be seeded
-    // We'll test the structure without actual data
+    // Seed WHO standards data for the test
+    $this->seed(\Database\Seeders\WhoStandardSeeder::class);
+
     $result = $calculator->calculateAll('male', 365, 9.5, 75.0);
 
     expect($result)->toBeArray()
@@ -121,7 +125,7 @@ test('calculateAll returns all z-scores and classifications', function () {
             'weight_for_height_status',
             'opt_classification',
         ]);
-})->skip('Requires WHO standards data - tested in feature tests');
+});
 
 test('handles null z-scores gracefully in OPT classification', function () {
     $calculator = new WHOCalculatorService;
@@ -130,5 +134,5 @@ test('handles null z-scores gracefully in OPT classification', function () {
     expect($calculator->determineOptClassification(null, null, null))->toBe('normal');
 
     // One value should still classify correctly
-    expect($calculator->determineOptClassification(-3.5, null, null))->toBe('severely_malnourished');
+    expect($calculator->determineOptClassification(-3.5, null, null))->toBe('sam');
 });

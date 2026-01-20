@@ -2,7 +2,7 @@
 
 First off, thank you for considering contributing to the OPT Plus Digital System! 🎉
 
-This project aims to transform nutrition surveillance for Filipino children, and your contributions help make that mission a reality.
+This project aims to transform nutrition surveillance for Filipino children at the barangay level, and your contributions help make that mission a reality.
 
 ## Table of Contents
 
@@ -20,6 +20,7 @@ This project aims to transform nutrition surveillance for Filipino children, and
 ### Our Pledge
 
 We are committed to providing a welcoming and inclusive environment for all contributors, regardless of:
+
 - Age, body size, disability, ethnicity
 - Gender identity and expression
 - Level of experience
@@ -29,6 +30,7 @@ We are committed to providing a welcoming and inclusive environment for all cont
 ### Our Standards
 
 **Examples of behavior that contributes to a positive environment:**
+
 - Using welcoming and inclusive language
 - Being respectful of differing viewpoints and experiences
 - Gracefully accepting constructive criticism
@@ -36,6 +38,7 @@ We are committed to providing a welcoming and inclusive environment for all cont
 - Showing empathy towards other community members
 
 **Examples of unacceptable behavior:**
+
 - Trolling, insulting/derogatory comments, and personal attacks
 - Public or private harassment
 - Publishing others' private information without permission
@@ -46,13 +49,14 @@ We are committed to providing a welcoming and inclusive environment for all cont
 ### Reporting Bugs
 
 **Before submitting a bug report:**
+
 - Check if the bug has already been reported in [Issues](https://github.com/your-org/opt-plus-digital/issues)
 - Make sure you're using the latest version
 - Collect information about the bug:
-  - Stack trace
-  - Expected vs actual behavior
-  - Steps to reproduce
-  - Screenshots (if applicable)
+    - Stack trace
+    - Expected vs actual behavior
+    - Steps to reproduce
+    - Screenshots (if applicable)
 
 **Submitting a bug report:**
 
@@ -63,6 +67,7 @@ Create an issue with the following information:
 A clear description of what the bug is.
 
 **Steps to Reproduce:**
+
 1. Go to '...'
 2. Click on '...'
 3. Scroll down to '...'
@@ -78,6 +83,7 @@ What actually happened.
 If applicable, add screenshots.
 
 **Environment:**
+
 - OS: [e.g., Windows 11, macOS 14, Ubuntu 22.04]
 - PHP Version: [e.g., 8.3.0]
 - Node Version: [e.g., 20.10.0]
@@ -90,6 +96,7 @@ Any other information about the problem.
 ### Suggesting Features
 
 **Before submitting a feature request:**
+
 - Check the [roadmap](docs/ROADMAP.md) to see if it's already planned
 - Check existing [feature requests](https://github.com/your-org/opt-plus-digital/labels/enhancement)
 - Consider whether your feature aligns with the project goals
@@ -118,6 +125,7 @@ Mockups, examples, or links to similar features.
 #### First-Time Contributors
 
 Look for issues labeled `good first issue`:
+
 - Simple, well-defined tasks
 - Great for learning the codebase
 - Mentorship available
@@ -125,38 +133,39 @@ Look for issues labeled `good first issue`:
 #### Areas to Contribute
 
 1. **Backend Development (Laravel)**
-   - Controllers, models, services
-   - API endpoints
-   - Database migrations
-   - Business logic
+    - Controllers, models, services
+    - API endpoints
+    - Database migrations
+    - Business logic
 
 2. **Frontend Development (React)**
-   - UI components
-   - Page layouts
-   - Form handling
-   - State management
+    - UI components
+    - Page layouts
+    - Form handling
+    - State management
 
 3. **Testing**
-   - Feature tests
-   - Unit tests
-   - Browser tests
+    - Feature tests
+    - Unit tests
+    - Browser tests
 
 4. **Documentation**
-   - User guides
-   - API documentation
-   - Code comments
-   - README improvements
+    - User guides
+    - API documentation
+    - Code comments
+    - README improvements
 
 5. **Design**
-   - UI/UX improvements
-   - Mobile responsiveness
-   - Accessibility enhancements
+    - UI/UX improvements
+    - Mobile responsiveness
+    - Accessibility enhancements
 
 ## Development Setup
 
 See [GETTING-STARTED.md](docs/GETTING-STARTED.md) for detailed setup instructions.
 
 **Quick setup:**
+
 ```bash
 git clone https://github.com/your-org/opt-plus-digital.git
 cd opt-plus-digital
@@ -189,6 +198,7 @@ git checkout -b feature/your-feature-name
 ```
 
 **Branch naming conventions:**
+
 - `feature/` - New features (e.g., `feature/measurement-entry`)
 - `bugfix/` - Bug fixes (e.g., `bugfix/validation-error`)
 - `docs/` - Documentation updates (e.g., `docs/update-readme`)
@@ -242,12 +252,14 @@ Brief description of changes.
 Closes #123
 
 **Type of Change:**
+
 - [ ] Bug fix
 - [ ] New feature
 - [ ] Breaking change
 - [ ] Documentation update
 
 **Checklist:**
+
 - [ ] Tests pass locally
 - [ ] Code follows style guidelines
 - [ ] Self-review completed
@@ -259,6 +271,7 @@ Closes #123
 Before/after screenshots for UI changes.
 
 **Testing Instructions:**
+
 1. Step one
 2. Step two
 3. Expected result
@@ -271,6 +284,7 @@ Before/after screenshots for UI changes.
 - Once approved, maintainer will merge
 
 **Review criteria:**
+
 - Code quality and readability
 - Test coverage
 - Documentation
@@ -318,6 +332,7 @@ class ChildController extends Controller
 ```
 
 **Key principles:**
+
 - Type hints for parameters and return types
 - Descriptive variable and method names
 - Single Responsibility Principle
@@ -326,6 +341,7 @@ class ChildController extends Controller
 - Eager load relationships
 
 **Format with Pint:**
+
 ```bash
 ./vendor/bin/pint
 ```
@@ -341,40 +357,41 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
 interface ChildFormProps {
-  child?: Child;
+    child?: Child;
 }
 
 export default function ChildForm({ child }: ChildFormProps) {
-  const { data, setData, post, processing, errors } = useForm({
-    first_name: child?.first_name ?? '',
-    last_name: child?.last_name ?? '',
-  });
+    const { data, setData, post, processing, errors } = useForm({
+        first_name: child?.first_name ?? '',
+        last_name: child?.last_name ?? '',
+    });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    post(route('children.store'));
-  };
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        post(route('children.store'));
+    };
 
-  return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <div>
-        <Input
-          value={data.first_name}
-          onChange={(e) => setData('first_name', e.target.value)}
-        />
-        {errors.first_name && (
-          <p className="text-sm text-red-500">{errors.first_name}</p>
-        )}
-      </div>
-      <Button type="submit" disabled={processing}>
-        Save
-      </Button>
-    </form>
-  );
+    return (
+        <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+                <Input
+                    value={data.first_name}
+                    onChange={(e) => setData('first_name', e.target.value)}
+                />
+                {errors.first_name && (
+                    <p className="text-sm text-red-500">{errors.first_name}</p>
+                )}
+            </div>
+            <Button type="submit" disabled={processing}>
+                Save
+            </Button>
+        </form>
+    );
 }
 ```
 
 **Key principles:**
+
 - Functional components with hooks
 - TypeScript for all new code
 - Props destructuring
@@ -383,6 +400,7 @@ export default function ChildForm({ child }: ChildFormProps) {
 - Use Tailwind CSS for styling
 
 **Lint and format:**
+
 ```bash
 npm run lint
 npm run format
@@ -461,6 +479,7 @@ Added troubleshooting section for common setup issues.
 ### Test Types
 
 **Feature Tests (Full Stack):**
+
 ```php
 <?php
 
@@ -469,7 +488,7 @@ use App\Models\User;
 
 test('authenticated user can create a child', function () {
     $user = User::factory()->create(['role' => 'bhw']);
-    
+
     $this->actingAs($user)
         ->post(route('children.store'), [
             'first_name' => 'Juan',
@@ -486,6 +505,7 @@ test('authenticated user can create a child', function () {
 ```
 
 **Unit Tests (Isolated):**
+
 ```php
 <?php
 
@@ -493,13 +513,13 @@ use App\Services\WHOStandardsService;
 
 test('calculates z-score correctly', function () {
     $service = new WHOStandardsService();
-    
+
     $zScore = $service->calculateWeightForAge(
         sex: 'male',
         ageInMonths: 12,
         weight: 9.5
     );
-    
+
     expect($zScore)->toBeGreaterThan(-2)
                    ->toBeLessThan(2);
 });
@@ -530,17 +550,20 @@ php artisan test --coverage
 ### Code Comments
 
 **When to comment:**
+
 - Complex algorithms
 - Non-obvious decisions
 - Workarounds for bugs
 - Public API methods
 
 **When NOT to comment:**
+
 - Self-explanatory code
 - Repeating what code does
 - Commented-out code (delete instead)
 
 **Good comments:**
+
 ```php
 // Calculate age in completed months per WHO guidelines
 // (disregard days, only count full months)
@@ -548,7 +571,7 @@ $ageInMonths = $dateOfBirth->diffInMonths(now(), false);
 
 /**
  * Calculate z-score using WHO LMS method.
- * 
+ *
  * @param string $sex 'male' or 'female'
  * @param int $ageInMonths 0-71 months
  * @param float $weight in kilograms
@@ -560,6 +583,7 @@ public function calculateWeightForAge(string $sex, int $ageInMonths, float $weig
 ### Update Documentation
 
 When making changes, update:
+
 - README.md (if user-facing changes)
 - ROADMAP.md (if affecting timeline)
 - API docs (if changing endpoints)
@@ -568,6 +592,7 @@ When making changes, update:
 ## Recognition
 
 Contributors will be recognized in:
+
 - CONTRIBUTORS.md file
 - GitHub contributors page
 - Project acknowledgments

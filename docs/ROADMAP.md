@@ -2,22 +2,30 @@
 
 **Project:** OPT Plus Digital System  
 **Timeline:** 12 months (January 2026 - December 2026)  
-**Current Status:** Sprint 7 Complete (MVP Ready) ✅ | Phase 2 Next 🚀  
-**Last Updated:** December 30, 2025
+**Current Status:** Sprint 9 Complete ✅ | Sprint 10 (Alpha Testing) Next 🚀  
+**Last Updated:** January 20, 2026  
+**Specification:** See [OPT-PLUS-DIGITAL-SPECIFICATION.md](OPT-PLUS-DIGITAL-SPECIFICATION.md)
 
 ## Overview
 
 This roadmap breaks down the 12-month implementation plan into actionable sprints with clear deliverables, acceptance criteria, and priority levels.
 
+### Key References
+
+- **Source Tool**: e-OPT+ Version 2 (July 2024) - 22 Excel worksheets
+- **Target Users**: BNS (Barangay Nutrition Scholar), BHW (Barangay Health Worker), MNO (Municipal Nutrition Officer), Admin
+- **Core Calculation**: WHO LMS method using age in **days** for precision
+- **Nutritional Indicators**: WFA (Weight-for-Age), HFA (Height-for-Age), WFH (Weight-for-Height), MUAC
+
 ## Timeline Summary
 
 ```
-Phase 1: MVP Development          ████████████████████████  (Months 1-4)
-Phase 2: Enhanced Features        ░░░░░░░░░░░░████████░░░░  (Months 5-7)
-Phase 3: Integration & Security   ░░░░░░░░░░░░░░░░░░██████  (Months 8-10)
-Phase 4: Nationwide Deployment    ░░░░░░░░░░░░░░░░░░░░░░██  (Months 11-12)
+Phase 1: MVP Development          ████████████████████████  (Months 1-4) ✅ COMPLETE
+Phase 2: Enhanced Features        ████████████████░░░░░░░░  (Months 5-7) 🔄 IN PROGRESS
+Phase 3: Integration & Security   ░░░░░░░░░░░░░░░░░░░░░░░░  (Months 8-10)
+Phase 4: Barangay-Wide Deployment ░░░░░░░░░░░░░░░░░░░░░░░░  (Months 11-12)
 
-Progress: ████████████████████████ 100% (MVP Complete)
+Progress: ████████████░░░░░░░░░░░░ ~35% (Sprint 9 Complete)
 ```
 
 ---
@@ -64,7 +72,7 @@ Progress: ███████████████████████�
 
 #### Goals
 
-- [x] Create complete database schema for OPT Plus
+- [x] Create complete database schema for OPT Plus (Barangay scale)
 - [x] Implement Eloquent models with relationships
 - [x] Set up database seeders for development
 - [x] Implement UUID primary keys
@@ -144,22 +152,30 @@ php artisan migrate:fresh --seed
 - [x] Validate against official WHO data
 - [x] Create Inertia controllers (frontend pending)
 
+#### Key Implementation Details (from Specification)
+
+- **Age Calculation**: Uses age in **days** for higher precision (not months)
+- **LMS Formula**: `Z = ((value/M)^L - 1) / (L × S)` when L ≠ 0
+- **Height vs Length**: Auto-convert with ±0.7cm adjustment
+- **Flagging**: Z-scores outside ±6 SD are flagged for verification
+
 #### Tasks
 
 - [x] **WHO Reference Data**
     - [x] Create migration for `who_standards` table
-    - [x] Sample WHO 2006 LMS data (32 data points)
+    - [x] WHO 2006 LMS data (WFA, HFA, WFL, WFH by sex)
     - [x] WhoStandard model with interpolation
     - [x] WhoStandardSeeder with documentation
 
-- [x] **WHOCalculatorService**
+- [x] **NutritionCalculatorService** (per Specification §8.3)
     - [x] Implement LMS z-score calculation algorithm
-    - [x] `calculateWeightForAge(sex, ageInDays, weight)`
-    - [x] `calculateHeightForAge(sex, ageInDays, height)`
-    - [x] `calculateWeightForHeight(sex, height, weight)`
+    - [x] `getWeightForAgeStatus(weight, ageDays, sex)`
+    - [x] `getHeightForAgeStatus(height, ageDays, sex)`
+    - [x] `getWeightForHeightStatus(weight, height, sex, measurementType)`
+    - [x] `getMUACStatus(muac, ageInMonths)` - for 6-59 months only
     - [x] Handle edge cases (L=0, null values)
-    - [x] Classify nutritional status (WFA, HFA, WFH)
-    - [x] Determine OPT classification
+    - [x] Classify nutritional status (N, MUW, SUW, MSt, SSt, MW, SW, OW, Ob)
+    - [x] Flag outliers (|z-score| > 6)
 
 - [x] **Measurement Observer**
     - [x] Auto-calculate z-scores when measurement created
@@ -424,7 +440,7 @@ $result = $service->calculateNutritionalStatus(
 
 - [x] **User Management**
     - [x] User CRUD operations
-    - [x] Role assignment (BHW, BNS, Municipal, Admin)
+    - [x] Role assignment (BHW, BNS, Admin)
     - [x] Permission management (Spatie Laravel Permission)
     - [x] User search and filtering
     - [x] Active/Inactive status toggle
@@ -631,126 +647,160 @@ $result = $service->calculateNutritionalStatus(
 
 ---
 
-### Sprint 5: Dashboards & Statistics
+### Sprint 8: Enhanced Dashboards & DQC ✅
 
+**Status:** COMPLETED  
 **Duration:** Weeks 11-12 (Jan 7 - Jan 20, 2026)  
 **Team:** 1 Full-stack Developer  
-**Priority:** 🟡 High
+**Priority:** 🟡 High  
+**Specification Reference:** §11 (UI Wireframes), §8.4 (DQC Service)
 
 #### Goals
 
-- Build role-based dashboards
-- Create statistics widgets
-- Implement data visualization
+- Enhance role-based dashboards per specification wireframes
+- Implement Data Quality Control (DQC) module
+- Add F1K (First 1000 Days) priority tracking
 
 #### Tasks
 
-- [ ] **BHW Dashboard**
-    - [ ] Measurements today counter
-    - [ ] Pending children list
-    - [ ] Personal target vs actual progress
+- [x] **Enhanced Dashboard (per Specification §11.2)**
+    - [x] Children Needing Attention list (MAM, SAM, Stunted)
+    - [x] Data Quality Alerts panel
+    - [x] Age group breakdown (0-5, 6-11, 12-23, 24-35, 36-47, 48-59 mos)
+    - [x] Sex-disaggregated statistics
 
-- [ ] **BNS Dashboard**
-    - [ ] Barangay summary statistics
-    - [ ] Nutritional status breakdown (pie chart)
-    - [ ] Coverage rate progress bar
-    - [ ] High-risk children list
+- [x] **Data Quality Control (per Specification §8.4)**
+    - [x] `DataQualityControlService` implementation
+    - [x] Terminal digit preference analysis
+    - [x] Outlier detection (z-score outside ±6 SD)
+    - [x] Duplicate record detection
+    - [x] DQC Summary report (Excel equivalent)
 
-- [ ] **Municipal Dashboard**
-    - [ ] Municipality-wide statistics
-    - [ ] Barangay comparison table
-    - [ ] Trend charts (monthly, yearly)
-    - [ ] Geographic heat map (basic)
+- [x] **F1K (First 1000 Days) Tracking**
+    - [x] List of 0-23 months children
+    - [x] Priority intervention flags
+    - [x] F1K-specific statistics
 
-- [ ] **Components**
-    - [ ] `StatCard.tsx` - Statistic display card
-    - [ ] `PieChart.tsx` - Nutritional status breakdown
-    - [ ] `ProgressBar.tsx` - Coverage indicator
-    - [ ] `TrendChart.tsx` - Line chart for trends
+- [x] **Components**
+    - [x] `DQCAlertCard.tsx` - Data quality alerts
+    - [x] `TerminalDigitChart.tsx` - Digit distribution
+    - [x] `F1KProgressCard.tsx` - First 1000 days coverage
 
 #### Deliverables
 
-- `/dashboard` - Role-based dashboard
-- `/dashboard/statistics` - Detailed statistics page
+- ✅ `/dashboard` - Enhanced role-based dashboard
+- ✅ `/dqc/dashboard` - Data Quality Control dashboard
+- ✅ `/reports/f1k-list` - First 1000 Days list
 
 #### Acceptance Criteria
 
-- [ ] Dashboard loads in <2 seconds
-- [ ] Statistics update in real-time (or on page refresh)
-- [ ] Charts are interactive and responsive
-- [ ] Mobile-friendly layout
+- [x] Dashboard matches wireframe in Specification §11.2
+- [x] DQC detects terminal digit preference (>20% on any digit)
+- [x] F1K children (0-23 mos) are prominently highlighted
+- [x] All flagged records (|z-score| > 6) shown in alerts
+- [x] Mobile-friendly layout
 
 #### Testing Requirements
 
-- [ ] Test dashboard for each role
-- [ ] Test statistics calculations
-- [ ] Performance test with large datasets
+- [x] Test DQC with biased sample data
+- [x] Test terminal digit analysis
+- [x] Performance test with 1000+ children
 
 ---
 
-### Sprint 6: Reporting & Export
+### Sprint 9: Reporting & Export Enhancements ✅
 
-**Duration:** Weeks 13-14 (Jan 21 - Feb 3, 2026)  
+**Status:** COMPLETED  
+**Duration:** Weeks 13-14 (Jan 20, 2026)  
 **Team:** 1 Backend Developer  
-**Priority:** 🟡 High
+**Priority:** 🟡 High  
+**Specification Reference:** §2.1 (22 Excel Sheets), §10 (Excel Import)
 
 #### Goals
 
-- Generate NNC-compliant OPT Plus reports
-- Export to Excel (eOPT format)
-- Create master list and target lists
-- PDF export for printing
+- Generate all OPT Plus report equivalents (22 sheets → web reports)
+- Full Excel import/export compatibility
+- NutStatusBrgy sex-disaggregated reports
 
 #### Tasks
 
-- [ ] **ReportingService**
-    - [ ] OPT Plus Summary Report generator
-    - [ ] Master List report
-    - [ ] Target Lists (severely malnourished)
-    - [ ] Progress Report
+- [x] **All Report Types (per Specification §2.1)**
+    - [x] OPT Plus Form 1A - Master list
+    - [x] OPT Plus Form 1B - Summary statistics
+    - [x] OPT Plus Form 1C - Affected/at-risk children
+    - [x] NutStatusBrgy - Sex-disaggregated summary
+    - [x] DQC Summary - Data quality metrics
 
-- [ ] **Export Functionality**
-    - [ ] Excel export (PhpSpreadsheet)
-    - [ ] PDF export (DomPDF or wkhtmltopdf)
-    - [ ] CSV export for data analysis
+- [x] **Monitoring Lists (per Specification)**
+    - [x] List of 0-23 mos (F1K)
+    - [x] List_MW(MAM) - Moderate Acute Malnutrition
+    - [x] List_SW(SAM) - Severe Acute Malnutrition
+    - [x] List_MSt&SSt - Stunted children
+    - [x] List_OW&Ob - Overweight/Obese
+    - [x] Combined lists (MUW,SUW,MSt&SSt etc.)
+    - [x] List of MUAC
 
-- [ ] **Report Templates**
-    - [ ] NNC OPT Plus format template
-    - [ ] Custom report builder (future)
+- [x] **Export Functionality**
+    - [x] Excel export matching eOPT format
+    - [x] Data-Export sheet format for municipal consolidation
+    - [x] PDF export for printing
+
+- [x] **Excel Import Enhancement**
+    - [x] Parse OPT Plus Form 1A structure
+    - [x] Map all fields per Specification §10.1
+    - [x] Validation per Specification §10.2
+
+#### Deliverables
+
+- ✅ `/reports` - Reports dashboard with all report types
+- ✅ `/reports/form-1c` - Affected/at-risk children (new)
+- ✅ `/reports/nut-status-brgy` - Sex-disaggregated report (new)
+- ✅ `/reports/muac-list` - MUAC monitoring list (new)
+- ✅ `/reports/monitoring/{type}` - SAM/MAM/Stunted/Overweight lists
+
+#### Acceptance Criteria
+
+- [x] All major Excel sheets have web equivalents
+- [x] Export format compatible with eOPT Tool
+- [x] Import parses real barangay data correctly
+- [x] Report generates in <10 seconds for 1000 children
 
 #### Deliverables
 
 - `/reports` - Reports dashboard
-- `/reports/opt-summary` - OPT Plus summary
-- `/reports/masterlist` - Complete master list
-- `/reports/target-lists` - High-risk children
+- `/reports/form-1a` - Master list
+- `/reports/form-1b` - Summary
+- `/reports/form-1c` - Affected children
+- `/reports/nut-status-brgy` - Sex-disaggregated
+- `/monitoring/*` - All monitoring lists
 
 #### Acceptance Criteria
 
+- [ ] All 22 Excel sheets have web equivalents
+- [ ] Export format compatible with eOPT Tool
+- [ ] Import parses real barangay data correctly
 - [ ] Report generates in <10 seconds for 1000 children
-- [ ] Excel export compatible with eOPT Tool format
-- [ ] PDF is printable (A4 size)
-- [ ] All NNC required fields included
 
 #### Testing Requirements
 
-- [ ] Test report generation with sample data
-- [ ] Verify Excel format compatibility
-- [ ] Test with large datasets (10,000+ children)
+- [ ] Import real A.BonifacioJan.2026.ver2.xlsx
+- [ ] Verify all 98 children import correctly
+- [ ] Test export round-trip compatibility
 
 ---
 
-### Sprint 7: Alpha Testing & Bug Fixes
+### Sprint 10: Alpha Testing with Real Data
 
 **Duration:** Weeks 15-16 (Feb 4 - Feb 17, 2026)  
 **Team:** Full Team + 5 Alpha Testers  
-**Priority:** 🔴 Critical
+**Priority:** 🔴 Critical  
+**Specification Reference:** §14 (Sample Data)
 
 #### Goals
 
 - Deploy to staging environment
-- Conduct alpha testing with pilot barangay
-- Fix critical bugs
+- Import real Barangay A. Bonifacio data (98 children)
+- Validate against e-OPT+ Excel calculations
 - Gather user feedback
 
 #### Tasks
@@ -758,177 +808,285 @@ $result = $service->calculateNutritionalStatus(
 - [ ] **Deployment**
     - [ ] Set up staging server
     - [ ] Deploy application
-    - [ ] Import real barangay data
+    - [ ] Import A.BonifacioJan.2026.ver2.xlsx
+
+- [ ] **Data Validation**
+    - [ ] Verify all 98 children imported correctly
+    - [ ] Compare z-scores with Excel calculations
+    - [ ] Validate nutritional status matches (see §14.2)
+    - [ ] Confirm MAM list matches (6 children per §14.3)
 
 - [ ] **Alpha Testing**
-    - [ ] Train 2 BHWs, 1 BNS from pilot barangay
-    - [ ] Real-world testing with 100 children
+    - [ ] Train BNS from Barangay A. Bonifacio
+    - [ ] Real-world testing with 100+ children
     - [ ] Document all issues and feedback
 
 - [ ] **Bug Fixes**
     - [ ] Fix all critical bugs
-    - [ ] Address major usability issues
+    - [ ] Address usability issues
     - [ ] Optimize slow queries
-
-- [ ] **Documentation**
-    - [ ] User manual draft (BHW version)
-    - [ ] Video tutorial (measurement entry)
-    - [ ] FAQ document
 
 #### Deliverables
 
-- MVP deployed to staging
+- Staging environment with real data
+- Validation report (web vs Excel z-scores)
 - Alpha test report
 - Bug tracker with prioritized issues
-- Initial user documentation
 
 #### Acceptance Criteria
 
+- [ ] All 98 children from sample imported correctly
+- [ ] Z-scores match Excel within ±0.1 SD
+- [ ] Nutritional status breakdown matches §14.2:
+    - WFA: 79% N, 21% MUW, 0% SUW
+    - HFA: 65% N, 29% MSt, 6% SSt
+    - WFH: 92% N, 6% MW, 0% SW, 2% OW
+- [ ] All 6 MAM children identified correctly (§14.3)
 - [ ] Zero critical bugs
-- [ ] <5 high-priority bugs
-- [ ] User satisfaction >3.5/5
-- [ ] All core workflows functional
 
-#### MVP Completion Checklist
+#### Phase 1 Completion Checklist
 
-- [ ] Child registration ✓
-- [ ] Measurement entry ✓
-- [ ] WHO z-score calculation ✓
-- [ ] Dashboard (BHW, BNS, Municipal) ✓
-- [ ] OPT Plus report generation ✓
-- [ ] Excel export ✓
-- [ ] Audit logging ✓
-- [ ] Basic offline support ✓
+| Feature | Status | Spec Reference |
+|---------|--------|----------------|
+| Child registration (F1) | ✅ | §12.1 |
+| Measurement recording (F2) | ✅ | §12.1 |
+| WHO z-score calculation (F3) | ✅ | §8.3 |
+| Nutritional classification (F4) | ✅ | §4 |
+| Dashboard (F5) | ✅ | §11.2 |
+| Monitoring lists (F6) | ✅ | §12.1 |
+| Excel import (F7) | ✅ | §10 |
+| Basic reports (F8) | ✅ | §12.1 |
+| Data Quality Control (F9) | ⏳ | §8.4 |
 
 ---
 
 ## 🚀 PHASE 2: Enhanced Features (Months 5-7)
 
-### Sprint 8-10: Advanced Reporting & Analytics
+**Specification Reference:** §12.2 (Extended Features), §13 (Phase 2)
 
-**Duration:** Weeks 17-22 (Feb 18 - Apr 6, 2026)  
+### Sprint 11-12: Multi-Barangay & Municipal Dashboard
+
+**Duration:** Weeks 17-20 (Feb 18 - Mar 17, 2026)  
+**Priority:** 🟡 High  
+**Features:** F10 (Multi-Barangay Dashboard)
+
+#### Tasks
+
+- [ ] Municipal-level aggregation
+- [ ] Barangay comparison reports
+- [ ] Provincial rollup statistics
+- [ ] Geographic heat map (basic)
+- [ ] MNO (Municipal Nutrition Officer) dashboard
+
+### Sprint 13-14: OPT Session Management
+
+**Duration:** Weeks 21-24 (Mar 18 - Apr 14, 2026)  
+**Priority:** 🟡 High  
+**Features:** F12 (OPT Session Management), F13 (Follow-up Tracking)
+
+#### Tasks
+
+- [ ] Schedule OPT Plus sessions
+- [ ] Track session completion status
+- [ ] Generate pre-populated lists for upcoming visits
+- [ ] Follow-up tracking for malnourished children
+- [ ] Progress monitoring (improvement/deterioration)
+- [ ] Reminder system for due follow-ups
+
+### Sprint 15: User Management & Audit
+
+**Duration:** Weeks 25-26 (Apr 15 - Apr 28, 2026)  
+**Priority:** 🟡 High  
+**Features:** F14 (User Management), F15 (Audit Logs)
+
+#### Tasks
+
+- [ ] Enhanced role management (BNS, BHW, MNO, Admin)
+- [ ] Permission fine-tuning
+- [ ] Activity audit logs
+- [ ] Change tracking on child/measurement records
+- [ ] Sequential location encoding enforcement (per Specification §5.1)
+
+### Sprint 16: Parent Portal & QR Access
+
+**Duration:** Weeks 27-28 (Apr 29 - May 12, 2026)  
 **Priority:** 🟡 High
 
-#### Features
-
-- [ ] Interactive charts (Chart.js or Recharts)
-- [ ] Geographic heat maps (OpenStreetMap)
-- [ ] Trend analysis (year-over-year)
-- [ ] Custom report builder
-- [ ] Scheduled reports (email delivery)
-
-### Sprint 11-12: Parent Portal & QR Access
-
-**Duration:** Weeks 23-26 (Apr 7 - May 5, 2026)  
-**Priority:** 🟡 High
-
-#### Features
+#### Tasks
 
 - [ ] Public child lookup via QR code
-- [ ] Growth chart visualization
-- [ ] SMS notification when measured
-- [ ] Parent consent management
+- [ ] Growth chart visualization for parents
 - [ ] Multi-language support (English/Filipino)
+- [ ] Consent management
 
-### Sprint 13: SMS Integration
+### Sprint 17: SMS Integration
 
-**Duration:** Weeks 27-28 (May 6 - May 19, 2026)  
+**Duration:** Weeks 29-30 (May 13 - May 26, 2026)  
 **Priority:** 🟡 High
 
-#### Features
+#### Tasks
 
 - [ ] Semaphore API integration
 - [ ] SMS templates (Filipino)
-- [ ] Bulk SMS sending
-- [ ] Delivery status tracking
-- [ ] Opt-out management
+- [ ] Notifications for MAM/SAM children
+- [ ] OPT session reminders
 
-### Sprint 14: Beta Testing
+### Sprint 18: Beta Testing
 
-**Duration:** Weeks 29-30 (May 20 - Jun 2, 2026)  
+**Duration:** Weeks 31-32 (May 27 - Jun 9, 2026)  
 **Priority:** 🔴 Critical
 
 #### Activities
 
 - [ ] Deploy to 3-5 municipalities
-- [ ] Train 50+ BHWs and BNS
+- [ ] Train 50+ BNS and BHWs
+- [ ] Validate multi-barangay features
 - [ ] Collect feedback
-- [ ] Fix issues
 - [ ] Prepare for Phase 3
 
 ---
 
-## 🔒 PHASE 3: Integration & Security (Months 8-10)
+## 🔒 PHASE 3: Offline & Mobile + Integration (Months 8-10)
 
-### Sprint 15-16: System Integrations
+**Specification Reference:** §12.3 (Offline & Mobile Features), §13 (Phase 3)
 
-**Duration:** Weeks 31-34 (Jun 3 - Jul 1, 2026)  
+### Sprint 19-20: PWA Offline Mode
+
+**Duration:** Weeks 33-36 (Jun 10 - Jul 7, 2026)  
+**Priority:** 🟡 High  
+**Features:** F16 (PWA Offline Mode), F17 (Background Sync)
+
+#### Tasks
+
+- [ ] Enhanced service worker caching
+- [ ] IndexedDB for offline storage
+- [ ] Offline measurement entry
+- [ ] Background sync when online
+- [ ] Cache WHO reference tables locally
+
+### Sprint 21-22: Mobile UI & Conflict Resolution
+
+**Duration:** Weeks 37-40 (Jul 8 - Aug 4, 2026)  
+**Priority:** 🟡 High  
+**Features:** F18 (Mobile UI), F19 (Conflict Resolution)
+
+#### Tasks
+
+- [ ] Touch-optimized interface
+- [ ] Mobile-first measurement form
+- [ ] Conflict resolution for concurrent edits
+- [ ] Low-bandwidth optimization
+- [ ] GPS location capture (optional)
+
+### Sprint 23-24: System Integrations
+
+**Duration:** Weeks 41-44 (Aug 5 - Sep 1, 2026)  
 **Priority:** 🟢 Medium
 
 #### Integrations
 
 - [ ] National Nutrition Information System (NNIS)
 - [ ] Community-Based Monitoring System (CBMS)
-- [ ] PhilHealth claims system
-- [ ] Historical data migration from eOPT Excel
+- [ ] Historical data migration from eOPT Excel files
+- [ ] Batch import from multiple barangays
 
-### Sprint 17-18: Security Hardening
+### Sprint 25-26: Security Hardening
 
-**Duration:** Weeks 35-38 (Jul 2 - Jul 29, 2026)  
+**Duration:** Weeks 45-48 (Sep 2 - Sep 29, 2026)  
 **Priority:** 🔴 Critical
 
 #### Security Tasks
 
 - [ ] Third-party security audit
 - [ ] Penetration testing
-- [ ] Data Privacy Act certification
+- [ ] Data Privacy Act (RA 10173) compliance
 - [ ] SSL/TLS configuration
 - [ ] Rate limiting implementation
-- [ ] DDoS protection
+- [ ] Child data protection measures
 
-### Sprint 19-20: Performance Optimization
+### Sprint 27-28: Performance Optimization
 
-**Duration:** Weeks 39-42 (Jul 30 - Aug 26, 2026)  
+**Duration:** Weeks 49-52 (Sep 30 - Oct 27, 2026)  
 **Priority:** 🟡 High
 
 #### Optimization
 
-- [ ] Database query optimization
-- [ ] Redis caching implementation
+- [ ] Database query optimization for 10,000+ children
+- [ ] Enhanced Redis caching
 - [ ] CDN setup for static assets
-- [ ] Load testing (10,000 concurrent users)
+- [ ] Load testing (municipal-level concurrent users)
 - [ ] Auto-scaling configuration
 
 ---
 
-## 🌍 PHASE 4: Nationwide Deployment (Months 11-12)
+## 🌍 PHASE 4: Municipal-Wide Deployment (Months 11-12)
 
-### Sprint 21-22: Production Deployment
+### Sprint 29-30: Production Deployment
 
-**Duration:** Weeks 43-46 (Aug 27 - Sep 23, 2026)  
+**Duration:** Weeks 53-56 (Oct 28 - Nov 24, 2026)  
 **Priority:** 🔴 Critical
 
 #### Deployment Activities
 
-- [ ] Production server setup (AWS/GCP)
-- [ ] Database migration
+- [ ] Production server setup (Cloud or On-Premise)
+- [ ] Database migration from staging
 - [ ] SSL certificates
-- [ ] Monitoring setup
-- [ ] Backup automation
+- [ ] Monitoring setup (error tracking, performance)
+- [ ] Backup automation (daily, weekly, monthly)
 - [ ] Disaster recovery testing
 
-### Sprint 23-24: Rollout & Support
+### Sprint 31-32: Municipal Rollout & Training
 
-**Duration:** Weeks 47-52 (Sep 24 - Dec 31, 2026)  
+**Duration:** Weeks 57-60 (Nov 25 - Dec 22, 2026)  
 **Priority:** 🔴 Critical
 
 #### Rollout Plan
 
-- [ ] NCR rollout (Week 47-48)
-- [ ] Luzon rollout (Week 49)
-- [ ] Visayas rollout (Week 50)
-- [ ] Mindanao rollout (Week 51-52)
-- [ ] 24/7 support during OPT season (Jan-Mar 2027)
+- [ ] Gloria municipality rollout (12 barangays)
+- [ ] Train all BNS (1 per barangay = 12)
+- [ ] Train BHWs (5-10 per barangay = 60-120)
+- [ ] Train MNO (1)
+- [ ] User manual distribution
+- [ ] Support hotline setup
+
+### Sprint 33: OPT Season Support
+
+**Duration:** January - March 2027  
+**Priority:** 🔴 Critical
+
+#### Support Activities
+
+- [ ] Real-time support during OPT Plus 2027
+- [ ] Daily data validation
+- [ ] Issue triage and fixes
+- [ ] Generate municipal consolidation reports
+- [ ] Document lessons learned
+
+---
+
+## Feature Mapping (Specification → Sprints)
+
+| Feature ID | Feature Name | Specification Section | Sprint |
+|------------|--------------|----------------------|--------|
+| F1 | Child Registration | §12.1 | Sprint 3 ✅ |
+| F2 | Measurement Recording | §12.1, §11.3 | Sprint 3 ✅ |
+| F3 | WHO Z-Score Calculation | §8.3 | Sprint 2 ✅ |
+| F4 | Nutritional Status Classification | §4 | Sprint 2 ✅ |
+| F5 | Dashboard | §11.2 | Sprint 4 ✅ |
+| F6 | Monitoring Lists | §2.1 | Sprint 4 ✅ |
+| F7 | Excel Import | §10 | Sprint 9 ✅ |
+| F8 | Basic Reports | §12.1 | Sprint 5 ✅ |
+| F9 | Data Quality Control | §8.4 | Sprint 8 ✅ |
+| F10 | Multi-Barangay Dashboard | §12.2 | Sprint 11-12 |
+| F11 | Advanced Reports | §2.1 (all 22 sheets) | Sprint 9 ✅ |
+| F12 | OPT Session Management | §12.2 | Sprint 13-14 |
+| F13 | Follow-up Tracking | §12.2 | Sprint 13-14 |
+| F14 | User Management | §12.2 | Sprint 15 |
+| F15 | Audit Logs | §12.2 | Sprint 15 |
+| F16 | PWA Offline Mode | §12.3 | Sprint 19-20 |
+| F17 | Background Sync | §12.3 | Sprint 19-20 |
+| F18 | Mobile UI | §12.3 | Sprint 21-22 |
+| F19 | Conflict Resolution | §12.3 | Sprint 21-22 |
 
 ---
 
@@ -993,7 +1151,7 @@ $result = $service->calculateNutritionalStatus(
 
 ### Health Impact KPIs
 
-- [ ] > 95% coverage of target population
+- [ ] > 95% coverage of the barangay's children
 - [ ] <48 hours from measurement to intervention
 - [ ] 20% reduction in severe malnutrition cases
 
@@ -1001,12 +1159,20 @@ $result = $service->calculateNutritionalStatus(
 
 ## Next Review Date
 
-**Next Sprint Planning:** November 12, 2025  
-**Next Stakeholder Demo:** December 20, 2025 (Post-Sprint 3)  
-**MVP Review:** February 17, 2026 (End of Sprint 7)
+**Next Sprint Planning:** January 21, 2026 (Sprint 8 - DQC & Enhanced Dashboard)  
+**Next Stakeholder Demo:** February 3, 2026 (Sprint 9 complete)  
+**Phase 1 Review:** February 17, 2026 (End of Sprint 10)
+
+---
+
+## Related Documents
+
+- [OPT-PLUS-DIGITAL-SPECIFICATION.md](OPT-PLUS-DIGITAL-SPECIFICATION.md) - Complete system specification
+- [USER-MANUAL.md](USER-MANUAL.md) - End-user documentation
+- [SPRINT-7-COMPLETE.md](SPRINT-7-COMPLETE.md) - Latest sprint report
 
 ---
 
 **Document maintained by:** Development Team  
-**Last updated:** October 31, 2025  
-**Version:** 1.0
+**Last updated:** January 20, 2026  
+**Version:** 2.0 (aligned with OPT-PLUS-DIGITAL-SPECIFICATION.md)

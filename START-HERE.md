@@ -10,7 +10,7 @@
 | **Alpha Testing** | Jan 2026              | 🎯 NEXT    | Real-world pilot            |
 | **Phase 2**       | Feb - May 2026        | 📋 Planned | Advanced Analytics & Portal |
 | **Phase 3**       | Jun - Aug 2026        | 📋 Planned | Integration & Security      |
-| **Phase 4**       | Sep - Dec 2026        | 📋 Planned | Nationwide deployment       |
+| **Phase 4**       | Sep - Dec 2026        | 📋 Planned | Barangay-wide deployment    |
 
 ## 🚀 What to Do Right Now
 
@@ -221,7 +221,6 @@ Sprint 1 is done! Next is WHO Growth Standards Engine. See [Sprint 2 tasks](docs
 
 - Barangay Health Workers (BHW) - Field data collection
 - Barangay Nutrition Scholars (BNS) - Data management
-- Municipal Health Officers - Program monitoring
 - Parents - View child growth records
 
 ### What makes this project unique?
@@ -230,7 +229,7 @@ Sprint 1 is done! Next is WHO Growth Standards Engine. See [Sprint 2 tasks](docs
 - **Mobile-optimized** - BHWs use smartphones in the field
 - **WHO-compliant** - Automated growth standards calculations
 - **Data Privacy Act compliant** - Full encryption and audit trails
-- **Real impact** - Helps 11M+ Filipino children
+- **Real impact** - Helps hundreds of children in the barangay
 
 ### How can I contribute?
 

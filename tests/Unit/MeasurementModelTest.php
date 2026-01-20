@@ -5,11 +5,14 @@ use App\Models\Measurement;
 test('measurement has fillable attributes', function () {
     $fillable = [
         'child_id',
+        'opt_session_id',
         'measurement_date',
         'age_in_months',
+        'age_in_days',
         'weight_kg',
         'height_length_cm',
         'measurement_type',
+        'measurement_method',
         'weight_for_age_zscore',
         'height_for_age_zscore',
         'weight_for_height_zscore',
@@ -18,6 +21,13 @@ test('measurement has fillable attributes', function () {
         'weight_for_height_status',
         'opt_classification',
         'muac_cm',
+        'has_edema',
+        'edema_grade',
+        'has_disability',
+        'disability_notes',
+        'is_flagged',
+        'flag_reason',
+        'is_overaged',
         'notes',
         'measured_by_user_id',
         'synced_at',
@@ -33,12 +43,17 @@ test('measurement casts attributes correctly', function () {
 
     expect($casts)->toHaveKey('measurement_date', 'date')
         ->and($casts)->toHaveKey('age_in_months', 'integer')
+        ->and($casts)->toHaveKey('age_in_days', 'integer')
         ->and($casts)->toHaveKey('weight_kg', 'decimal:2')
         ->and($casts)->toHaveKey('height_length_cm', 'decimal:2')
         ->and($casts)->toHaveKey('weight_for_age_zscore', 'decimal:2')
         ->and($casts)->toHaveKey('height_for_age_zscore', 'decimal:2')
         ->and($casts)->toHaveKey('weight_for_height_zscore', 'decimal:2')
         ->and($casts)->toHaveKey('muac_cm', 'decimal:2')
+        ->and($casts)->toHaveKey('has_edema', 'boolean')
+        ->and($casts)->toHaveKey('has_disability', 'boolean')
+        ->and($casts)->toHaveKey('is_flagged', 'boolean')
+        ->and($casts)->toHaveKey('is_overaged', 'boolean')
         ->and($casts)->toHaveKey('synced_at', 'datetime');
 });
 
@@ -64,10 +79,10 @@ test('measurement belongs to user who measured', function () {
 });
 
 test('measurement identifies malnourished status', function () {
-    $severelyMalnourished = new Measurement(['opt_classification' => 'severely_malnourished']);
+    $severelyMalnourished = new Measurement(['opt_classification' => 'sam']);
     expect($severelyMalnourished->isMalnourished())->toBeTrue();
 
-    $moderatelyMalnourished = new Measurement(['opt_classification' => 'moderately_malnourished']);
+    $moderatelyMalnourished = new Measurement(['opt_classification' => 'mam']);
     expect($moderatelyMalnourished->isMalnourished())->toBeTrue();
 
     $normal = new Measurement(['opt_classification' => 'normal']);
@@ -78,10 +93,10 @@ test('measurement identifies malnourished status', function () {
 });
 
 test('measurement identifies severely malnourished status', function () {
-    $severelyMalnourished = new Measurement(['opt_classification' => 'severely_malnourished']);
+    $severelyMalnourished = new Measurement(['opt_classification' => 'sam']);
     expect($severelyMalnourished->isSeverelyMalnourished())->toBeTrue();
 
-    $moderatelyMalnourished = new Measurement(['opt_classification' => 'moderately_malnourished']);
+    $moderatelyMalnourished = new Measurement(['opt_classification' => 'mam']);
     expect($moderatelyMalnourished->isSeverelyMalnourished())->toBeFalse();
 
     $normal = new Measurement(['opt_classification' => 'normal']);

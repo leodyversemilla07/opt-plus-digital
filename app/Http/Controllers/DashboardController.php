@@ -36,6 +36,15 @@ class DashboardController extends Controller
         // Get monthly trends
         $monthlyTrends = $this->analyticsService->getMonthlyTrends();
 
+        // Get age group breakdown
+        $ageGroupBreakdown = $this->analyticsService->getAgeGroupBreakdown();
+
+        // Get sex-disaggregated statistics
+        $sexDisaggregated = $this->analyticsService->getSexDisaggregatedStats();
+
+        // Get F1K statistics (0-23 months)
+        $f1kStatistics = $this->analyticsService->getF1KStatistics();
+
         // Get barangay comparison (for municipal/admin users)
         $barangayComparison = [];
         if (in_array($user->role ?? 'bhw', ['municipal', 'admin'])) {
@@ -48,6 +57,9 @@ class DashboardController extends Controller
             'nutritionalStatus' => $nutritionalStatus,
             'highRiskChildren' => $highRiskChildren,
             'monthlyTrends' => $monthlyTrends,
+            'ageGroupBreakdown' => $ageGroupBreakdown,
+            'sexDisaggregated' => $sexDisaggregated,
+            'f1kStatistics' => $f1kStatistics,
             'barangayComparison' => $barangayComparison,
         ]);
     }

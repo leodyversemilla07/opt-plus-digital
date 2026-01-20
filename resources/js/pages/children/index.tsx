@@ -1,10 +1,15 @@
-import { Head, Link, router } from '@inertiajs/react';
-import { useState, useEffect } from 'react';
-import AppLayout from '@/layouts/app-layout';
-import { create as childrenCreate, show as childrenShow } from '@/routes/children';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { type BreadcrumbItem } from '@/types';
+import {
+    Pagination,
+    PaginationContent,
+    PaginationEllipsis,
+    PaginationItem,
+    PaginationLink,
+    PaginationNext,
+    PaginationPrevious,
+} from '@/components/ui/pagination';
 import {
     Select,
     SelectContent,
@@ -20,19 +25,17 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
-import {
-    Pagination,
-    PaginationContent,
-    PaginationEllipsis,
-    PaginationItem,
-    PaginationLink,
-    PaginationNext,
-    PaginationPrevious,
-} from '@/components/ui/pagination';
-import { Plus, Search, Download } from 'lucide-react';
-import { offlineDB } from '@/lib/offline-db';
 import { useOnlineStatus } from '@/hooks/use-online-status';
+import AppLayout from '@/layouts/app-layout';
+import { offlineDB } from '@/lib/offline-db';
+import {
+    create as childrenCreate,
+    show as childrenShow,
+} from '@/routes/children';
+import { type BreadcrumbItem } from '@/types';
+import { Head, Link, router } from '@inertiajs/react';
+import { Download, Plus, Search } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 interface Child {
     id: string;
@@ -58,6 +61,7 @@ interface Filters {
     search?: string;
     barangay_id?: string;
     is_indigenous_people?: boolean;
+    f1k?: boolean;
 }
 
 interface PaginatedChildren {
@@ -84,8 +88,9 @@ export default function Index({ children, filters, barangays }: Props) {
     const [search, setSearch] = useState(filters.search || '');
     const [barangayId, setBarangayId] = useState(filters.barangay_id || 'all');
     const [isIndigenous, setIsIndigenous] = useState(
-        filters.is_indigenous_people?.toString() || 'all'
+        filters.is_indigenous_people?.toString() || 'all',
     );
+    const [f1kOnly, setF1kOnly] = useState(filters.f1k || false);
     const [cachedCount, setCachedCount] = useState(0);
     const [isCaching, setIsCaching] = useState(false);
 
@@ -95,7 +100,11 @@ export default function Index({ children, filters, barangays }: Props) {
             if (isOnline && children.data.length > 0) {
                 try {
                     // Children from backend include first_name, last_name, etc.
-                    await offlineDB.cacheChildren(children.data as unknown as Parameters<typeof offlineDB.cacheChildren>[0]);
+                    await offlineDB.cacheChildren(
+                        children.data as unknown as Parameters<
+                            typeof offlineDB.cacheChildren
+                        >[0],
+                    );
                     updateCachedCount();
                 } catch (error) {
                     console.error('Failed to cache children:', error);
@@ -124,9 +133,15 @@ export default function Index({ children, filters, barangays }: Props) {
         setIsCaching(true);
         try {
             // Children from backend include first_name, last_name, etc.
-            await offlineDB.cacheChildren(children.data as unknown as Parameters<typeof offlineDB.cacheChildren>[0]);
+            await offlineDB.cacheChildren(
+                children.data as unknown as Parameters<
+                    typeof offlineDB.cacheChildren
+                >[0],
+            );
             await updateCachedCount();
-            alert(`Successfully cached ${children.data.length} children for offline access`);
+            alert(
+                `Successfully cached ${children.data.length} children for offline access`,
+            );
         } catch (error) {
             console.error('Failed to cache all children:', error);
             alert('Failed to cache children. Please try again.');
@@ -141,12 +156,13 @@ export default function Index({ children, filters, barangays }: Props) {
             {
                 search,
                 barangay_id: barangayId !== 'all' ? barangayId : undefined,
-                is_indigenous_people: isIndigenous !== 'all' ? isIndigenous : undefined,
+                is_indigenous_people:
+                    isIndigenous !== 'all' ? isIndigenous : undefined,
             },
             {
                 preserveState: true,
                 preserveScroll: true,
-            }
+            },
         );
     };
 
@@ -182,7 +198,7 @@ export default function Index({ children, filters, barangays }: Props) {
                         <h1 className="text-3xl font-bold tracking-tight">
                             Children Registry
                         </h1>
-                        <p className="text-muted-foreground mt-1">
+                        <p className="mt-1 text-muted-foreground">
                             Total: {children.total} children registered
                             {cachedCount > 0 && (
                                 <span className="ml-2 text-blue-600 dark:text-blue-400">
@@ -299,8 +315,8 @@ export default function Index({ children, filters, barangays }: Props) {
                                         colSpan={7}
                                         className="text-center text-muted-foreground"
                                     >
-                                        No children found. Register a child
-                                        to get started.
+                                        No children found. Register a child to
+                                        get started.
                                     </TableCell>
                                 </TableRow>
                             ) : (
@@ -323,9 +339,7 @@ export default function Index({ children, filters, barangays }: Props) {
                                             </Badge>
                                         </TableCell>
                                         <TableCell>
-                                            {getAgeDisplay(
-                                                child.age_in_months
-                                            )}
+                                            {getAgeDisplay(child.age_in_months)}
                                         </TableCell>
                                         <TableCell className="font-mono text-sm">
                                             {child.family_serial_number}
@@ -342,7 +356,9 @@ export default function Index({ children, filters, barangays }: Props) {
                                         </TableCell>
                                         <TableCell>
                                             <Link
-                                                href={childrenShow.url(child.id)}
+                                                href={childrenShow.url(
+                                                    child.id,
+                                                )}
                                             >
                                                 <Button
                                                     variant="ghost"
@@ -374,67 +390,97 @@ export default function Index({ children, filters, barangays }: Props) {
                                             onClick={(e) => {
                                                 e.preventDefault();
                                                 if (children.links[0]?.url) {
-                                                    router.visit(children.links[0].url);
+                                                    router.visit(
+                                                        children.links[0].url,
+                                                    );
                                                 }
                                             }}
-                                            className={!children.links[0]?.url ? 'pointer-events-none opacity-50' : ''}
+                                            className={
+                                                !children.links[0]?.url
+                                                    ? 'pointer-events-none opacity-50'
+                                                    : ''
+                                            }
                                         />
                                     </PaginationItem>
 
                                     {/* Page Numbers */}
-                                    {children.links.slice(1, -1).map((link, index) => {
-                                        // Show first page, last page, current page, and pages around current
-                                        const pageNum = index + 1;
-                                        const currentPage = children.current_page;
-                                        const lastPage = children.last_page;
-                                        
-                                        // Show ellipsis logic
-                                        if (
-                                            pageNum === 1 || 
-                                            pageNum === lastPage ||
-                                            (pageNum >= currentPage - 1 && pageNum <= currentPage + 1)
-                                        ) {
-                                            return (
-                                                <PaginationItem key={index}>
-                                                    <PaginationLink
-                                                        href={link.url || '#'}
-                                                        isActive={link.active}
-                                                        onClick={(e) => {
-                                                            e.preventDefault();
-                                                            if (link.url) {
-                                                                router.visit(link.url);
+                                    {children.links
+                                        .slice(1, -1)
+                                        .map((link, index) => {
+                                            // Show first page, last page, current page, and pages around current
+                                            const pageNum = index + 1;
+                                            const currentPage =
+                                                children.current_page;
+                                            const lastPage = children.last_page;
+
+                                            // Show ellipsis logic
+                                            if (
+                                                pageNum === 1 ||
+                                                pageNum === lastPage ||
+                                                (pageNum >= currentPage - 1 &&
+                                                    pageNum <= currentPage + 1)
+                                            ) {
+                                                return (
+                                                    <PaginationItem key={index}>
+                                                        <PaginationLink
+                                                            href={
+                                                                link.url || '#'
                                                             }
-                                                        }}
-                                                    >
-                                                        {pageNum}
-                                                    </PaginationLink>
-                                                </PaginationItem>
-                                            );
-                                        } else if (
-                                            pageNum === currentPage - 2 ||
-                                            pageNum === currentPage + 2
-                                        ) {
-                                            return (
-                                                <PaginationItem key={index}>
-                                                    <PaginationEllipsis />
-                                                </PaginationItem>
-                                            );
-                                        }
-                                        return null;
-                                    })}
+                                                            isActive={
+                                                                link.active
+                                                            }
+                                                            onClick={(e) => {
+                                                                e.preventDefault();
+                                                                if (link.url) {
+                                                                    router.visit(
+                                                                        link.url,
+                                                                    );
+                                                                }
+                                                            }}
+                                                        >
+                                                            {pageNum}
+                                                        </PaginationLink>
+                                                    </PaginationItem>
+                                                );
+                                            } else if (
+                                                pageNum === currentPage - 2 ||
+                                                pageNum === currentPage + 2
+                                            ) {
+                                                return (
+                                                    <PaginationItem key={index}>
+                                                        <PaginationEllipsis />
+                                                    </PaginationItem>
+                                                );
+                                            }
+                                            return null;
+                                        })}
 
                                     {/* Next Button */}
                                     <PaginationItem>
                                         <PaginationNext
-                                            href={children.links[children.links.length - 1]?.url || '#'}
+                                            href={
+                                                children.links[
+                                                    children.links.length - 1
+                                                ]?.url || '#'
+                                            }
                                             onClick={(e) => {
                                                 e.preventDefault();
-                                                const lastLink = children.links[children.links.length - 1];
+                                                const lastLink =
+                                                    children.links[
+                                                        children.links.length -
+                                                            1
+                                                    ];
                                                 if (lastLink?.url) {
                                                     router.visit(lastLink.url);
                                                 }
                                             }}
-                                            className={!children.links[children.links.length - 1]?.url ? 'pointer-events-none opacity-50' : ''}
+                                            className={
+                                                !children.links[
+                                                    children.links.length - 1
+                                                ]?.url
+                                                    ? 'pointer-events-none opacity-50'
+                                                    : ''
+                                            }
                                         />
                                     </PaginationItem>
                                 </PaginationContent>

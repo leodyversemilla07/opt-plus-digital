@@ -3,6 +3,7 @@ import {
     NutritionalStatusCard,
     StatCard,
 } from '@/components/dashboard-cards';
+import F1KProgressCard from '@/components/dashboard-cards/f1k-progress-card';
 import { Button } from '@/components/ui/button';
 import {
     Card,
@@ -104,6 +105,27 @@ interface DashboardProps {
     highRiskChildren: HighRiskChild[];
     monthlyTrends: MonthlyTrend[];
     barangayComparison: BarangayData[];
+    ageGroupBreakdown: Record<string, number>;
+    sexDisaggregated: {
+        total: number;
+        male: number;
+        female: number;
+        male_mam: number;
+        male_sam: number;
+        male_stunted: number;
+        female_mam: number;
+        female_sam: number;
+        female_stunted: number;
+    };
+    f1kStatistics: {
+        total_children_0to23: number;
+        measured_children_0to23: number;
+        f1k_coverage: number;
+        male_f1k: number;
+        female_f1k: number;
+        malnourished_f1k: number;
+        stunted_f1k: number;
+    };
 }
 
 export default function Dashboard({
@@ -112,6 +134,9 @@ export default function Dashboard({
     highRiskChildren,
     monthlyTrends,
     barangayComparison,
+    ageGroupBreakdown,
+    sexDisaggregated,
+    f1kStatistics,
 }: DashboardProps) {
     const { auth } = usePage<SharedData>().props;
 
@@ -142,7 +167,9 @@ export default function Dashboard({
                             Nutrition monitoring overview for{' '}
                             <span className="font-bold text-primary">
                                 Barangay{' '}
-                                {(auth.user as any).barangay?.name ||
+                                {(
+                                    (auth.user as SharedData["auth"]["user"] & { barangay?: { name?: string } })
+                                ).barangay?.name ||
                                     'Assigned Area'}
                             </span>
                         </p>
@@ -161,11 +188,18 @@ export default function Dashboard({
                 </div>
 
                 {/* Statistics Cards */}
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
                     <StatCard
                         title="Total Children"
                         value={overallStats.total_children.toLocaleString()}
                         description="Target population"
+                        icon={<Users className="h-5 w-5 text-primary" />}
+                        className="border-l-4 border-l-primary shadow-md"
+                    />
+                    <StatCard
+                        title="F1K (0-23 mos)"
+                        value={f1kStatistics.total_children_0to23.toLocaleString()}
+                        description="First 1000 Days"
                         icon={<Users className="h-5 w-5 text-primary" />}
                         className="border-l-4 border-l-primary shadow-md"
                     />
@@ -196,6 +230,23 @@ export default function Dashboard({
 
                 {/* Main Content Grid */}
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                    {/* F1K Progress Card */}
+                    <div className="lg:col-span-2">
+                        <F1KProgressCard
+                            totalChildren0to23={
+                                f1kStatistics.total_children_0to23
+                            }
+                            measuredChildren0to23={
+                                f1kStatistics.measured_children_0to23
+                            }
+                            f1kCoverage={f1kStatistics.f1k_coverage}
+                            maleF1K={f1kStatistics.male_f1k}
+                            femaleF1K={f1kStatistics.female_f1k}
+                            malnourishedF1K={f1kStatistics.malnourished_f1k}
+                            stuntedF1K={f1kStatistics.stunted_f1k}
+                        />
+                    </div>
+
                     {/* Nutritional Status */}
                     <div className="lg:col-span-1">
                         <NutritionalStatusCard
@@ -223,7 +274,7 @@ export default function Dashboard({
                         <CardContent>
                             <ChartContainer
                                 config={chartConfig}
-                                className="h-[240px] w-full text-foreground"
+                                className="h-60 w-full text-foreground"
                             >
                                 <AreaChart data={trendChartData}>
                                     <CartesianGrid
@@ -257,6 +308,120 @@ export default function Dashboard({
                         </CardContent>
                     </Card>
                 </div>
+
+                {/* Age Group Breakdown */}
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2 text-foreground">
+                            <BarChart3 className="h-5 w-5 text-primary" />
+                            Age Distribution
+                        </CardTitle>
+                        <CardDescription>
+                            Children by age group (months)
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-6">
+                            {Object.entries(ageGroupBreakdown).map(
+                                ([group, count]) => (
+                                    <div
+                                        key={group}
+                                        className="flex flex-col items-center rounded-lg border bg-background p-3"
+                                    >
+                                        <p className="text-lg font-bold text-foreground">
+                                            {count}
+                                        </p>
+                                        <p className="text-xs text-muted-foreground">
+                                            {group}
+                                        </p>
+                                    </div>
+                                ),
+                            )}
+                        </div>
+                    </CardContent>
+                </Card>
+
+                {/* Sex-Disaggregated Stats */}
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2 text-foreground">
+                            <Users className="h-5 w-5 text-primary" />
+                            Sex-Disaggregated Statistics
+                        </CardTitle>
+                        <CardDescription>
+                            Nutritional status breakdown by sex
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="space-y-4">
+                            {/* Male Stats */}
+                            <div className="rounded-lg border bg-background p-3">
+                                <p className="mb-3 text-sm font-medium text-foreground">
+                                    Male Children ({sexDisaggregated.male})
+                                </p>
+                                <div className="grid grid-cols-3 gap-4">
+                                    <div>
+                                        <p className="text-xs text-muted-foreground">
+                                            MAM
+                                        </p>
+                                        <p className="text-lg font-bold text-foreground">
+                                            {sexDisaggregated.male_mam}
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <p className="text-xs text-muted-foreground">
+                                            SAM
+                                        </p>
+                                        <p className="text-lg font-bold text-foreground">
+                                            {sexDisaggregated.male_sam}
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <p className="text-xs text-muted-foreground">
+                                            Stunted
+                                        </p>
+                                        <p className="text-lg font-bold text-foreground">
+                                            {sexDisaggregated.male_stunted}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Female Stats */}
+                            <div className="rounded-lg border bg-background p-3">
+                                <p className="mb-3 text-sm font-medium text-foreground">
+                                    Female Children ({sexDisaggregated.female})
+                                </p>
+                                <div className="grid grid-cols-3 gap-4">
+                                    <div>
+                                        <p className="text-xs text-muted-foreground">
+                                            MAM
+                                        </p>
+                                        <p className="text-lg font-bold text-foreground">
+                                            {sexDisaggregated.female_mam}
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <p className="text-xs text-muted-foreground">
+                                            SAM
+                                        </p>
+                                        <p className="text-lg font-bold text-foreground">
+                                            {sexDisaggregated.female_sam}
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <p className="text-xs text-muted-foreground">
+                                            Stunted
+                                        </p>
+                                        <p className="text-lg font-bold text-foreground">
+                                            {sexDisaggregated.female_stunted}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </CardContent>
+                </Card>
 
                 {/* High-Risk Children */}
                 <div className="grid gap-6 lg:grid-cols-3">

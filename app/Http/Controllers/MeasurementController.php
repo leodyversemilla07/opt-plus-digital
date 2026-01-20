@@ -18,7 +18,7 @@ class MeasurementController extends Controller
     public function __construct(
         protected MeasurementService $measurementService
     ) {
-        $this->authorizeResource(Measurement::class, 'measurement');
+        // Authorization is handled per-method due to Laravel 12 compatibility
     }
 
     /**
@@ -26,6 +26,8 @@ class MeasurementController extends Controller
      */
     public function index(Child $child): Response
     {
+        $this->authorize('viewAny', Measurement::class);
+
         $measurements = $child->measurements()
             ->with('measuredBy:id,name')
             ->latest('measurement_date')
@@ -45,6 +47,8 @@ class MeasurementController extends Controller
      */
     public function create(Child $child): Response
     {
+        $this->authorize('create', Measurement::class);
+
         return Inertia::render('measurements/create', [
             'child' => $child->load('barangay'),
             'measurementType' => $this->measurementService->determineMeasurementType(
@@ -58,12 +62,19 @@ class MeasurementController extends Controller
      */
     public function store(Request $request, Child $child): RedirectResponse
     {
+        $this->authorize('create', Measurement::class);
+
         $validated = $request->validate([
             'measurement_date' => 'required|date|before_or_equal:today',
             'weight_kg' => 'required|numeric|min:1|max:30',
             'height_length_cm' => 'required|numeric|min:40|max:125',
             'measurement_type' => 'nullable|in:length,height',
+            'measurement_method' => 'nullable|in:weight_height,muac_only',
             'muac_cm' => 'nullable|numeric|min:10|max:20',
+            'has_edema' => 'nullable|boolean',
+            'edema_grade' => 'nullable|in:+1,+2,+3',
+            'has_disability' => 'nullable|boolean',
+            'disability_notes' => 'nullable|string|max:500',
             'notes' => 'nullable|string|max:500',
         ]);
 
@@ -100,6 +111,8 @@ class MeasurementController extends Controller
      */
     public function show(Child $child, Measurement $measurement): Response
     {
+        $this->authorize('view', $measurement);
+
         // Ensure measurement belongs to child
         abort_if($measurement->child_id !== $child->id, 404);
 
@@ -118,6 +131,8 @@ class MeasurementController extends Controller
      */
     public function edit(Child $child, Measurement $measurement): Response
     {
+        $this->authorize('update', $measurement);
+
         // Ensure measurement belongs to child
         abort_if($measurement->child_id !== $child->id, 404);
 
@@ -132,6 +147,8 @@ class MeasurementController extends Controller
      */
     public function update(Request $request, Child $child, Measurement $measurement): RedirectResponse
     {
+        $this->authorize('update', $measurement);
+
         // Ensure measurement belongs to child
         abort_if($measurement->child_id !== $child->id, 404);
 
@@ -140,7 +157,12 @@ class MeasurementController extends Controller
             'weight_kg' => 'sometimes|numeric|min:1|max:30',
             'height_length_cm' => 'sometimes|numeric|min:40|max:125',
             'measurement_type' => 'sometimes|in:length,height',
+            'measurement_method' => 'nullable|in:weight_height,muac_only',
             'muac_cm' => 'nullable|numeric|min:10|max:20',
+            'has_edema' => 'nullable|boolean',
+            'edema_grade' => 'nullable|in:+1,+2,+3',
+            'has_disability' => 'nullable|boolean',
+            'disability_notes' => 'nullable|string|max:500',
             'notes' => 'nullable|string|max:500',
         ]);
 
@@ -157,6 +179,8 @@ class MeasurementController extends Controller
      */
     public function destroy(Child $child, Measurement $measurement): RedirectResponse
     {
+        $this->authorize('delete', $measurement);
+
         // Ensure measurement belongs to child
         abort_if($measurement->child_id !== $child->id, 404);
 

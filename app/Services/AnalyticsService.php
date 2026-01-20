@@ -213,6 +213,175 @@ class AnalyticsService
     }
 
     /**
+     * Get age group breakdown (0-5, 6-11, 12-23, 24-35, 36-47, 48-59 months)
+     */
+    public function getAgeGroupBreakdown(?string $barangayId = null): array
+    {
+        // Get latest measurement for each child using a subquery
+        $latestMeasurements = Measurement::query()
+            ->select('child_id', DB::raw('MAX(age_in_months) as latest_age'))
+            ->whereNotNull('age_in_months')
+            ->when($barangayId, function ($query, $barangayId) {
+                $query->whereHas('child', function ($q) use ($barangayId) {
+                    $q->where('barangay_id', $barangayId);
+                });
+            })
+            ->groupBy('child_id')
+            ->get();
+
+        $ageGroups = [
+            '0-5 months' => 0,
+            '6-11 months' => 0,
+            '12-23 months' => 0,
+            '24-35 months' => 0,
+            '36-47 months' => 0,
+            '48-59 months' => 0,
+        ];
+
+        foreach ($latestMeasurements as $latest) {
+            $age = $latest->latest_age;
+
+            if ($age < 6) {
+                $ageGroups['0-5 months']++;
+            } elseif ($age < 12) {
+                $ageGroups['6-11 months']++;
+            } elseif ($age < 24) {
+                $ageGroups['12-23 months']++;
+            } elseif ($age < 36) {
+                $ageGroups['24-35 months']++;
+            } elseif ($age < 48) {
+                $ageGroups['36-47 months']++;
+            } else {
+                $ageGroups['48-59 months']++;
+            }
+        }
+
+        return $ageGroups;
+    }
+
+    /**
+     * Get F1K (First 1000 Days) statistics for children 0-23 months
+     */
+    public function getF1KStatistics(?string $barangayId = null): array
+    {
+        $cacheKey = $barangayId
+            ? "analytics:f1k_stats:barangay:{$barangayId}"
+            : 'analytics:f1k_stats:all';
+
+        return Cache::remember($cacheKey, self::STATS_CACHE_TTL, function () use ($barangayId) {
+            // Get all children 0-23 months (database agnostic - calculate in PHP)
+            $cutoffDate = now()->subMonths(23)->startOfDay();
+            
+            $query = Child::query()
+                ->where('date_of_birth', '>=', $cutoffDate)
+                ->when($barangayId, function ($q) use ($barangayId) {
+                    $q->where('barangay_id', $barangayId);
+                });
+
+            $totalF1K = $query->count();
+            $childIds = $query->pluck('id')->toArray();
+
+            // Get measurements for F1K children
+            $f1kMeasurements = Measurement::query()
+                ->whereIn('child_id', $childIds)
+                ->whereNotNull('opt_classification')
+                ->with('child')
+                ->get();
+
+            $measuredF1K = $f1kMeasurements->count();
+            $f1kCoverage = $totalF1K > 0 ? ($measuredF1K / $totalF1K) * 100 : 0;
+
+            // Get sex breakdown
+            $maleF1K = 0;
+            $femaleF1K = 0;
+            $malnourishedF1K = 0;
+            $stuntedF1K = 0;
+
+            foreach ($f1kMeasurements as $measurement) {
+                $sex = $measurement->child->sex;
+                if ($sex === 'male') $maleF1K++;
+                if ($sex === 'female') $femaleF1K++;
+
+                if (in_array($measurement->opt_classification, ['mam', 'sam'])) {
+                    $malnourishedF1K++;
+                }
+
+                if (in_array($measurement->height_for_age_status, ['stunted', 'severely_stunted'])) {
+                    $stuntedF1K++;
+                }
+            }
+
+            return [
+                'total_children_0to23' => $totalF1K,
+                'measured_children_0to23' => $measuredF1K,
+                'f1k_coverage' => round($f1kCoverage, 1),
+                'male_f1k' => $maleF1K,
+                'female_f1k' => $femaleF1K,
+                'malnourished_f1k' => $malnourishedF1K,
+                'stunted_f1k' => $stuntedF1K,
+            ];
+        });
+    }
+
+    /**
+     * Get sex-disaggregated statistics
+     */
+    public function getSexDisaggregatedStats(?string $barangayId = null): array
+    {
+        $cacheKey = $barangayId
+            ? "analytics:sex_stats:barangay:{$barangayId}"
+            : 'analytics:sex_stats:all';
+
+        return Cache::remember($cacheKey, self::STATS_CACHE_TTL, function () use ($barangayId) {
+            $latestMeasurements = Measurement::query()
+                ->select('child_id', 'weight_for_age_zscore', 'height_for_age_zscore', 'weight_for_height_zscore')
+                ->when($barangayId, function ($query, $barangayId) {
+                    $query->whereHas('child', function ($q) use ($barangayId) {
+                        $q->where('barangay_id', $barangayId);
+                    });
+                })
+                ->get();
+
+            $childIds = $latestMeasurements->pluck('child_id')->unique()->values();
+            $children = Child::with(['barangay'])
+                ->whereIn('id', $childIds)
+                ->get()
+                ->keyBy('id');
+
+            $stats = [
+                'total' => $children->count(),
+                'male' => 0,
+                'female' => 0,
+                'male_mam' => 0,
+                'male_sam' => 0,
+                'male_stunted' => 0,
+                'female_mam' => 0,
+                'female_sam' => 0,
+                'female_stunted' => 0,
+            ];
+
+            foreach ($latestMeasurements as $measurement) {
+                $child = $children->get($measurement->child_id);
+                if (!$child) continue;
+
+                $sex = $child->sex;
+                $stats[$sex]++;
+
+                $classification = $measurement->opt_classification;
+                if ($classification) {
+                    $stats["{$sex}_{$classification}"]++;
+                }
+
+                if (in_array($measurement->height_for_age_status, ['stunted', 'severely_stunted'])) {
+                    $stats["{$sex}_stunted"]++;
+                }
+            }
+
+            return $stats;
+        });
+    }
+
+    /**
      * Get monthly trend data (last 6 months) - cached
      */
     public function getMonthlyTrends(?string $barangayId = null): array
