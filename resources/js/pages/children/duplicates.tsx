@@ -109,16 +109,16 @@ export default function Duplicates({ duplicates }: Props) {
 
                     {/* Alert */}
                     {duplicates.length > 0 && (
-                        <div className="mb-6 rounded-lg border border-yellow-200 bg-yellow-50 p-4">
+                        <div className="mb-6 rounded-lg border border-amber-200 bg-amber-50 p-4 dark:border-amber-800 dark:bg-amber-950">
                             <div className="flex items-start gap-3">
-                                <AlertTriangle className="h-5 w-5 text-yellow-600" />
+                                <AlertTriangle className="h-5 w-5 text-amber-600 dark:text-amber-400" />
                                 <div>
-                                    <h3 className="font-semibold text-yellow-900">
+                                    <h3 className="font-semibold text-amber-900 dark:text-amber-100">
                                         {duplicates.length} Potential Duplicate
                                         Group{duplicates.length > 1 ? 's' : ''}{' '}
                                         Found
                                     </h3>
-                                    <p className="mt-1 text-sm text-yellow-800">
+                                    <p className="mt-1 text-sm text-amber-800 dark:text-amber-200">
                                         Please review these potential duplicates
                                         carefully. If they are the same child,
                                         consider merging or deleting duplicate
@@ -133,7 +133,7 @@ export default function Duplicates({ duplicates }: Props) {
                     {duplicates.length === 0 ? (
                         <Card>
                             <CardContent className="py-12 text-center">
-                                <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
+                                <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-100 dark:bg-green-900">
                                     <User className="h-8 w-8 text-green-600" />
                                 </div>
                                 <h3 className="text-lg font-semibold tracking-tight">
@@ -174,11 +174,10 @@ export default function Duplicates({ duplicates }: Props) {
                                                 (child, childIndex) => (
                                                     <div
                                                         key={child.id}
-                                                        className={`rounded-lg border p-4 ${
-                                                            childIndex === 0
-                                                                ? 'border-blue-200 bg-blue-50'
-                                                                : 'border-gray-200 bg-white'
-                                                        }`}
+                                                        className={`rounded-lg border p-4 ${childIndex === 0
+                                                                ? 'border-blue-200 bg-blue-50 dark:border-blue-800 dark:bg-blue-950'
+                                                                : 'border-border bg-card'
+                                                            }`}
                                                     >
                                                         <div className="flex items-start justify-between">
                                                             <div className="flex-1">
@@ -191,22 +190,22 @@ export default function Duplicates({ duplicates }: Props) {
                                                                     <Badge
                                                                         variant={
                                                                             child.sex ===
-                                                                            'male'
+                                                                                'male'
                                                                                 ? 'default'
                                                                                 : 'secondary'
                                                                         }
                                                                     >
                                                                         {child.sex ===
-                                                                        'male'
+                                                                            'male'
                                                                             ? 'Male'
                                                                             : 'Female'}
                                                                     </Badge>
                                                                     {childIndex ===
                                                                         0 && (
-                                                                        <Badge variant="outline">
-                                                                            Original
-                                                                        </Badge>
-                                                                    )}
+                                                                            <Badge variant="outline">
+                                                                                Original
+                                                                            </Badge>
+                                                                        )}
                                                                 </div>
 
                                                                 <div className="mt-3 grid gap-2 text-sm md:grid-cols-2">

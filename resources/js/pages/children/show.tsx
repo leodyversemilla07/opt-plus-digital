@@ -375,7 +375,7 @@ export default function Show({ child, latestMeasurement }: Props) {
                                 </CardTitle>
                             </CardHeader>
                             <CardContent className="flex flex-col items-center gap-4">
-                                <div className="rounded-2xl border-2 border-primary/20 bg-white p-4 shadow-inner">
+                                <div className="rounded-2xl border-2 border-primary/20 bg-card p-4 shadow-inner">
                                     <QrCode className="h-40 w-40 text-primary" />
                                 </div>
                                 <p className="rounded-full bg-muted px-4 py-1 font-mono text-sm font-bold">

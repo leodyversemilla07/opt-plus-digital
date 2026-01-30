@@ -152,7 +152,7 @@ export function OfflineChildrenList() {
                 {/* Search */}
                 <div className="mb-4">
                     <div className="relative">
-                        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                         <Input
                             placeholder="Search cached children..."
                             value={search}
@@ -161,7 +161,7 @@ export function OfflineChildrenList() {
                         />
                     </div>
                     {search && (
-                        <p className="mt-2 text-sm text-gray-600">
+                        <p className="mt-2 text-sm text-muted-foreground">
                             Found {filteredChildren.length} of {children.length} children
                         </p>
                     )}
@@ -215,7 +215,7 @@ export function OfflineChildrenList() {
                                         <TableCell>
                                             {child.barangay?.name || 'N/A'}
                                         </TableCell>
-                                        <TableCell className="text-xs text-gray-500">
+                                        <TableCell className="text-xs text-muted-foreground">
                                             {getCacheAge(child.cachedAt)}
                                         </TableCell>
                                         <TableCell>

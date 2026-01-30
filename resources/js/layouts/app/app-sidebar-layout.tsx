@@ -2,7 +2,6 @@ import { AppContent } from '@/components/app-content';
 import { AppShell } from '@/components/app-shell';
 import { AppSidebar } from '@/components/app-sidebar';
 import { AppSidebarHeader } from '@/components/app-sidebar-header';
-import { GovPHHeader } from '@/components/gov-ph-header';
 import { MobileBottomNav } from '@/components/mobile-bottom-nav';
 import { OfflineIndicator } from '@/components/offline-indicator';
 import { type BreadcrumbItem } from '@/types';
@@ -19,7 +18,6 @@ export default function AppSidebarLayout({
                 variant="sidebar"
                 className="overflow-x-hidden pb-16 md:pb-0"
             >
-                <GovPHHeader />
                 <AppSidebarHeader breadcrumbs={breadcrumbs} />
                 {children}
             </AppContent>

@@ -50,15 +50,15 @@ const breadcrumbs: BreadcrumbItem[] = [
 const getMUACStatusColor = (status: string | null): string => {
     switch (status) {
         case 'SAM':
-            return 'bg-red-100 text-red-800 border-red-200';
+            return 'bg-red-100 text-red-800 border-red-200 dark:bg-red-900 dark:text-red-200 dark:border-red-800';
         case 'MAM':
-            return 'bg-orange-100 text-orange-800 border-orange-200';
+            return 'bg-orange-100 text-orange-800 border-orange-200 dark:bg-orange-900 dark:text-orange-200 dark:border-orange-800';
         case 'At Risk':
-            return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+            return 'bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900 dark:text-yellow-200 dark:border-yellow-800';
         case 'Normal':
-            return 'bg-green-100 text-green-800 border-green-200';
+            return 'bg-green-100 text-green-800 border-green-200 dark:bg-green-900 dark:text-green-200 dark:border-green-800';
         default:
-            return 'bg-gray-100 text-gray-800 border-gray-200';
+            return 'bg-muted text-muted-foreground border-border';
     }
 };
 
@@ -132,50 +132,50 @@ export default function MUACList({ children, barangayId }: Props) {
                             <p className="text-2xl font-bold">{stats.total}</p>
                         </CardContent>
                     </Card>
-                    <Card className="border-red-200 bg-red-50">
+                    <Card className="border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-950">
                         <CardHeader className="pb-2">
-                            <CardTitle className="text-sm font-medium text-red-700">
+                            <CardTitle className="text-sm font-medium text-red-700 dark:text-red-300">
                                 SAM (&lt;11.5cm)
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <p className="text-2xl font-bold text-red-700">
+                            <p className="text-2xl font-bold text-red-700 dark:text-red-300">
                                 {stats.sam}
                             </p>
                         </CardContent>
                     </Card>
-                    <Card className="border-orange-200 bg-orange-50">
+                    <Card className="border-orange-200 bg-orange-50 dark:border-orange-800 dark:bg-orange-950">
                         <CardHeader className="pb-2">
-                            <CardTitle className="text-sm font-medium text-orange-700">
+                            <CardTitle className="text-sm font-medium text-orange-700 dark:text-orange-300">
                                 MAM (11.5-12.4cm)
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <p className="text-2xl font-bold text-orange-700">
+                            <p className="text-2xl font-bold text-orange-700 dark:text-orange-300">
                                 {stats.mam}
                             </p>
                         </CardContent>
                     </Card>
-                    <Card className="border-yellow-200 bg-yellow-50">
+                    <Card className="border-yellow-200 bg-yellow-50 dark:border-yellow-800 dark:bg-yellow-950">
                         <CardHeader className="pb-2">
-                            <CardTitle className="text-sm font-medium text-yellow-700">
+                            <CardTitle className="text-sm font-medium text-yellow-700 dark:text-yellow-300">
                                 At Risk (12.5-13.4cm)
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <p className="text-2xl font-bold text-yellow-700">
+                            <p className="text-2xl font-bold text-yellow-700 dark:text-yellow-300">
                                 {stats.atRisk}
                             </p>
                         </CardContent>
                     </Card>
-                    <Card className="border-green-200 bg-green-50">
+                    <Card className="border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-950">
                         <CardHeader className="pb-2">
-                            <CardTitle className="text-sm font-medium text-green-700">
+                            <CardTitle className="text-sm font-medium text-green-700 dark:text-green-300">
                                 Normal (≥13.5cm)
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <p className="text-2xl font-bold text-green-700">
+                            <p className="text-2xl font-bold text-green-700 dark:text-green-300">
                                 {stats.normal}
                             </p>
                         </CardContent>
@@ -183,9 +183,9 @@ export default function MUACList({ children, barangayId }: Props) {
                 </div>
 
                 {/* Info Card */}
-                <Card className="border-blue-200 bg-blue-50">
+                <Card className="border-blue-200 bg-blue-50 dark:border-blue-800 dark:bg-blue-950">
                     <CardContent className="py-4">
-                        <p className="text-sm text-blue-800">
+                        <p className="text-sm text-blue-800 dark:text-blue-200">
                             <strong>MUAC Classification (6-59 months):</strong>{' '}
                             SAM: &lt;11.5cm | MAM: 11.5-12.4cm | At Risk:
                             12.5-13.4cm | Normal: ≥13.5cm
@@ -240,8 +240,8 @@ export default function MUACList({ children, barangayId }: Props) {
                                                     variant="outline"
                                                     className={
                                                         child.sex === 'Male'
-                                                            ? 'bg-blue-50 text-blue-700'
-                                                            : 'bg-pink-50 text-pink-700'
+                                                            ? 'bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300'
+                                                            : 'bg-pink-50 text-pink-700 dark:bg-pink-950 dark:text-pink-300'
                                                     }
                                                 >
                                                     {child.sex}

@@ -65,7 +65,7 @@ export default function ChildCard({ child, showActions = true }: ChildCardProps)
                     <div className="flex-1">
                         {/* Name and Sex */}
                         <div className="mb-3 flex items-start gap-2">
-                            <h3 className="text-lg font-semibold text-gray-900">
+                            <h3 className="text-lg font-semibold text-foreground">
                                 {child.full_name}
                             </h3>
                             <Badge
@@ -84,7 +84,7 @@ export default function ChildCard({ child, showActions = true }: ChildCardProps)
                         </div>
 
                         {/* Details Grid */}
-                        <div className="space-y-2 text-sm text-gray-600">
+                        <div className="space-y-2 text-sm text-muted-foreground">
                             <div className="flex items-center gap-2">
                                 <Users className="h-4 w-4" />
                                 <span className="font-medium">FSN:</span>
@@ -131,14 +131,14 @@ export default function ChildCard({ child, showActions = true }: ChildCardProps)
 
                         {/* Latest Measurement Status */}
                         {child.latest_measurement && (
-                            <div className="mt-3 flex items-center gap-2 rounded-md border border-gray-200 bg-gray-50 p-2">
-                                <span className="text-xs text-gray-600">
+                            <div className="mt-3 flex items-center gap-2 rounded-md border border-border bg-muted p-2">
+                                <span className="text-xs text-muted-foreground">
                                     Latest Status:
                                 </span>
                                 {getStatusBadge(
                                     child.latest_measurement.opt_classification
                                 )}
-                                <span className="ml-auto text-xs text-gray-500">
+                                <span className="ml-auto text-xs text-muted-foreground">
                                     {new Date(
                                         child.latest_measurement.measurement_date
                                     ).toLocaleDateString()}

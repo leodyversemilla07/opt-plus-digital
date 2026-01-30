@@ -124,15 +124,15 @@ export function OfflineStorageStats() {
             <CardContent className="space-y-4">
                 {/* Stats Grid */}
                 <div className="grid gap-4 md:grid-cols-3">
-                    <div className="rounded-lg border p-4">
-                        <p className="text-sm font-medium text-gray-600">Cached Children</p>
+                    <div className="rounded-lg border border-border p-4">
+                        <p className="text-sm font-medium text-muted-foreground">Cached Children</p>
                         <p className="mt-2 text-2xl font-bold">{stats.totalChildren}</p>
                         <Badge variant="secondary" className="mt-2">
                             Available Offline
                         </Badge>
                     </div>
-                    <div className="rounded-lg border p-4">
-                        <p className="text-sm font-medium text-gray-600">
+                    <div className="rounded-lg border border-border p-4">
+                        <p className="text-sm font-medium text-muted-foreground">
                             Pending Measurements
                         </p>
                         <p className="mt-2 text-2xl font-bold">
@@ -145,8 +145,8 @@ export function OfflineStorageStats() {
                             {stats.pendingMeasurements > 0 ? 'Needs Sync' : 'All Synced'}
                         </Badge>
                     </div>
-                    <div className="rounded-lg border p-4">
-                        <p className="text-sm font-medium text-gray-600">Total Items</p>
+                    <div className="rounded-lg border border-border p-4">
+                        <p className="text-sm font-medium text-muted-foreground">Total Items</p>
                         <p className="mt-2 text-2xl font-bold">{getTotalItems()}</p>
                         <Badge variant="secondary" className="mt-2">
                             In Storage
@@ -157,27 +157,27 @@ export function OfflineStorageStats() {
                 {/* Storage Usage */}
                 <div className="space-y-2">
                     <div className="flex items-center justify-between text-sm">
-                        <span className="text-gray-600">Estimated Storage Usage</span>
+                        <span className="text-muted-foreground">Estimated Storage Usage</span>
                         <span className="font-medium">
                             {getStoragePercentage().toFixed(1)}%
                         </span>
                     </div>
                     <Progress value={getStoragePercentage()} />
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-muted-foreground">
                         ~{(getTotalItems() * 1).toFixed(0)} KB used of ~50 MB available
                     </p>
                 </div>
 
                 {/* Warning if near limit */}
                 {getStoragePercentage() > 80 && (
-                    <div className="rounded-lg bg-amber-50 p-3 text-sm text-amber-800">
-                        ⚠️ Storage usage is high. Consider clearing old cached data.
+                    <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-200">
+                        Storage usage is high. Consider clearing old cached data.
                     </div>
                 )}
 
                 {/* Info */}
                 {getTotalItems() === 0 && (
-                    <div className="rounded-lg bg-blue-50 p-3 text-sm text-blue-800">
+                    <div className="rounded-lg border border-blue-200 bg-blue-50 p-3 text-sm text-blue-800 dark:border-blue-800 dark:bg-blue-950 dark:text-blue-200">
                         No offline data cached. Visit pages while online to cache data for
                         offline access.
                     </div>

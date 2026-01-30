@@ -45,18 +45,16 @@ export function StatCard({
                 {trend && (
                     <div className="mt-2 flex items-center">
                         <TrendingUp
-                            className={`mr-1 h-3 w-3 ${
-                                trend.positive !== false
-                                    ? 'text-green-600 dark:text-green-400'
-                                    : 'text-red-600 dark:text-red-400'
-                            }`}
+                            className={`mr-1 h-3 w-3 ${trend.positive !== false
+                                ? 'text-green-600 dark:text-green-400'
+                                : 'text-red-600 dark:text-red-400'
+                                }`}
                         />
                         <span
-                            className={`text-xs ${
-                                trend.positive !== false
-                                    ? 'text-green-600 dark:text-green-400'
-                                    : 'text-red-600 dark:text-red-400'
-                            }`}
+                            className={`text-xs ${trend.positive !== false
+                                ? 'text-green-600 dark:text-green-400'
+                                : 'text-red-600 dark:text-red-400'
+                                }`}
                         >
                             {trend.value > 0 ? '+' : ''}
                             {trend.value}% {trend.label}

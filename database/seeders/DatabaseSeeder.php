@@ -14,28 +14,23 @@ class DatabaseSeeder extends Seeder
     {
         $this->command->info('🌱 Starting OPT Plus database seeding...');
 
-        // Create default test user
-        User::firstOrCreate(
-            ['email' => 'test@example.com'],
-            [
-                'name' => 'Test User',
-                'password' => bcrypt('password'),
-                'email_verified_at' => now(),
-            ]
-        );
-
         // Run seeders in order
         $this->call([
-            WhoStandardSeeder::class,  // WHO data first
-            BarangaySeeder::class,
-            ChildSeeder::class,
+            RolePermissionSeeder::class,  // Roles and permissions first
+            WhoStandardSeeder::class,     // WHO data
+            BarangaySeeder::class,        // Barangays
+            UserSeeder::class,            // Users with roles
+            ChildSeeder::class,           // Children data
         ]);
 
         $this->command->info('✅ Database seeding completed successfully!');
         $this->command->newLine();
         $this->command->info('🔑 Test accounts created:');
-        $this->command->info('   - test@example.com (password: password)');
-        $this->command->info('   - bhw@optplus.test (password: password)');
-        $this->command->info('   - bns@optplus.test (password: password)');
+        $this->command->info('   - admin@optplus.test     (Admin)');
+        $this->command->info('   - municipal@optplus.test (Municipal Officer)');
+        $this->command->info('   - bns@optplus.test       (BNS)');
+        $this->command->info('   - bhw@optplus.test       (BHW)');
+        $this->command->info('   Password for all: password');
     }
 }
+

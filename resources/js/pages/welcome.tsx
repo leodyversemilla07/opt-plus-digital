@@ -26,7 +26,7 @@ export default function Welcome({
             <GovPHHeader />
 
             {/* Hero Section */}
-            <header className="relative overflow-hidden border-b bg-white py-12 md:py-24 dark:bg-card">
+            <header className="relative overflow-hidden border-b bg-card py-12 md:py-24">
                 <div className="pointer-events-none absolute inset-0 opacity-[0.03] dark:opacity-[0.05]">
                     <svg
                         width="100%"
@@ -130,7 +130,7 @@ export default function Welcome({
                                     <Button
                                         size="lg"
                                         variant="outline"
-                                        className="rounded-full bg-white/50 px-8 backdrop-blur-sm"
+                                        className="rounded-full bg-background/50 px-8 backdrop-blur-sm"
                                         asChild
                                     >
                                         <Link href={register()}>
@@ -337,7 +337,7 @@ function FeatureCard({
     description: string;
 }) {
     return (
-        <Card className="border-none bg-white shadow-xl shadow-black/5 transition-transform hover:-translate-y-1 dark:bg-card">
+        <Card className="border-none bg-card shadow-xl shadow-black/5 transition-transform hover:-translate-y-1">
             <CardContent className="space-y-4 p-8 text-center md:text-left">
                 <div className="mb-2 inline-block rounded-2xl bg-secondary/50 p-4">
                     {icon}

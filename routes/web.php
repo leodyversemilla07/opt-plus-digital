@@ -86,6 +86,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 Route::get('/design-system', function () {
     return Inertia::render('design-system');
-})->middleware(['auth'])->name('design-system');
+})->name('design-system');
 
 require __DIR__.'/settings.php';

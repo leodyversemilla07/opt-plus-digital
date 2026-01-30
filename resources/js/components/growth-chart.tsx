@@ -113,7 +113,7 @@ export default function GrowthChart({
                     <CardDescription>No data available</CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <div className="flex h-64 items-center justify-center rounded-lg border-2 border-dashed border-gray-300 text-gray-500">
+                    <div className="flex h-64 items-center justify-center rounded-lg border-2 border-dashed border-border text-muted-foreground">
                         No measurement data available
                     </div>
                 </CardContent>
