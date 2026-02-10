@@ -1,12 +1,9 @@
 {
     "agents": [
-        "cursor",
-        "phpstorm"
+        "opencode"
     ],
-    "editors": [
-        "cursor",
-        "phpstorm",
-        "vscode"
-    ],
-    "guidelines": []
+    "guidelines": true,
+    "packages": [
+        "laravel/fortify"
+    ]
 }
