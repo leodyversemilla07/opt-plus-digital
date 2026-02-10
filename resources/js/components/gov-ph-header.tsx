@@ -1,7 +1,7 @@
 export function GovPHHeader() {
     return (
-        <div className="border-b border-border bg-muted px-4 py-1 font-sans text-[10px] md:text-xs">
-            <div className="mx-auto flex max-w-7xl items-center justify-between">
+        <div className="border-b border-border bg-muted py-1 font-sans text-[10px] md:text-xs">
+            <div className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6">
                 <div className="flex items-center gap-2 md:gap-4">
                     <span className="flex items-center gap-1 font-bold tracking-tight text-foreground">
                         <span className="hidden md:inline">
@@ -31,7 +31,7 @@ export function GovPHHeader() {
                     </nav>
                 </div>
                 <div className="flex items-center gap-2">
-                    <span className="hidden text-muted-foreground italic lg:inline">
+                    <span className="hidden text-muted-foreground lg:inline">
                         Official Portal of the Philippine Government
                     </span>
                 </div>

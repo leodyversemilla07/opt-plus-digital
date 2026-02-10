@@ -1,6 +1,6 @@
-import { GovPHHeader } from '@/components/gov-ph-header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import GuestLayout from '@/layouts/guest-layout';
 import { dashboard, login, register } from '@/routes';
 import { type SharedData } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/react';
@@ -12,7 +12,7 @@ import {
     WifiOff,
 } from 'lucide-react';
 
-export default function Welcome({
+export default function Home({
     canRegister = true,
 }: {
     canRegister?: boolean;
@@ -20,13 +20,11 @@ export default function Welcome({
     const { auth } = usePage<SharedData>().props;
 
     return (
-        <div className="flex min-h-screen flex-col bg-background font-sans text-foreground">
+        <GuestLayout canRegister={canRegister}>
             <Head title="Welcome to OPT Plus Digital" />
 
-            <GovPHHeader />
-
             {/* Hero Section */}
-            <header className="relative overflow-hidden border-b bg-card py-12 md:py-24">
+            <header className="relative overflow-hidden border-b bg-card py-12 sm:py-16 md:py-24">
                 <div className="pointer-events-none absolute inset-0 opacity-[0.03] dark:opacity-[0.05]">
                     <svg
                         width="100%"
@@ -52,9 +50,9 @@ export default function Welcome({
                     </svg>
                 </div>
 
-                <div className="relative container mx-auto flex flex-col items-center px-6 text-center">
+                <div className="relative mx-auto flex max-w-7xl flex-col items-center px-4 text-center sm:px-6">
                     <div className="mb-6 flex items-center gap-3">
-                        <div className="rounded-2xl bg-primary p-3 shadow-lg shadow-primary/20">
+                        <div className="rounded-2xl bg-primary p-3 shadow-md shadow-primary/20">
                             <svg
                                 width="40"
                                 height="40"
@@ -91,15 +89,15 @@ export default function Welcome({
                                 />
                             </svg>
                         </div>
-                        <span className="text-2xl font-bold tracking-tight text-primary">
+                        <span className="text-2xl font-semibold tracking-tight text-primary">
                             OPT Plus Digital
                         </span>
                     </div>
 
-                    <h1 className="mb-4 max-w-3xl text-4xl leading-tight font-extrabold tracking-tight md:text-6xl">
+                    <h1 className="mb-4 max-w-3xl text-3xl leading-tight font-semibold tracking-tight sm:text-4xl md:text-5xl">
                         Revolutionizing Nutrition Monitoring in the Philippines
                     </h1>
-                    <p className="mb-8 max-w-2xl text-lg leading-relaxed text-muted-foreground md:text-xl">
+                    <p className="mb-8 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg md:text-xl">
                         A robust, offline-first digital tool for BHWs and BNS to
                         streamline "Operation Timbang Plus" and improve child
                         health outcomes.
@@ -109,7 +107,7 @@ export default function Welcome({
                         {auth.user ? (
                             <Button
                                 size="lg"
-                                className="rounded-full px-8 shadow-lg shadow-primary/20"
+                                className="px-8 shadow-sm"
                                 asChild
                             >
                                 <Link href={dashboard()}>
@@ -121,7 +119,7 @@ export default function Welcome({
                             <>
                                 <Button
                                     size="lg"
-                                    className="rounded-full px-8 shadow-lg shadow-primary/20"
+                                    className="px-8 shadow-sm"
                                     asChild
                                 >
                                     <Link href={login()}>Get Started</Link>
@@ -130,7 +128,7 @@ export default function Welcome({
                                     <Button
                                         size="lg"
                                         variant="outline"
-                                        className="rounded-full bg-background/50 px-8 backdrop-blur-sm"
+                                        className="px-8"
                                         asChild
                                     >
                                         <Link href={register()}>
@@ -145,10 +143,10 @@ export default function Welcome({
             </header>
 
             {/* Features Grid */}
-            <section className="bg-secondary/30 py-16 md:py-24">
-                <div className="container mx-auto px-6">
-                    <div className="mb-16 text-center">
-                        <h2 className="mb-4 text-3xl font-bold">
+            <section id="features" className="bg-secondary/30 py-12 sm:py-16 md:py-24">
+                <div className="mx-auto max-w-7xl px-4 sm:px-6">
+                    <div className="mb-12 text-center sm:mb-16">
+                        <h2 className="mb-4 text-2xl font-semibold sm:text-3xl">
                             Frontline-First Design
                         </h2>
                         <p className="mx-auto max-w-xl text-muted-foreground">
@@ -157,7 +155,7 @@ export default function Welcome({
                         </p>
                     </div>
 
-                    <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+                    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-8 md:grid-cols-3">
                         <FeatureCard
                             icon={
                                 <WifiOff className="h-8 w-8 text-secondary-foreground" />
@@ -174,7 +172,7 @@ export default function Welcome({
                         />
                         <FeatureCard
                             icon={
-                                <BarChart3 className="h-8 w-8 text-accent-foreground" />
+                                <BarChart3 className="h-8 w-8 text-primary" />
                             }
                             title="Instant Reporting"
                             description="Generate OPT Plus summary reports and target lists with a single click."
@@ -184,18 +182,18 @@ export default function Welcome({
             </section>
 
             {/* Mission Section */}
-            <section className="border-t py-16 md:py-24">
-                <div className="container mx-auto px-6">
-                    <div className="flex flex-col items-center gap-12 md:flex-row">
+            <section id="about" className="border-t py-12 sm:py-16 md:py-24">
+                <div className="mx-auto max-w-7xl px-4 sm:px-6">
+                    <div className="flex flex-col items-center gap-8 sm:gap-12 md:flex-row">
                         <div className="flex-1 space-y-6 text-center md:text-left">
-                            <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-bold tracking-wider text-primary uppercase">
+                            <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold tracking-wider text-primary uppercase">
                                 <ShieldCheck className="h-4 w-4" />
                                 NNC & DOH Aligned
                             </div>
-                            <h2 className="text-3xl font-bold md:text-4xl">
+                            <h2 className="text-2xl font-semibold sm:text-3xl md:text-4xl">
                                 Data You Can Trust
                             </h2>
-                            <p className="text-lg leading-relaxed text-muted-foreground">
+                            <p className="text-base leading-relaxed text-muted-foreground sm:text-lg">
                                 Our system is fully aligned with the National
                                 Nutrition Council's requirements, ensuring that
                                 every measurement is accurate and every report
@@ -208,17 +206,17 @@ export default function Welcome({
                             </div>
                         </div>
                         <div className="w-full max-w-md flex-1">
-                            <Card className="rotate-2 border-2 border-primary/20 shadow-2xl">
+                            <Card className="border-2 border-primary/20 shadow-lg">
                                 <CardContent className="overflow-hidden rounded-lg p-0">
                                     <div className="bg-primary p-6 text-center text-white">
                                         <div className="mb-1 text-sm font-medium opacity-80">
                                             Nutritional Status
                                         </div>
-                                        <div className="text-4xl font-bold">
+                                        <div className="text-4xl font-semibold">
                                             NORMAL
                                         </div>
                                     </div>
-                                    <div className="space-y-4 p-8">
+                                    <div className="space-y-4 p-6 sm:p-8">
                                         <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
                                             <div className="h-full w-[85%] bg-primary" />
                                         </div>
@@ -226,7 +224,7 @@ export default function Welcome({
                                             <span className="font-medium text-muted-foreground">
                                                 Weight for Age
                                             </span>
-                                            <span className="font-bold">
+                                            <span className="font-semibold">
                                                 +0.12 (Normal)
                                             </span>
                                         </div>
@@ -234,7 +232,7 @@ export default function Welcome({
                                             <span className="font-medium text-muted-foreground">
                                                 Height for Age
                                             </span>
-                                            <span className="font-bold">
+                                            <span className="font-semibold">
                                                 -0.54 (Normal)
                                             </span>
                                         </div>
@@ -245,85 +243,7 @@ export default function Welcome({
                     </div>
                 </div>
             </section>
-
-            {/* Footer */}
-            <footer className="mt-auto border-t bg-card py-12">
-                <div className="container mx-auto flex flex-col items-center justify-between gap-8 px-6 md:flex-row">
-                    <div className="flex items-center gap-2 opacity-60 grayscale transition-all hover:grayscale-0">
-                        <div className="rounded-lg bg-primary p-1.5">
-                            <svg
-                                width="24"
-                                height="24"
-                                viewBox="0 0 512 512"
-                                fill="none"
-                                xmlns="http://www.w3.org/2000/svg"
-                            >
-                                <path
-                                    d="M256 128V384"
-                                    stroke="white"
-                                    strokeWidth="48"
-                                    strokeLinecap="round"
-                                />
-                                <path
-                                    d="M128 256H384"
-                                    stroke="white"
-                                    strokeWidth="48"
-                                    strokeLinecap="round"
-                                />
-                                <circle
-                                    cx="256"
-                                    cy="256"
-                                    r="180"
-                                    stroke="white"
-                                    strokeWidth="32"
-                                    strokeDasharray="30 30"
-                                    fill="none"
-                                />
-                            </svg>
-                        </div>
-                        <span className="text-lg font-bold">
-                            OPT Plus Digital
-                        </span>
-                    </div>
-
-                    <div className="flex flex-wrap justify-center gap-x-8 gap-y-4 text-sm text-muted-foreground">
-                        <Link
-                            href="#"
-                            className="transition-colors hover:text-primary"
-                        >
-                            Privacy Policy
-                        </Link>
-                        <Link
-                            href="#"
-                            className="transition-colors hover:text-primary"
-                        >
-                            Terms of Service
-                        </Link>
-                        <a
-                            href="https://www.nnc.gov.ph"
-                            className="transition-colors hover:text-primary"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                        >
-                            Official NNC Website
-                        </a>
-                        <a
-                            href="https://www.doh.gov.ph"
-                            className="transition-colors hover:text-primary"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                        >
-                            Department of Health
-                        </a>
-                    </div>
-
-                    <div className="text-xs text-muted-foreground opacity-60">
-                        &copy; {new Date().getFullYear()} OPT Plus Digital
-                        Project.
-                    </div>
-                </div>
-            </footer>
-        </div>
+        </GuestLayout>
     );
 }
 
@@ -337,13 +257,13 @@ function FeatureCard({
     description: string;
 }) {
     return (
-        <Card className="border-none bg-card shadow-xl shadow-black/5 transition-transform hover:-translate-y-1">
-            <CardContent className="space-y-4 p-8 text-center md:text-left">
+        <Card className="border bg-card shadow-sm transition-transform hover:-translate-y-1">
+            <CardContent className="space-y-4 p-6 text-center sm:p-8 md:text-left">
                 <div className="mb-2 inline-block rounded-2xl bg-secondary/50 p-4">
                     {icon}
                 </div>
-                <h3 className="text-xl font-bold">{title}</h3>
-                <p className="leading-relaxed text-muted-foreground italic">
+                <h3 className="text-lg font-semibold sm:text-xl">{title}</h3>
+                <p className="leading-relaxed text-muted-foreground">
                     {description}
                 </p>
             </CardContent>

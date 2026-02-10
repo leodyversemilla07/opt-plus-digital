@@ -13,10 +13,22 @@ use Inertia\Inertia;
 use Laravel\Fortify\Features;
 
 Route::get('/', function () {
-    return Inertia::render('welcome', [
+    return Inertia::render('home', [
         'canRegister' => Features::enabled(Features::registration()),
     ]);
 })->name('home');
+
+Route::get('/features', function () {
+    return Inertia::render('features', [
+        'canRegister' => Features::enabled(Features::registration()),
+    ]);
+})->name('features');
+
+Route::get('/about', function () {
+    return Inertia::render('about', [
+        'canRegister' => Features::enabled(Features::registration()),
+    ]);
+})->name('about');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
