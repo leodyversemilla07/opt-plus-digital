@@ -21,7 +21,6 @@ import { type BreadcrumbItem } from '@/types';
 import { Head, Link } from '@inertiajs/react';
 import {
     AlertTriangle,
-    ArrowLeft,
     FileDown,
     FileSpreadsheet,
     Scale,
@@ -204,14 +203,6 @@ export default function Form1C({ report, barangayId }: Props) {
                 {/* Header */}
                 <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
                     <div>
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            className="mb-2"
-                            onClick={() => window.history.back()}
-                        >
-                            <ArrowLeft className="mr-2 h-4 w-4" /> Back
-                        </Button>
                         <h1 className="flex items-center gap-2 text-3xl font-bold tracking-tight">
                             <AlertTriangle className="h-8 w-8 text-red-500" />
                             OPT Plus Form 1C

@@ -21,7 +21,6 @@ import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
 import {
     AlertTriangle,
-    ArrowLeft,
     FileDown,
     FileSpreadsheet,
     Phone,
@@ -68,14 +67,6 @@ export default function TargetList({ children, barangayId }: TargetListProps) {
             <div className="flex flex-col gap-6 p-6">
                 <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
                     <div>
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            className="mb-2"
-                            onClick={() => window.history.back()}
-                        >
-                            <ArrowLeft className="mr-2 h-4 w-4" /> Back
-                        </Button>
                         <h1 className="flex items-center gap-2 text-3xl font-bold tracking-tight">
                             <AlertTriangle className="h-8 w-8 text-red-600" />
                             Target List
@@ -104,11 +95,11 @@ export default function TargetList({ children, barangayId }: TargetListProps) {
                 </div>
 
                 <Card className="border-red-200 dark:border-red-900/50">
-                    <CardHeader className="bg-red-50 pb-3 dark:bg-red-950/20">
-                        <CardTitle className="text-red-900 dark:text-red-100">
+                    <CardHeader>
+                        <CardTitle>
                             Children Requiring Attention
                         </CardTitle>
-                        <CardDescription className="text-red-700 dark:text-red-300">
+                        <CardDescription>
                             Showing {children.length} high-risk children
                             identified from latest measurements
                         </CardDescription>

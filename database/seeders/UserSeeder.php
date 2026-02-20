@@ -63,7 +63,5 @@ class UserSeeder extends Seeder
             ]
         );
         $bhw->assignRole('bhw');
-
-        $this->command->info('Users with roles seeded successfully!');
     }
 }

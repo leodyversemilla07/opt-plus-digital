@@ -176,11 +176,6 @@ export default function Show({ child, latestMeasurement }: Props) {
 
                 <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
                     <div className="flex items-center gap-4">
-                        <Link href={childrenIndex.url()}>
-                            <Button variant="ghost" size="icon">
-                                <ArrowLeft className="h-4 w-4" />
-                            </Button>
-                        </Link>
                         <div>
                             <h1 className="text-3xl font-bold tracking-tight">
                                 {child.full_name}

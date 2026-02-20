@@ -11,7 +11,6 @@ import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link } from '@inertiajs/react';
 import {
-    ArrowLeft,
     CheckCircle,
     Edit,
     Mail,
@@ -60,17 +59,6 @@ export default function UserShow({ user, permissions }: UserShowProps) {
             <div className="flex flex-col gap-6 p-6">
                 <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
                     <div>
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            className="mb-2"
-                            asChild
-                        >
-                            <Link href="/users">
-                                <ArrowLeft className="mr-2 h-4 w-4" /> Back to
-                                Users
-                            </Link>
-                        </Button>
                         <div className="flex items-center gap-3">
                             <h1 className="text-3xl font-bold tracking-tight">
                                 {user.name}

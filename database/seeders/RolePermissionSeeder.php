@@ -102,7 +102,5 @@ class RolePermissionSeeder extends Seeder
             'edit measurements',
             'view reports',
         ]);
-
-        $this->command->info('Roles and permissions seeded successfully!');
     }
 }

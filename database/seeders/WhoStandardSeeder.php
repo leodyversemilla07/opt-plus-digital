@@ -24,8 +24,6 @@ class WhoStandardSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->command->info('Seeding WHO Growth Standards (Sample Data)...');
-
         // Sample Weight-for-Age data for boys (0-60 months)
         $this->seedWeightForAgeBoys();
 
@@ -37,9 +35,6 @@ class WhoStandardSeeder extends Seeder
 
         // Sample Weight-for-Height data
         $this->seedWeightForHeight();
-
-        $this->command->info('✅ Sample WHO data seeded successfully');
-        $this->command->warn('⚠️  For production, import full WHO dataset from official sources');
     }
 
     /**

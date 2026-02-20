@@ -78,31 +78,94 @@ return new class extends Migration
      */
     public function down(): void
     {
-        // Drop indexes from measurements table
-        Schema::table('measurements', function (Blueprint $table) {
-            $table->dropIndex('idx_measurements_child_id');
-            $table->dropIndex('idx_measurements_date');
-            $table->dropIndex('idx_measurements_child_date');
-            $table->dropIndex('idx_measurements_measured_by');
-        });
+        // Drop indexes from measurements table.
+        // Use conditional checks to handle partial rollbacks gracefully.
+        // The measured_by_user_id foreign key depends on idx_measurements_measured_by,
+        // so we must drop the foreign key first, then the index, then restore the constraint.
+        $measurementIndexNames = collect(Schema::getIndexes('measurements'))->pluck('name');
 
-        // Drop indexes from children table
-        Schema::table('children', function (Blueprint $table) {
-            $table->dropIndex('idx_children_last_name');
-            $table->dropIndex('idx_children_barangay_id');
-            $table->dropIndex('idx_children_barangay_lastname');
-            $table->dropIndex('idx_children_dob');
-            $table->dropIndex('idx_children_fsn');
-            $table->dropIndex('idx_children_indigenous');
-            $table->dropIndex('idx_children_created_by');
-        });
-
-        // Drop indexes from users table
-        Schema::table('users', function (Blueprint $table) {
-            if (Schema::hasColumn('users', 'barangay_id')) {
-                $table->dropIndex('idx_users_barangay_id');
+        Schema::table('measurements', function (Blueprint $table) use ($measurementIndexNames) {
+            if ($measurementIndexNames->contains('idx_measurements_child_id')) {
+                $table->dropIndex('idx_measurements_child_id');
+            }
+            if ($measurementIndexNames->contains('idx_measurements_date')) {
+                $table->dropIndex('idx_measurements_date');
+            }
+            if ($measurementIndexNames->contains('idx_measurements_child_date')) {
+                $table->dropIndex('idx_measurements_child_date');
             }
         });
+
+        Schema::table('measurements', function (Blueprint $table) {
+            if (collect(Schema::getForeignKeys('measurements'))->where('name', 'measurements_measured_by_user_id_foreign')->isNotEmpty()) {
+                $table->dropForeign('measurements_measured_by_user_id_foreign');
+            }
+        });
+
+        if (collect(Schema::getIndexes('measurements'))->pluck('name')->contains('idx_measurements_measured_by')) {
+            Schema::table('measurements', fn (Blueprint $table) => $table->dropIndex('idx_measurements_measured_by'));
+        }
+
+        Schema::table('measurements', function (Blueprint $table) {
+            $table->foreign('measured_by_user_id')->references('id')->on('users')->onDelete('restrict');
+        });
+
+        // Drop indexes from children table.
+        // idx_children_created_by supports a foreign key; drop FK first, then index, then restore.
+        $childrenIndexNames = collect(Schema::getIndexes('children'))->pluck('name');
+
+        Schema::table('children', function (Blueprint $table) use ($childrenIndexNames) {
+            if ($childrenIndexNames->contains('idx_children_last_name')) {
+                $table->dropIndex('idx_children_last_name');
+            }
+            if ($childrenIndexNames->contains('idx_children_barangay_id')) {
+                $table->dropIndex('idx_children_barangay_id');
+            }
+            if ($childrenIndexNames->contains('idx_children_barangay_lastname')) {
+                $table->dropIndex('idx_children_barangay_lastname');
+            }
+            if ($childrenIndexNames->contains('idx_children_dob')) {
+                $table->dropIndex('idx_children_dob');
+            }
+            if ($childrenIndexNames->contains('idx_children_fsn')) {
+                $table->dropIndex('idx_children_fsn');
+            }
+            if ($childrenIndexNames->contains('idx_children_indigenous')) {
+                $table->dropIndex('idx_children_indigenous');
+            }
+        });
+
+        Schema::table('children', function (Blueprint $table) {
+            if (collect(Schema::getForeignKeys('children'))->where('name', 'children_created_by_user_id_foreign')->isNotEmpty()) {
+                $table->dropForeign('children_created_by_user_id_foreign');
+            }
+        });
+
+        if (collect(Schema::getIndexes('children'))->pluck('name')->contains('idx_children_created_by')) {
+            Schema::table('children', fn (Blueprint $table) => $table->dropIndex('idx_children_created_by'));
+        }
+
+        Schema::table('children', function (Blueprint $table) {
+            $table->foreign('created_by_user_id')->references('id')->on('users')->onDelete('restrict');
+        });
+
+        // Drop indexes from users table.
+        // idx_users_barangay_id supports a foreign key; drop FK first, then index, then restore.
+        if (Schema::hasColumn('users', 'barangay_id')) {
+            Schema::table('users', function (Blueprint $table) {
+                if (collect(Schema::getForeignKeys('users'))->where('name', 'users_barangay_id_foreign')->isNotEmpty()) {
+                    $table->dropForeign('users_barangay_id_foreign');
+                }
+            });
+
+            if (collect(Schema::getIndexes('users'))->pluck('name')->contains('idx_users_barangay_id')) {
+                Schema::table('users', fn (Blueprint $table) => $table->dropIndex('idx_users_barangay_id'));
+            }
+
+            Schema::table('users', function (Blueprint $table) {
+                $table->foreign('barangay_id')->references('id')->on('barangays')->onDelete('set null');
+            });
+        }
 
         // Drop indexes from barangays table
         Schema::table('barangays', function (Blueprint $table) {

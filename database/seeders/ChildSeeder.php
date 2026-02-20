@@ -37,12 +37,6 @@ class ChildSeeder extends Seeder
         // Get all barangays
         $barangays = Barangay::all();
 
-        if ($barangays->isEmpty()) {
-            $this->command->warn('No barangays found. Run BarangaySeeder first.');
-
-            return;
-        }
-
         $totalChildren = 0;
         $totalMeasurements = 0;
 
@@ -108,7 +102,5 @@ class ChildSeeder extends Seeder
                 }
             }
         }
-
-        $this->command->info("Seeded {$totalChildren} children with {$totalMeasurements} measurements");
     }
 }

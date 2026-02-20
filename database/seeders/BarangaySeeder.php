@@ -132,7 +132,5 @@ class BarangaySeeder extends Seeder
 
         // Create additional random barangays for testing
         Barangay::factory(38)->create();
-
-        $this->command->info('Seeded 50 barangays (12 real + 38 test data)');
     }
 }

@@ -20,7 +20,6 @@ import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
 import {
-    ArrowLeft,
     FileDown,
     FileSpreadsheet,
     Filter,
@@ -71,14 +70,6 @@ export default function MasterList({ children, barangayId }: MasterListProps) {
             <div className="flex flex-col gap-6 p-6">
                 <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
                     <div>
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            className="mb-2"
-                            onClick={() => window.history.back()}
-                        >
-                            <ArrowLeft className="mr-2 h-4 w-4" /> Back
-                        </Button>
                         <h1 className="text-3xl font-bold tracking-tight">
                             Master List
                         </h1>

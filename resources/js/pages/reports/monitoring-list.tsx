@@ -21,7 +21,6 @@ import { type BreadcrumbItem } from '@/types';
 import { Head, Link } from '@inertiajs/react';
 import {
     AlertTriangle,
-    ArrowLeft,
     FileDown,
     FileSpreadsheet,
     Scale,
@@ -61,37 +60,32 @@ interface Props {
 
 const typeConfig: Record<
     string,
-    { title: string; description: string; icon: React.ReactNode; color: string }
+    { title: string; description: string; icon: React.ReactNode }
 > = {
     sam: {
         title: 'SAM (Severe Acute Malnutrition)',
         description: 'Children with severe wasting requiring immediate therapeutic feeding',
         icon: <AlertTriangle className="h-8 w-8 text-red-600" />,
-        color: 'border-red-200 bg-red-50',
     },
     mam: {
         title: 'MAM (Moderate Acute Malnutrition)',
         description: 'Children with moderate wasting requiring supplementary feeding',
         icon: <TrendingDown className="h-8 w-8 text-orange-600" />,
-        color: 'border-orange-200 bg-orange-50',
     },
     stunted: {
         title: 'Stunted Children',
         description: 'Children with chronic malnutrition (low height-for-age)',
         icon: <Scale className="h-8 w-8 text-yellow-600" />,
-        color: 'border-yellow-200 bg-yellow-50',
     },
     overweight: {
         title: 'Overweight Children',
         description: 'Children with elevated weight-for-height',
         icon: <TrendingUp className="h-8 w-8 text-purple-600" />,
-        color: 'border-purple-200 bg-purple-50',
     },
     obese: {
         title: 'Obese Children',
         description: 'Children with severely elevated weight-for-height',
         icon: <TrendingUp className="h-8 w-8 text-red-600" />,
-        color: 'border-red-200 bg-red-50',
     },
 };
 
@@ -115,14 +109,6 @@ export default function MonitoringList({ type, children, barangayId }: Props) {
             <div className="flex flex-col gap-6 p-6">
                 <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
                     <div>
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            className="mb-2"
-                            onClick={() => window.history.back()}
-                        >
-                            <ArrowLeft className="mr-2 h-4 w-4" /> Back
-                        </Button>
                         <h1 className="flex items-center gap-2 text-3xl font-bold tracking-tight">
                             {config.icon}
                             {config.title}
@@ -150,7 +136,7 @@ export default function MonitoringList({ type, children, barangayId }: Props) {
                 </div>
 
                 {/* Summary Card */}
-                <Card className={config.color}>
+                <Card>
                     <CardHeader className="pb-2">
                         <CardTitle className="text-lg">
                             Monitoring Summary
@@ -270,37 +256,37 @@ export default function MonitoringList({ type, children, barangayId }: Props) {
                                                 <div className="space-y-1 text-xs">
                                                     {child.wfa_zscore !==
                                                         null && (
-                                                        <div>
-                                                            WFA:{' '}
-                                                            <span className="font-mono">
-                                                                {child.wfa_zscore.toFixed(
-                                                                    2
-                                                                )}
-                                                            </span>
-                                                        </div>
-                                                    )}
+                                                            <div>
+                                                                WFA:{' '}
+                                                                <span className="font-mono">
+                                                                    {child.wfa_zscore.toFixed(
+                                                                        2
+                                                                    )}
+                                                                </span>
+                                                            </div>
+                                                        )}
                                                     {child.hfa_zscore !==
                                                         null && (
-                                                        <div>
-                                                            HFA:{' '}
-                                                            <span className="font-mono">
-                                                                {child.hfa_zscore.toFixed(
-                                                                    2
-                                                                )}
-                                                            </span>
-                                                        </div>
-                                                    )}
+                                                            <div>
+                                                                HFA:{' '}
+                                                                <span className="font-mono">
+                                                                    {child.hfa_zscore.toFixed(
+                                                                        2
+                                                                    )}
+                                                                </span>
+                                                            </div>
+                                                        )}
                                                     {child.wfh_zscore !==
                                                         null && (
-                                                        <div>
-                                                            WFH:{' '}
-                                                            <span className="font-mono">
-                                                                {child.wfh_zscore.toFixed(
-                                                                    2
-                                                                )}
-                                                            </span>
-                                                        </div>
-                                                    )}
+                                                            <div>
+                                                                WFH:{' '}
+                                                                <span className="font-mono">
+                                                                    {child.wfh_zscore.toFixed(
+                                                                        2
+                                                                    )}
+                                                                </span>
+                                                            </div>
+                                                        )}
                                                 </div>
                                             </TableCell>
                                             <TableCell>
@@ -317,7 +303,7 @@ export default function MonitoringList({ type, children, barangayId }: Props) {
                                                     <span
                                                         className={
                                                             child.days_since_measurement &&
-                                                            child.days_since_measurement >
+                                                                child.days_since_measurement >
                                                                 30
                                                                 ? 'text-yellow-600'
                                                                 : ''
@@ -326,14 +312,14 @@ export default function MonitoringList({ type, children, barangayId }: Props) {
                                                         {child.measurement_date}
                                                         {child.days_since_measurement !==
                                                             null && (
-                                                            <span className="ml-1 text-xs text-muted-foreground">
-                                                                (
-                                                                {
-                                                                    child.days_since_measurement
-                                                                }
-                                                                d)
-                                                            </span>
-                                                        )}
+                                                                <span className="ml-1 text-xs text-muted-foreground">
+                                                                    (
+                                                                    {
+                                                                        child.days_since_measurement
+                                                                    }
+                                                                    d)
+                                                                </span>
+                                                            )}
                                                     </span>
                                                 ) : (
                                                     <span className="text-muted-foreground">
