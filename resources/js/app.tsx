@@ -38,10 +38,16 @@ if ('serviceWorker' in navigator) {
         navigator.serviceWorker
             .register('/sw.js', { scope: '/' })
             .then((registration) => {
-                console.log('[SW] Service Worker registered:', registration.scope);
+                console.log(
+                    '[SW] Service Worker registered:',
+                    registration.scope,
+                );
             })
             .catch((error) => {
-                console.error('[SW] Service Worker registration failed:', error);
+                console.error(
+                    '[SW] Service Worker registration failed:',
+                    error,
+                );
             });
     });
 }

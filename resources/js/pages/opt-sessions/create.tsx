@@ -100,7 +100,8 @@ export default function Create({ barangays }: Props) {
                             Create OPT Session
                         </h1>
                         <p className="text-muted-foreground">
-                            Schedule a new Operation Timbang Plus weighing session
+                            Schedule a new Operation Timbang Plus weighing
+                            session
                         </p>
                     </div>
                 </div>
@@ -191,7 +192,10 @@ export default function Create({ barangays }: Props) {
                                         type="date"
                                         value={data.start_date}
                                         onChange={(e) =>
-                                            setData('start_date', e.target.value)
+                                            setData(
+                                                'start_date',
+                                                e.target.value,
+                                            )
                                         }
                                     />
                                 </div>
@@ -221,7 +225,10 @@ export default function Create({ barangays }: Props) {
                                     min="0"
                                     value={data.target_children}
                                     onChange={(e) =>
-                                        setData('target_children', e.target.value)
+                                        setData(
+                                            'target_children',
+                                            e.target.value,
+                                        )
                                     }
                                     placeholder="Leave blank to auto-calculate"
                                 />
@@ -263,7 +270,9 @@ export default function Create({ barangays }: Props) {
                                 <Button
                                     type="button"
                                     variant="outline"
-                                    onClick={() => router.visit('/opt-sessions')}
+                                    onClick={() =>
+                                        router.visit('/opt-sessions')
+                                    }
                                 >
                                     Cancel
                                 </Button>

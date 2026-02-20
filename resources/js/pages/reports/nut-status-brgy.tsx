@@ -56,9 +56,7 @@ export default function NutStatusBrgy({ report, barangayId }: Props) {
     };
 
     const formatLabel = (key: string): string => {
-        return key
-            .replace(/_/g, ' ')
-            .replace(/\b\w/g, (l) => l.toUpperCase());
+        return key.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
     };
 
     const calculatePercentage = (value: number, total: number): string => {
@@ -134,7 +132,7 @@ export default function NutStatusBrgy({ report, barangayId }: Props) {
                             <p className="text-sm text-blue-600">
                                 {calculatePercentage(
                                     report.male_count,
-                                    report.total_children
+                                    report.total_children,
                                 )}
                                 %
                             </p>
@@ -153,7 +151,7 @@ export default function NutStatusBrgy({ report, barangayId }: Props) {
                             <p className="text-sm text-pink-600">
                                 {calculatePercentage(
                                     report.female_count,
-                                    report.total_children
+                                    report.total_children,
                                 )}
                                 %
                             </p>
@@ -202,7 +200,7 @@ export default function NutStatusBrgy({ report, barangayId }: Props) {
                                                 {stats.total}
                                             </TableCell>
                                         </TableRow>
-                                    )
+                                    ),
                                 )}
                             </TableBody>
                         </Table>
@@ -255,12 +253,12 @@ export default function NutStatusBrgy({ report, barangayId }: Props) {
                                             <TableCell className="text-center">
                                                 {calculatePercentage(
                                                     stats.total,
-                                                    report.total_children
+                                                    report.total_children,
                                                 )}
                                                 %
                                             </TableCell>
                                         </TableRow>
-                                    )
+                                    ),
                                 )}
                             </TableBody>
                         </Table>
@@ -313,12 +311,12 @@ export default function NutStatusBrgy({ report, barangayId }: Props) {
                                             <TableCell className="text-center">
                                                 {calculatePercentage(
                                                     stats.total,
-                                                    report.total_children
+                                                    report.total_children,
                                                 )}
                                                 %
                                             </TableCell>
                                         </TableRow>
-                                    )
+                                    ),
                                 )}
                             </TableBody>
                         </Table>
@@ -371,12 +369,12 @@ export default function NutStatusBrgy({ report, barangayId }: Props) {
                                             <TableCell className="text-center">
                                                 {calculatePercentage(
                                                     stats.total,
-                                                    report.total_children
+                                                    report.total_children,
                                                 )}
                                                 %
                                             </TableCell>
                                         </TableRow>
-                                    )
+                                    ),
                                 )}
                             </TableBody>
                         </Table>

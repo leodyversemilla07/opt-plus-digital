@@ -261,7 +261,7 @@ export default function MUACList({ children, barangayId }: Props) {
                                                 {child.muac_status && (
                                                     <Badge
                                                         className={getMUACStatusColor(
-                                                            child.muac_status
+                                                            child.muac_status,
                                                         )}
                                                     >
                                                         {child.muac_status}

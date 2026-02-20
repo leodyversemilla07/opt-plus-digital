@@ -13,13 +13,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { NutritionalStatusBadge } from '@/components/ui/nutritional-status-badge';
 import { Head } from '@inertiajs/react';
-import {
-    AlertTriangle,
-    Check,
-    CheckCircle,
-    Info,
-    XCircle,
-} from 'lucide-react';
+import { AlertTriangle, Check, CheckCircle, Info, XCircle } from 'lucide-react';
 import { useState } from 'react';
 
 export default function DesignSystem() {
@@ -224,7 +218,9 @@ export default function DesignSystem() {
                         <Section title="Typography">
                             <Card>
                                 <CardHeader>
-                                    <CardTitle>Inter — Primary Typeface</CardTitle>
+                                    <CardTitle>
+                                        Inter — Primary Typeface
+                                    </CardTitle>
                                     <CardDescription>
                                         Highly readable at all sizes, excellent
                                         for dashboards, forms, and data-heavy
@@ -238,7 +234,7 @@ export default function DesignSystem() {
                                             <span className="w-24 shrink-0 text-xs font-medium text-muted-foreground">
                                                 H1 — 32px
                                             </span>
-                                            <h1 className="text-2xl font-semibold leading-tight tracking-tight sm:text-[32px]">
+                                            <h1 className="text-2xl leading-tight font-semibold tracking-tight sm:text-[32px]">
                                                 Page titles
                                             </h1>
                                         </div>
@@ -529,9 +525,7 @@ export default function DesignSystem() {
                             <div className="grid gap-4 md:grid-cols-2">
                                 <Alert variant="success">
                                     <CheckCircle className="h-4 w-4" />
-                                    <span>
-                                        Record saved successfully.
-                                    </span>
+                                    <span>Record saved successfully.</span>
                                 </Alert>
                                 <Alert variant="warning">
                                     <AlertTriangle className="h-4 w-4" />
@@ -542,9 +536,7 @@ export default function DesignSystem() {
                                 </Alert>
                                 <Alert variant="error">
                                     <XCircle className="h-4 w-4" />
-                                    <span>
-                                        Required fields are missing.
-                                    </span>
+                                    <span>Required fields are missing.</span>
                                 </Alert>
                                 <Alert variant="info">
                                     <Info className="h-4 w-4" />
@@ -595,7 +587,8 @@ export default function DesignSystem() {
                                                 </li>
                                                 <li className="flex items-start gap-2">
                                                     <XCircle className="mt-0.5 h-4 w-4 shrink-0 text-destructive" />
-                                                    "Execute batch synchronization"
+                                                    "Execute batch
+                                                    synchronization"
                                                 </li>
                                             </ul>
                                         </div>
@@ -653,9 +646,7 @@ export default function DesignSystem() {
                                             </p>
                                         </div>
                                         <div className="rounded-lg border bg-muted p-4">
-                                            <p className="font-medium">
-                                                Muted
-                                            </p>
+                                            <p className="font-medium">Muted</p>
                                             <p className="text-xs text-muted-foreground">
                                                 bg-muted
                                             </p>
@@ -703,7 +694,9 @@ function Section({
 }) {
     return (
         <section className="space-y-3 sm:space-y-4">
-            <h2 className="border-b pb-2 text-xl font-semibold sm:text-2xl">{title}</h2>
+            <h2 className="border-b pb-2 text-xl font-semibold sm:text-2xl">
+                {title}
+            </h2>
             {children}
         </section>
     );

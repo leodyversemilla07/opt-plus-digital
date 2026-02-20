@@ -69,7 +69,8 @@ export default function ReportsIndex() {
         },
         {
             title: 'First 1000 Days (F1K)',
-            description: 'Priority list for children 0-23 months requiring early intervention',
+            description:
+                'Priority list for children 0-23 months requiring early intervention',
             icon: Baby,
             href: '/reports/f1k-list',
             color: 'text-pink-600 dark:text-pink-400',
@@ -85,7 +86,8 @@ export default function ReportsIndex() {
         },
         {
             title: 'Form 1C - At-Risk Children',
-            description: 'Comprehensive list of affected and at-risk children by category',
+            description:
+                'Comprehensive list of affected and at-risk children by category',
             icon: ClipboardList,
             href: '/reports/form-1c',
             color: 'text-red-600 dark:text-red-400',
@@ -101,7 +103,8 @@ export default function ReportsIndex() {
         },
         {
             title: 'MUAC Monitoring',
-            description: 'Mid-Upper Arm Circumference list for children 6-59 months',
+            description:
+                'Mid-Upper Arm Circumference list for children 6-59 months',
             icon: Ruler,
             href: '/reports/muac-list',
             color: 'text-teal-600 dark:text-teal-400',
@@ -112,7 +115,8 @@ export default function ReportsIndex() {
     const monitoringLists = [
         {
             title: 'SAM (Severe Acute Malnutrition)',
-            description: 'Children with severe wasting requiring therapeutic feeding',
+            description:
+                'Children with severe wasting requiring therapeutic feeding',
             icon: AlertTriangle,
             href: '/reports/monitoring/sam',
             color: 'text-red-600 dark:text-red-400',
@@ -120,7 +124,8 @@ export default function ReportsIndex() {
         },
         {
             title: 'MAM (Moderate Acute Malnutrition)',
-            description: 'Children with moderate wasting requiring supplementary feeding',
+            description:
+                'Children with moderate wasting requiring supplementary feeding',
             icon: TrendingDown,
             href: '/reports/monitoring/mam',
             color: 'text-orange-600 dark:text-orange-400',
@@ -128,7 +133,8 @@ export default function ReportsIndex() {
         },
         {
             title: 'Stunted Children',
-            description: 'Children with chronic malnutrition (low height-for-age)',
+            description:
+                'Children with chronic malnutrition (low height-for-age)',
             icon: Scale,
             href: '/reports/monitoring/stunted',
             color: 'text-yellow-600 dark:text-yellow-400',
@@ -236,7 +242,7 @@ export default function ReportsIndex() {
 
                 {/* Monitoring Lists Section */}
                 <div>
-                    <h2 className="mb-4 text-xl font-semibold flex items-center gap-2">
+                    <h2 className="mb-4 flex items-center gap-2 text-xl font-semibold">
                         <Heart className="h-5 w-5 text-red-500" />
                         Monitoring Lists
                     </h2>

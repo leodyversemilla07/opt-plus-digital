@@ -1,19 +1,5 @@
-import { Head, Link, useForm } from '@inertiajs/react';
-import { FormEventHandler } from 'react';
-import { index as childrenIndex } from '@/routes/children';
-import AppLayout from '@/layouts/app-layout';
 import { Button } from '@/components/ui/button';
-import { type BreadcrumbItem } from '@/types';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
     Field,
@@ -21,7 +7,21 @@ import {
     FieldGroup,
     FieldLabel,
 } from '@/components/ui/field';
+import { Input } from '@/components/ui/input';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
+import AppLayout from '@/layouts/app-layout';
+import { index as childrenIndex } from '@/routes/children';
+import { type BreadcrumbItem } from '@/types';
+import { Head, Link, useForm } from '@inertiajs/react';
 import { ArrowLeft } from 'lucide-react';
+import { FormEventHandler } from 'react';
 
 interface Barangay {
     id: string;
@@ -73,19 +73,19 @@ export default function Create({ barangays }: Props) {
             <Head title="Register Child" />
 
             <div className="flex flex-col gap-6 p-6">
-                <div className="mx-auto max-w-4xl w-full">
+                <div className="mx-auto w-full max-w-4xl">
                     {/* Header */}
                     <div className="flex items-center gap-2">
                         <Link href={childrenIndex.url()}>
                             <Button variant="ghost" size="sm">
-                                <ArrowLeft className="h-4 w-4 mr-2" />
+                                <ArrowLeft className="mr-2 h-4 w-4" />
                                 Back to Children
                             </Button>
                         </Link>
                     </div>
                 </div>
 
-                <div className="mx-auto max-w-4xl w-full">
+                <div className="mx-auto w-full max-w-4xl">
                     {/* Form */}
                     <form onSubmit={submit} className="space-y-6">
                         {/* Child Information */}
@@ -98,7 +98,9 @@ export default function Create({ barangays }: Props) {
                                     <Field>
                                         <FieldLabel htmlFor="family_serial_number">
                                             Family Serial Number{' '}
-                                            <span className="text-red-500">*</span>
+                                            <span className="text-red-500">
+                                                *
+                                            </span>
                                         </FieldLabel>
                                         <Input
                                             id="family_serial_number"
@@ -106,7 +108,7 @@ export default function Create({ barangays }: Props) {
                                             onChange={(e) =>
                                                 setData(
                                                     'family_serial_number',
-                                                    e.target.value
+                                                    e.target.value,
                                                 )
                                             }
                                             required
@@ -121,7 +123,9 @@ export default function Create({ barangays }: Props) {
                                     <Field>
                                         <FieldLabel htmlFor="first_name">
                                             First Name{' '}
-                                            <span className="text-red-500">*</span>
+                                            <span className="text-red-500">
+                                                *
+                                            </span>
                                         </FieldLabel>
                                         <Input
                                             id="first_name"
@@ -129,7 +133,7 @@ export default function Create({ barangays }: Props) {
                                             onChange={(e) =>
                                                 setData(
                                                     'first_name',
-                                                    e.target.value
+                                                    e.target.value,
                                                 )
                                             }
                                             required
@@ -151,7 +155,7 @@ export default function Create({ barangays }: Props) {
                                             onChange={(e) =>
                                                 setData(
                                                     'middle_name',
-                                                    e.target.value
+                                                    e.target.value,
                                                 )
                                             }
                                         />
@@ -160,7 +164,9 @@ export default function Create({ barangays }: Props) {
                                     <Field>
                                         <FieldLabel htmlFor="last_name">
                                             Last Name{' '}
-                                            <span className="text-red-500">*</span>
+                                            <span className="text-red-500">
+                                                *
+                                            </span>
                                         </FieldLabel>
                                         <Input
                                             id="last_name"
@@ -168,7 +174,7 @@ export default function Create({ barangays }: Props) {
                                             onChange={(e) =>
                                                 setData(
                                                     'last_name',
-                                                    e.target.value
+                                                    e.target.value,
                                                 )
                                             }
                                             required
@@ -181,12 +187,17 @@ export default function Create({ barangays }: Props) {
                                     </Field>
 
                                     <Field>
-                                        <FieldLabel htmlFor="suffix">Suffix</FieldLabel>
+                                        <FieldLabel htmlFor="suffix">
+                                            Suffix
+                                        </FieldLabel>
                                         <Input
                                             id="suffix"
                                             value={data.suffix}
                                             onChange={(e) =>
-                                                setData('suffix', e.target.value)
+                                                setData(
+                                                    'suffix',
+                                                    e.target.value,
+                                                )
                                             }
                                             placeholder="Jr., Sr., III, etc."
                                         />
@@ -195,7 +206,9 @@ export default function Create({ barangays }: Props) {
                                     <Field>
                                         <FieldLabel htmlFor="sex">
                                             Sex{' '}
-                                            <span className="text-red-500">*</span>
+                                            <span className="text-red-500">
+                                                *
+                                            </span>
                                         </FieldLabel>
                                         <Select
                                             value={data.sex}
@@ -225,7 +238,9 @@ export default function Create({ barangays }: Props) {
                                     <Field>
                                         <FieldLabel htmlFor="date_of_birth">
                                             Date of Birth{' '}
-                                            <span className="text-red-500">*</span>
+                                            <span className="text-red-500">
+                                                *
+                                            </span>
                                         </FieldLabel>
                                         <Input
                                             id="date_of_birth"
@@ -234,7 +249,7 @@ export default function Create({ barangays }: Props) {
                                             onChange={(e) =>
                                                 setData(
                                                     'date_of_birth',
-                                                    e.target.value
+                                                    e.target.value,
                                                 )
                                             }
                                             max={
@@ -263,7 +278,7 @@ export default function Create({ barangays }: Props) {
                                             onChange={(e) =>
                                                 setData(
                                                     'birth_weight_kg',
-                                                    e.target.value
+                                                    e.target.value,
                                                 )
                                             }
                                             placeholder="2.5"
@@ -285,7 +300,7 @@ export default function Create({ barangays }: Props) {
                                             onChange={(e) =>
                                                 setData(
                                                     'birth_length_cm',
-                                                    e.target.value
+                                                    e.target.value,
                                                 )
                                             }
                                             placeholder="48.0"
@@ -308,7 +323,9 @@ export default function Create({ barangays }: Props) {
                                     <Field>
                                         <FieldLabel htmlFor="barangay_id">
                                             Barangay{' '}
-                                            <span className="text-red-500">*</span>
+                                            <span className="text-red-500">
+                                                *
+                                            </span>
                                         </FieldLabel>
                                         <Select
                                             value={data.barangay_id}
@@ -326,7 +343,9 @@ export default function Create({ barangays }: Props) {
                                                         value={barangay.id}
                                                     >
                                                         {barangay.name},{' '}
-                                                        {barangay.municipality_city}
+                                                        {
+                                                            barangay.municipality_city
+                                                        }
                                                     </SelectItem>
                                                 ))}
                                             </SelectContent>
@@ -348,13 +367,14 @@ export default function Create({ barangays }: Props) {
                                             onChange={(e) =>
                                                 setData(
                                                     'purok_sitio',
-                                                    e.target.value
+                                                    e.target.value,
                                                 )
                                             }
                                             placeholder="Purok 1"
                                         />
                                         <FieldDescription>
-                                            Specify the purok or sitio within the barangay
+                                            Specify the purok or sitio within
+                                            the barangay
                                         </FieldDescription>
                                     </Field>
                                 </FieldGroup>
@@ -364,7 +384,9 @@ export default function Create({ barangays }: Props) {
                         {/* Parents/Guardian */}
                         <Card>
                             <CardHeader>
-                                <CardTitle>Parents/Guardian Information</CardTitle>
+                                <CardTitle>
+                                    Parents/Guardian Information
+                                </CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 <FieldGroup>
@@ -378,7 +400,7 @@ export default function Create({ barangays }: Props) {
                                             onChange={(e) =>
                                                 setData(
                                                     'mother_name',
-                                                    e.target.value
+                                                    e.target.value,
                                                 )
                                             }
                                         />
@@ -394,7 +416,7 @@ export default function Create({ barangays }: Props) {
                                             onChange={(e) =>
                                                 setData(
                                                     'father_name',
-                                                    e.target.value
+                                                    e.target.value,
                                                 )
                                             }
                                         />
@@ -410,7 +432,7 @@ export default function Create({ barangays }: Props) {
                                             onChange={(e) =>
                                                 setData(
                                                     'guardian_name',
-                                                    e.target.value
+                                                    e.target.value,
                                                 )
                                             }
                                         />
@@ -426,7 +448,7 @@ export default function Create({ barangays }: Props) {
                                             onChange={(e) =>
                                                 setData(
                                                     'guardian_relationship',
-                                                    e.target.value
+                                                    e.target.value,
                                                 )
                                             }
                                             placeholder="Grandmother, Aunt, etc."
@@ -443,7 +465,7 @@ export default function Create({ barangays }: Props) {
                                             onChange={(e) =>
                                                 setData(
                                                     'contact_number',
-                                                    e.target.value
+                                                    e.target.value,
                                                 )
                                             }
                                             placeholder="09XX XXX XXXX"
@@ -467,7 +489,7 @@ export default function Create({ barangays }: Props) {
                                             onCheckedChange={(checked) =>
                                                 setData(
                                                     'is_indigenous_people',
-                                                    checked as boolean
+                                                    checked as boolean,
                                                 )
                                             }
                                         />
@@ -490,7 +512,7 @@ export default function Create({ barangays }: Props) {
                                                 onChange={(e) =>
                                                     setData(
                                                         'indigenous_group',
-                                                        e.target.value
+                                                        e.target.value,
                                                     )
                                                 }
                                                 placeholder="e.g., Lumad, Mangyan, etc."
@@ -499,7 +521,9 @@ export default function Create({ barangays }: Props) {
                                     )}
 
                                     <Field>
-                                        <FieldLabel htmlFor="notes">Notes</FieldLabel>
+                                        <FieldLabel htmlFor="notes">
+                                            Notes
+                                        </FieldLabel>
                                         <Textarea
                                             id="notes"
                                             value={data.notes}
@@ -510,7 +534,8 @@ export default function Create({ barangays }: Props) {
                                             placeholder="Additional notes or remarks..."
                                         />
                                         <FieldDescription>
-                                            Any additional information about the child
+                                            Any additional information about the
+                                            child
                                         </FieldDescription>
                                     </Field>
                                 </FieldGroup>

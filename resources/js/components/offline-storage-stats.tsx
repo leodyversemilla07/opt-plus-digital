@@ -1,10 +1,16 @@
-import { useState, useEffect } from 'react';
-import { offlineDB } from '@/lib/offline-db';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
-import { Database, Trash2, RefreshCw } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
+import { Progress } from '@/components/ui/progress';
+import { offlineDB } from '@/lib/offline-db';
+import { Database, RefreshCw, Trash2 } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 interface StorageStats {
     totalChildren: number;
@@ -46,7 +52,11 @@ export function OfflineStorageStats() {
     };
 
     const handleClearCache = async () => {
-        if (!confirm('Are you sure you want to clear all offline data? Pending measurements will be lost.')) {
+        if (
+            !confirm(
+                'Are you sure you want to clear all offline data? Pending measurements will be lost.',
+            )
+        ) {
             return;
         }
 
@@ -64,7 +74,9 @@ export function OfflineStorageStats() {
     };
 
     const getTotalItems = () => {
-        return stats.totalChildren + stats.pendingMeasurements + stats.queuedSyncs;
+        return (
+            stats.totalChildren + stats.pendingMeasurements + stats.queuedSyncs
+        );
     };
 
     const getStoragePercentage = () => {
@@ -125,8 +137,12 @@ export function OfflineStorageStats() {
                 {/* Stats Grid */}
                 <div className="grid gap-4 md:grid-cols-3">
                     <div className="rounded-lg border border-border p-4">
-                        <p className="text-sm font-medium text-muted-foreground">Cached Children</p>
-                        <p className="mt-2 text-2xl font-bold">{stats.totalChildren}</p>
+                        <p className="text-sm font-medium text-muted-foreground">
+                            Cached Children
+                        </p>
+                        <p className="mt-2 text-2xl font-bold">
+                            {stats.totalChildren}
+                        </p>
                         <Badge variant="secondary" className="mt-2">
                             Available Offline
                         </Badge>
@@ -139,15 +155,25 @@ export function OfflineStorageStats() {
                             {stats.pendingMeasurements}
                         </p>
                         <Badge
-                            variant={stats.pendingMeasurements > 0 ? 'default' : 'secondary'}
+                            variant={
+                                stats.pendingMeasurements > 0
+                                    ? 'default'
+                                    : 'secondary'
+                            }
                             className="mt-2"
                         >
-                            {stats.pendingMeasurements > 0 ? 'Needs Sync' : 'All Synced'}
+                            {stats.pendingMeasurements > 0
+                                ? 'Needs Sync'
+                                : 'All Synced'}
                         </Badge>
                     </div>
                     <div className="rounded-lg border border-border p-4">
-                        <p className="text-sm font-medium text-muted-foreground">Total Items</p>
-                        <p className="mt-2 text-2xl font-bold">{getTotalItems()}</p>
+                        <p className="text-sm font-medium text-muted-foreground">
+                            Total Items
+                        </p>
+                        <p className="mt-2 text-2xl font-bold">
+                            {getTotalItems()}
+                        </p>
                         <Badge variant="secondary" className="mt-2">
                             In Storage
                         </Badge>
@@ -157,29 +183,33 @@ export function OfflineStorageStats() {
                 {/* Storage Usage */}
                 <div className="space-y-2">
                     <div className="flex items-center justify-between text-sm">
-                        <span className="text-muted-foreground">Estimated Storage Usage</span>
+                        <span className="text-muted-foreground">
+                            Estimated Storage Usage
+                        </span>
                         <span className="font-medium">
                             {getStoragePercentage().toFixed(1)}%
                         </span>
                     </div>
                     <Progress value={getStoragePercentage()} />
                     <p className="text-xs text-muted-foreground">
-                        ~{(getTotalItems() * 1).toFixed(0)} KB used of ~50 MB available
+                        ~{(getTotalItems() * 1).toFixed(0)} KB used of ~50 MB
+                        available
                     </p>
                 </div>
 
                 {/* Warning if near limit */}
                 {getStoragePercentage() > 80 && (
                     <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-200">
-                        Storage usage is high. Consider clearing old cached data.
+                        Storage usage is high. Consider clearing old cached
+                        data.
                     </div>
                 )}
 
                 {/* Info */}
                 {getTotalItems() === 0 && (
                     <div className="rounded-lg border border-blue-200 bg-blue-50 p-3 text-sm text-blue-800 dark:border-blue-800 dark:bg-blue-950 dark:text-blue-200">
-                        No offline data cached. Visit pages while online to cache data for
-                        offline access.
+                        No offline data cached. Visit pages while online to
+                        cache data for offline access.
                     </div>
                 )}
             </CardContent>

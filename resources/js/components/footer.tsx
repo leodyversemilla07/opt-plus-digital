@@ -36,7 +36,9 @@ export function Footer() {
                             />
                         </svg>
                     </div>
-                    <span className="text-lg font-semibold">OPT Plus Digital</span>
+                    <span className="text-lg font-semibold">
+                        OPT Plus Digital
+                    </span>
                 </div>
 
                 <div className="flex flex-wrap justify-center gap-x-8 gap-y-4 text-sm text-muted-foreground">

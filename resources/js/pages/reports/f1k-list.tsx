@@ -95,7 +95,9 @@ export default function F1KList({ children, statistics, barangayId }: Props) {
 
     const criticalCount = children.filter((c) => c.priority === 1).length;
     const highCount = children.filter((c) => c.priority === 2).length;
-    const needsMeasurementCount = children.filter((c) => c.needs_measurement).length;
+    const needsMeasurementCount = children.filter(
+        (c) => c.needs_measurement,
+    ).length;
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>

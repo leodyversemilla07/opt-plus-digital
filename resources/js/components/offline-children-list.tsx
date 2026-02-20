@@ -1,9 +1,6 @@
-import { useState, useEffect } from 'react';
-import { Link } from '@inertiajs/react';
-import { offlineDB } from '@/lib/offline-db';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
     Card,
     CardContent,
@@ -11,6 +8,7 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
 import {
     Table,
     TableBody,
@@ -19,8 +17,10 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-import { Search, Database, AlertCircle } from 'lucide-react';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { offlineDB } from '@/lib/offline-db';
+import { Link } from '@inertiajs/react';
+import { AlertCircle, Database, Search } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 interface CachedChild {
     id: string;
@@ -53,8 +53,10 @@ export function OfflineChildrenList() {
             const filtered = children.filter(
                 (child) =>
                     child.full_name.toLowerCase().includes(searchLower) ||
-                    child.family_serial_number.toLowerCase().includes(searchLower) ||
-                    child.barangay?.name.toLowerCase().includes(searchLower)
+                    child.family_serial_number
+                        .toLowerCase()
+                        .includes(searchLower) ||
+                    child.barangay?.name.toLowerCase().includes(searchLower),
             );
             setFilteredChildren(filtered);
         }
@@ -127,9 +129,10 @@ export function OfflineChildrenList() {
                     <Alert>
                         <AlertCircle className="h-4 w-4" />
                         <AlertDescription>
-                            No children cached for offline viewing. When online, visit the
-                            Children Registry and click "Cache for Offline" to download
-                            child records for offline access.
+                            No children cached for offline viewing. When online,
+                            visit the Children Registry and click "Cache for
+                            Offline" to download child records for offline
+                            access.
                         </AlertDescription>
                     </Alert>
                 </CardContent>
@@ -152,7 +155,7 @@ export function OfflineChildrenList() {
                 {/* Search */}
                 <div className="mb-4">
                     <div className="relative">
-                        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                        <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                         <Input
                             placeholder="Search cached children..."
                             value={search}
@@ -162,7 +165,8 @@ export function OfflineChildrenList() {
                     </div>
                     {search && (
                         <p className="mt-2 text-sm text-muted-foreground">
-                            Found {filteredChildren.length} of {children.length} children
+                            Found {filteredChildren.length} of {children.length}{' '}
+                            children
                         </p>
                     )}
                 </div>
@@ -203,7 +207,9 @@ export function OfflineChildrenList() {
                                                         : 'secondary'
                                                 }
                                             >
-                                                {child.sex === 'male' ? 'M' : 'F'}
+                                                {child.sex === 'male'
+                                                    ? 'M'
+                                                    : 'F'}
                                             </Badge>
                                         </TableCell>
                                         <TableCell>
@@ -219,8 +225,13 @@ export function OfflineChildrenList() {
                                             {getCacheAge(child.cachedAt)}
                                         </TableCell>
                                         <TableCell>
-                                            <Link href={`/children/${child.id}`}>
-                                                <Button size="sm" variant="outline">
+                                            <Link
+                                                href={`/children/${child.id}`}
+                                            >
+                                                <Button
+                                                    size="sm"
+                                                    variant="outline"
+                                                >
                                                     View
                                                 </Button>
                                             </Link>

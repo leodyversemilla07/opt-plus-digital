@@ -1,16 +1,13 @@
-import { Head, Link, useForm } from '@inertiajs/react';
-import { FormEventHandler } from 'react';
-import { show as childrenShow } from '@/routes/children';
-import AppLayout from '@/layouts/app-layout';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
-    Card,
-    CardContent,
-    CardHeader,
-    CardTitle,
-} from '@/components/ui/card';
+    Field,
+    FieldDescription,
+    FieldGroup,
+    FieldLabel,
+} from '@/components/ui/field';
+import { Input } from '@/components/ui/input';
 import {
     Select,
     SelectContent,
@@ -18,13 +15,11 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import {
-    Field,
-    FieldDescription,
-    FieldGroup,
-    FieldLabel,
-} from '@/components/ui/field';
+import AppLayout from '@/layouts/app-layout';
+import { show as childrenShow } from '@/routes/children';
 import { type BreadcrumbItem } from '@/types';
+import { Head, Link, useForm } from '@inertiajs/react';
+import { FormEventHandler } from 'react';
 
 interface Child {
     id: string;
@@ -88,28 +83,32 @@ export default function Edit({ child, barangays }: Props) {
 
     const breadcrumbs: BreadcrumbItem[] = [
         { title: 'Children', href: '/children' },
-        { title: `${child.first_name} ${child.last_name}`, href: `/children/${child.id}` },
+        {
+            title: `${child.first_name} ${child.last_name}`,
+            href: `/children/${child.id}`,
+        },
         { title: 'Edit', href: `/children/${child.id}/edit` },
     ];
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title={`Edit Child - ${child.first_name} ${child.last_name}`} />
+            <Head
+                title={`Edit Child - ${child.first_name} ${child.last_name}`}
+            />
 
             <div className="flex flex-col gap-6 p-6">
-                <div className="mx-auto max-w-4xl w-full">
+                <div className="mx-auto w-full max-w-4xl">
                     <div>
                         <h1 className="text-3xl font-bold tracking-tight">
                             Edit Child Information
                         </h1>
-                        <p className="text-muted-foreground mt-1">
+                        <p className="mt-1 text-muted-foreground">
                             Update child registration details
                         </p>
                     </div>
                 </div>
 
-                <div className="mx-auto max-w-4xl w-full">
-
+                <div className="mx-auto w-full max-w-4xl">
                     <form onSubmit={submit}>
                         <div className="space-y-6">
                             {/* Child Information */}
@@ -128,18 +127,22 @@ export default function Edit({ child, barangays }: Props) {
                                             </FieldLabel>
                                             <Input
                                                 id="family_serial_number"
-                                                value={data.family_serial_number}
+                                                value={
+                                                    data.family_serial_number
+                                                }
                                                 onChange={(e) =>
                                                     setData(
                                                         'family_serial_number',
-                                                        e.target.value
+                                                        e.target.value,
                                                     )
                                                 }
                                                 required
                                             />
                                             {errors.family_serial_number && (
                                                 <FieldDescription className="text-red-500">
-                                                    {errors.family_serial_number}
+                                                    {
+                                                        errors.family_serial_number
+                                                    }
                                                 </FieldDescription>
                                             )}
                                         </Field>
@@ -157,7 +160,7 @@ export default function Edit({ child, barangays }: Props) {
                                                 onChange={(e) =>
                                                     setData(
                                                         'last_name',
-                                                        e.target.value
+                                                        e.target.value,
                                                     )
                                                 }
                                                 required
@@ -182,7 +185,7 @@ export default function Edit({ child, barangays }: Props) {
                                                 onChange={(e) =>
                                                     setData(
                                                         'first_name',
-                                                        e.target.value
+                                                        e.target.value,
                                                     )
                                                 }
                                                 required
@@ -204,7 +207,7 @@ export default function Edit({ child, barangays }: Props) {
                                                 onChange={(e) =>
                                                     setData(
                                                         'middle_name',
-                                                        e.target.value
+                                                        e.target.value,
                                                     )
                                                 }
                                             />
@@ -220,7 +223,7 @@ export default function Edit({ child, barangays }: Props) {
                                                 onChange={(e) =>
                                                     setData(
                                                         'name_extension',
-                                                        e.target.value
+                                                        e.target.value,
                                                     )
                                                 }
                                                 placeholder="Jr., Sr., III"
@@ -241,7 +244,7 @@ export default function Edit({ child, barangays }: Props) {
                                                         'sex',
                                                         value as
                                                             | 'male'
-                                                            | 'female'
+                                                            | 'female',
                                                     )
                                                 }
                                             >
@@ -278,7 +281,7 @@ export default function Edit({ child, barangays }: Props) {
                                                 onChange={(e) =>
                                                     setData(
                                                         'date_of_birth',
-                                                        e.target.value
+                                                        e.target.value,
                                                     )
                                                 }
                                                 max={
@@ -305,7 +308,7 @@ export default function Edit({ child, barangays }: Props) {
                                                 onChange={(e) =>
                                                     setData(
                                                         'place_of_birth',
-                                                        e.target.value
+                                                        e.target.value,
                                                     )
                                                 }
                                             />
@@ -350,7 +353,9 @@ export default function Edit({ child, barangays }: Props) {
                                         {selectedBarangay && (
                                             <p className="mt-1 text-sm text-muted-foreground">
                                                 Municipality:{' '}
-                                                {selectedBarangay.municipality_city}
+                                                {
+                                                    selectedBarangay.municipality_city
+                                                }
                                             </p>
                                         )}
                                         {errors.barangay_id && (
@@ -362,14 +367,16 @@ export default function Edit({ child, barangays }: Props) {
 
                                     <div className="grid gap-4 md:grid-cols-2">
                                         <div>
-                                            <FieldLabel htmlFor="purok">Purok</FieldLabel>
+                                            <FieldLabel htmlFor="purok">
+                                                Purok
+                                            </FieldLabel>
                                             <Input
                                                 id="purok"
                                                 value={data.purok}
                                                 onChange={(e) =>
                                                     setData(
                                                         'purok',
-                                                        e.target.value
+                                                        e.target.value,
                                                     )
                                                 }
                                             />
@@ -385,7 +392,7 @@ export default function Edit({ child, barangays }: Props) {
                                                 onChange={(e) =>
                                                     setData(
                                                         'address_details',
-                                                        e.target.value
+                                                        e.target.value,
                                                     )
                                                 }
                                                 placeholder="House number, street, etc."
@@ -412,7 +419,7 @@ export default function Edit({ child, barangays }: Props) {
                                                 onChange={(e) =>
                                                     setData(
                                                         'mother_name',
-                                                        e.target.value
+                                                        e.target.value,
                                                     )
                                                 }
                                             />
@@ -428,7 +435,7 @@ export default function Edit({ child, barangays }: Props) {
                                                 onChange={(e) =>
                                                     setData(
                                                         'father_name',
-                                                        e.target.value
+                                                        e.target.value,
                                                     )
                                                 }
                                             />
@@ -437,8 +444,7 @@ export default function Edit({ child, barangays }: Props) {
 
                                     <div>
                                         <FieldLabel htmlFor="guardian_name">
-                                            Guardian's Full Name (if
-                                            applicable)
+                                            Guardian's Full Name (if applicable)
                                         </FieldLabel>
                                         <Input
                                             id="guardian_name"
@@ -446,7 +452,7 @@ export default function Edit({ child, barangays }: Props) {
                                             onChange={(e) =>
                                                 setData(
                                                     'guardian_name',
-                                                    e.target.value
+                                                    e.target.value,
                                                 )
                                             }
                                         />
@@ -469,7 +475,7 @@ export default function Edit({ child, barangays }: Props) {
                                             onCheckedChange={(checked) =>
                                                 setData(
                                                     'is_indigenous_people',
-                                                    checked as boolean
+                                                    checked as boolean,
                                                 )
                                             }
                                         />
@@ -494,7 +500,7 @@ export default function Edit({ child, barangays }: Props) {
                                                 onChange={(e) =>
                                                     setData(
                                                         'indigenous_people_group',
-                                                        e.target.value
+                                                        e.target.value,
                                                     )
                                                 }
                                                 placeholder="e.g., Manobo, Ata, Bagobo"
@@ -513,12 +519,17 @@ export default function Edit({ child, barangays }: Props) {
                                     )}
 
                                     <div>
-                                        <FieldLabel htmlFor="qr_code">QR Code</FieldLabel>
+                                        <FieldLabel htmlFor="qr_code">
+                                            QR Code
+                                        </FieldLabel>
                                         <Input
                                             id="qr_code"
                                             value={data.qr_code}
                                             onChange={(e) =>
-                                                setData('qr_code', e.target.value)
+                                                setData(
+                                                    'qr_code',
+                                                    e.target.value,
+                                                )
                                             }
                                             placeholder="Auto-generated or manual"
                                         />

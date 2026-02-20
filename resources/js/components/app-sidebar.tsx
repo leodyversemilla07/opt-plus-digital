@@ -12,16 +12,16 @@ import {
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
 import children from '@/routes/children';
-import users from '@/routes/users';
 import reports from '@/routes/reports';
+import users from '@/routes/users';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { 
-    LayoutDashboard, 
-    Baby, 
+import {
+    Baby,
     FileBarChart,
+    LayoutDashboard,
+    Settings,
     UserCog,
-    Settings
 } from 'lucide-react';
 import AppLogo from './app-logo';
 

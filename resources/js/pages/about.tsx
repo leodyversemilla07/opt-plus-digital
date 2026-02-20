@@ -1,8 +1,8 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import GuestLayout from '@/layouts/guest-layout';
 import { login } from '@/routes';
 import { type SharedData } from '@/types';
-import GuestLayout from '@/layouts/guest-layout';
 import { Head, Link, usePage } from '@inertiajs/react';
 import {
     Building2,
@@ -120,16 +120,12 @@ export default function About({
                             description="Our system meets all requirements set by the National Nutrition Council and the Department of Health."
                         />
                         <ComplianceCard
-                            icon={
-                                <Scale className="h-8 w-8 text-primary" />
-                            }
+                            icon={<Scale className="h-8 w-8 text-primary" />}
                             title="Data Privacy Act"
                             description="Compliant with the Data Privacy Act of 2012 (RA 10173), ensuring the protection of all child health records."
                         />
                         <ComplianceCard
-                            icon={
-                                <Heart className="h-8 w-8 text-primary" />
-                            }
+                            icon={<Heart className="h-8 w-8 text-primary" />}
                             title="WHO Growth Standards"
                             description="Uses validated WHO Child Growth Standards for accurate Z-score computations across all indicators."
                         />

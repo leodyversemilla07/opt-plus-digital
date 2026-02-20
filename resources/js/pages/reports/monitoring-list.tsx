@@ -64,12 +64,14 @@ const typeConfig: Record<
 > = {
     sam: {
         title: 'SAM (Severe Acute Malnutrition)',
-        description: 'Children with severe wasting requiring immediate therapeutic feeding',
+        description:
+            'Children with severe wasting requiring immediate therapeutic feeding',
         icon: <AlertTriangle className="h-8 w-8 text-red-600" />,
     },
     mam: {
         title: 'MAM (Moderate Acute Malnutrition)',
-        description: 'Children with moderate wasting requiring supplementary feeding',
+        description:
+            'Children with moderate wasting requiring supplementary feeding',
         icon: <TrendingDown className="h-8 w-8 text-orange-600" />,
     },
     stunted: {
@@ -157,7 +159,10 @@ export default function MonitoringList({ type, children, barangayId }: Props) {
                                     Male
                                 </p>
                                 <p className="text-2xl font-bold">
-                                    {children.filter((c) => c.sex === 'Male').length}
+                                    {
+                                        children.filter((c) => c.sex === 'Male')
+                                            .length
+                                    }
                                 </p>
                             </div>
                             <div>
@@ -165,7 +170,11 @@ export default function MonitoringList({ type, children, barangayId }: Props) {
                                     Female
                                 </p>
                                 <p className="text-2xl font-bold">
-                                    {children.filter((c) => c.sex === 'Female').length}
+                                    {
+                                        children.filter(
+                                            (c) => c.sex === 'Female',
+                                        ).length
+                                    }
                                 </p>
                             </div>
                             <div>
@@ -176,8 +185,9 @@ export default function MonitoringList({ type, children, barangayId }: Props) {
                                     {
                                         children.filter(
                                             (c) =>
-                                                c.days_since_measurement === null ||
-                                                c.days_since_measurement > 30
+                                                c.days_since_measurement ===
+                                                    null ||
+                                                c.days_since_measurement > 30,
                                         ).length
                                     }
                                 </p>
@@ -191,7 +201,8 @@ export default function MonitoringList({ type, children, barangayId }: Props) {
                     <CardHeader>
                         <CardTitle>Children List</CardTitle>
                         <CardDescription>
-                            Showing {children.length} children with {type.toUpperCase()} status
+                            Showing {children.length} children with{' '}
+                            {type.toUpperCase()} status
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="overflow-x-auto p-0">
@@ -256,37 +267,37 @@ export default function MonitoringList({ type, children, barangayId }: Props) {
                                                 <div className="space-y-1 text-xs">
                                                     {child.wfa_zscore !==
                                                         null && (
-                                                            <div>
-                                                                WFA:{' '}
-                                                                <span className="font-mono">
-                                                                    {child.wfa_zscore.toFixed(
-                                                                        2
-                                                                    )}
-                                                                </span>
-                                                            </div>
-                                                        )}
+                                                        <div>
+                                                            WFA:{' '}
+                                                            <span className="font-mono">
+                                                                {child.wfa_zscore.toFixed(
+                                                                    2,
+                                                                )}
+                                                            </span>
+                                                        </div>
+                                                    )}
                                                     {child.hfa_zscore !==
                                                         null && (
-                                                            <div>
-                                                                HFA:{' '}
-                                                                <span className="font-mono">
-                                                                    {child.hfa_zscore.toFixed(
-                                                                        2
-                                                                    )}
-                                                                </span>
-                                                            </div>
-                                                        )}
+                                                        <div>
+                                                            HFA:{' '}
+                                                            <span className="font-mono">
+                                                                {child.hfa_zscore.toFixed(
+                                                                    2,
+                                                                )}
+                                                            </span>
+                                                        </div>
+                                                    )}
                                                     {child.wfh_zscore !==
                                                         null && (
-                                                            <div>
-                                                                WFH:{' '}
-                                                                <span className="font-mono">
-                                                                    {child.wfh_zscore.toFixed(
-                                                                        2
-                                                                    )}
-                                                                </span>
-                                                            </div>
-                                                        )}
+                                                        <div>
+                                                            WFH:{' '}
+                                                            <span className="font-mono">
+                                                                {child.wfh_zscore.toFixed(
+                                                                    2,
+                                                                )}
+                                                            </span>
+                                                        </div>
+                                                    )}
                                                 </div>
                                             </TableCell>
                                             <TableCell>
@@ -303,7 +314,7 @@ export default function MonitoringList({ type, children, barangayId }: Props) {
                                                     <span
                                                         className={
                                                             child.days_since_measurement &&
-                                                                child.days_since_measurement >
+                                                            child.days_since_measurement >
                                                                 30
                                                                 ? 'text-yellow-600'
                                                                 : ''
@@ -312,14 +323,14 @@ export default function MonitoringList({ type, children, barangayId }: Props) {
                                                         {child.measurement_date}
                                                         {child.days_since_measurement !==
                                                             null && (
-                                                                <span className="ml-1 text-xs text-muted-foreground">
-                                                                    (
-                                                                    {
-                                                                        child.days_since_measurement
-                                                                    }
-                                                                    d)
-                                                                </span>
-                                                            )}
+                                                            <span className="ml-1 text-xs text-muted-foreground">
+                                                                (
+                                                                {
+                                                                    child.days_since_measurement
+                                                                }
+                                                                d)
+                                                            </span>
+                                                        )}
                                                     </span>
                                                 ) : (
                                                     <span className="text-muted-foreground">

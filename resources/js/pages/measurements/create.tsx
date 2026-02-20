@@ -348,7 +348,9 @@ export default function CreateMeasurement({ child }: CreateMeasurementProps) {
                                                 <Checkbox
                                                     id="has_edema"
                                                     checked={data.has_edema}
-                                                    onCheckedChange={(checked) =>
+                                                    onCheckedChange={(
+                                                        checked,
+                                                    ) =>
                                                         setData(
                                                             'has_edema',
                                                             checked === true,
@@ -357,9 +359,10 @@ export default function CreateMeasurement({ child }: CreateMeasurementProps) {
                                                 />
                                                 <Label
                                                     htmlFor="has_edema"
-                                                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                                    className="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                                                 >
-                                                    Bilateral Pitting Edema Present
+                                                    Bilateral Pitting Edema
+                                                    Present
                                                 </Label>
                                             </div>
                                             {data.has_edema && (
@@ -369,7 +372,9 @@ export default function CreateMeasurement({ child }: CreateMeasurementProps) {
                                                     </FieldLabel>
                                                     <Select
                                                         value={data.edema_grade}
-                                                        onValueChange={(value) =>
+                                                        onValueChange={(
+                                                            value,
+                                                        ) =>
                                                             setData(
                                                                 'edema_grade',
                                                                 value,
@@ -381,13 +386,16 @@ export default function CreateMeasurement({ child }: CreateMeasurementProps) {
                                                         </SelectTrigger>
                                                         <SelectContent>
                                                             <SelectItem value="+1">
-                                                                +1 (Mild - feet/ankles)
+                                                                +1 (Mild -
+                                                                feet/ankles)
                                                             </SelectItem>
                                                             <SelectItem value="+2">
-                                                                +2 (Moderate - lower legs)
+                                                                +2 (Moderate -
+                                                                lower legs)
                                                             </SelectItem>
                                                             <SelectItem value="+3">
-                                                                +3 (Severe - generalized)
+                                                                +3 (Severe -
+                                                                generalized)
                                                             </SelectItem>
                                                         </SelectContent>
                                                     </Select>
@@ -400,12 +408,16 @@ export default function CreateMeasurement({ child }: CreateMeasurementProps) {
                                             )}
                                         </div>
 
-                                        <div className="space-y-4 pt-4 border-t">
+                                        <div className="space-y-4 border-t pt-4">
                                             <div className="flex items-center space-x-2">
                                                 <Checkbox
                                                     id="has_disability"
-                                                    checked={data.has_disability}
-                                                    onCheckedChange={(checked) =>
+                                                    checked={
+                                                        data.has_disability
+                                                    }
+                                                    onCheckedChange={(
+                                                        checked,
+                                                    ) =>
                                                         setData(
                                                             'has_disability',
                                                             checked === true,
@@ -414,7 +426,7 @@ export default function CreateMeasurement({ child }: CreateMeasurementProps) {
                                                 />
                                                 <Label
                                                     htmlFor="has_disability"
-                                                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                                    className="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                                                 >
                                                     Child has Disability
                                                 </Label>
@@ -426,7 +438,9 @@ export default function CreateMeasurement({ child }: CreateMeasurementProps) {
                                                     </FieldLabel>
                                                     <Textarea
                                                         id="disability_notes"
-                                                        value={data.disability_notes}
+                                                        value={
+                                                            data.disability_notes
+                                                        }
                                                         onChange={(e) =>
                                                             setData(
                                                                 'disability_notes',
@@ -438,14 +452,16 @@ export default function CreateMeasurement({ child }: CreateMeasurementProps) {
                                                     />
                                                     {errors.disability_notes && (
                                                         <FieldDescription className="text-red-500">
-                                                            {errors.disability_notes}
+                                                            {
+                                                                errors.disability_notes
+                                                            }
                                                         </FieldDescription>
                                                     )}
                                                 </Field>
                                             )}
                                         </div>
 
-                                        <Field className="pt-4 border-t">
+                                        <Field className="border-t pt-4">
                                             <FieldLabel htmlFor="notes">
                                                 Additional Notes
                                             </FieldLabel>

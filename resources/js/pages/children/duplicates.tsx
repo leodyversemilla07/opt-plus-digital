@@ -1,16 +1,15 @@
-import { Head, Link } from '@inertiajs/react';
-import AppLayout from '@/layouts/app-layout';
-import { index as childrenIndex, show as childrenShow, edit as childrenEdit } from '@/routes/children';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import AppLayout from '@/layouts/app-layout';
 import {
-    Card,
-    CardContent,
-    CardHeader,
-    CardTitle,
-} from '@/components/ui/card';
-import { AlertTriangle, User, Calendar, MapPin } from 'lucide-react';
+    edit as childrenEdit,
+    index as childrenIndex,
+    show as childrenShow,
+} from '@/routes/children';
 import { type BreadcrumbItem } from '@/types';
+import { Head, Link } from '@inertiajs/react';
+import { AlertTriangle, Calendar, MapPin, User } from 'lucide-react';
 
 interface Child {
     id: string;
@@ -73,14 +72,12 @@ export default function Duplicates({ duplicates }: Props) {
 
     const getCriteriaDescription = (criteria: string) => {
         const descriptions: Record<string, string> = {
-            exact_name_dob:
-                'Exact match on full name and date of birth',
+            exact_name_dob: 'Exact match on full name and date of birth',
             exact_name_similar_dob:
                 'Exact name match with similar date of birth (±7 days)',
             similar_name_exact_dob:
                 'Similar name with exact date of birth match',
-            same_parents:
-                'Same mother and father names with similar age',
+            same_parents: 'Same mother and father names with similar age',
             same_fsn: 'Same family serial number',
             qr_code: 'Same QR code',
         };
@@ -92,21 +89,19 @@ export default function Duplicates({ duplicates }: Props) {
             <Head title="Potential Duplicate Children" />
 
             <div className="flex flex-col gap-6 p-6">
-                <div className="mx-auto max-w-7xl w-full">
+                <div className="mx-auto w-full max-w-7xl">
                     {/* Header */}
                     <div>
                         <h1 className="text-3xl font-bold tracking-tight">
                             Potential Duplicate Children
                         </h1>
-                        <p className="text-muted-foreground mt-1">
-                            Review and resolve potential duplicate
-                            registrations
+                        <p className="mt-1 text-muted-foreground">
+                            Review and resolve potential duplicate registrations
                         </p>
                     </div>
                 </div>
 
-                <div className="mx-auto max-w-7xl w-full">
-
+                <div className="mx-auto w-full max-w-7xl">
                     {/* Alert */}
                     {duplicates.length > 0 && (
                         <div className="mb-6 rounded-lg border border-amber-200 bg-amber-50 p-4 dark:border-amber-800 dark:bg-amber-950">
@@ -142,7 +137,10 @@ export default function Duplicates({ duplicates }: Props) {
                                 <p className="mt-2 text-sm text-muted-foreground">
                                     All child registrations appear to be unique.
                                 </p>
-                                <Link href={childrenIndex.url()} className="mt-4 inline-block">
+                                <Link
+                                    href={childrenIndex.url()}
+                                    className="mt-4 inline-block"
+                                >
                                     <Button>Back to Children List</Button>
                                 </Link>
                             </CardContent>
@@ -155,16 +153,17 @@ export default function Duplicates({ duplicates }: Props) {
                                         <div className="flex items-start justify-between">
                                             <div>
                                                 <CardTitle>
-                                                    Duplicate Group #{groupIndex + 1}
+                                                    Duplicate Group #
+                                                    {groupIndex + 1}
                                                 </CardTitle>
                                                 <p className="mt-1 text-sm text-muted-foreground">
                                                     {getCriteriaDescription(
-                                                        group.criteria
+                                                        group.criteria,
                                                     )}
                                                 </p>
                                             </div>
                                             {getConfidenceBadge(
-                                                group.confidence
+                                                group.confidence,
                                             )}
                                         </div>
                                     </CardHeader>
@@ -174,10 +173,11 @@ export default function Duplicates({ duplicates }: Props) {
                                                 (child, childIndex) => (
                                                     <div
                                                         key={child.id}
-                                                        className={`rounded-lg border p-4 ${childIndex === 0
+                                                        className={`rounded-lg border p-4 ${
+                                                            childIndex === 0
                                                                 ? 'border-blue-200 bg-blue-50 dark:border-blue-800 dark:bg-blue-950'
                                                                 : 'border-border bg-card'
-                                                            }`}
+                                                        }`}
                                                     >
                                                         <div className="flex items-start justify-between">
                                                             <div className="flex-1">
@@ -190,22 +190,22 @@ export default function Duplicates({ duplicates }: Props) {
                                                                     <Badge
                                                                         variant={
                                                                             child.sex ===
-                                                                                'male'
+                                                                            'male'
                                                                                 ? 'default'
                                                                                 : 'secondary'
                                                                         }
                                                                     >
                                                                         {child.sex ===
-                                                                            'male'
+                                                                        'male'
                                                                             ? 'Male'
                                                                             : 'Female'}
                                                                     </Badge>
                                                                     {childIndex ===
                                                                         0 && (
-                                                                            <Badge variant="outline">
-                                                                                Original
-                                                                            </Badge>
-                                                                        )}
+                                                                        <Badge variant="outline">
+                                                                            Original
+                                                                        </Badge>
+                                                                    )}
                                                                 </div>
 
                                                                 <div className="mt-3 grid gap-2 text-sm md:grid-cols-2">
@@ -214,11 +214,11 @@ export default function Duplicates({ duplicates }: Props) {
                                                                         <span>
                                                                             Born:{' '}
                                                                             {new Date(
-                                                                                child.date_of_birth
+                                                                                child.date_of_birth,
                                                                             ).toLocaleDateString()}{' '}
                                                                             (
                                                                             {getAgeDisplay(
-                                                                                child.age_in_months
+                                                                                child.age_in_months,
                                                                             )}
                                                                             )
                                                                         </span>
@@ -272,7 +272,7 @@ export default function Duplicates({ duplicates }: Props) {
                                                                             Registered:
                                                                         </span>{' '}
                                                                         {new Date(
-                                                                            child.created_at
+                                                                            child.created_at,
                                                                         ).toLocaleDateString()}
                                                                     </div>
                                                                 </div>
@@ -280,7 +280,9 @@ export default function Duplicates({ duplicates }: Props) {
 
                                                             <div className="ml-4 flex gap-2">
                                                                 <Link
-                                                                    href={childrenShow.url(child.id)}
+                                                                    href={childrenShow.url(
+                                                                        child.id,
+                                                                    )}
                                                                 >
                                                                     <Button
                                                                         variant="outline"
@@ -290,7 +292,9 @@ export default function Duplicates({ duplicates }: Props) {
                                                                     </Button>
                                                                 </Link>
                                                                 <Link
-                                                                    href={childrenEdit.url(child.id)}
+                                                                    href={childrenEdit.url(
+                                                                        child.id,
+                                                                    )}
                                                                 >
                                                                     <Button
                                                                         variant="outline"
@@ -302,7 +306,7 @@ export default function Duplicates({ duplicates }: Props) {
                                                             </div>
                                                         </div>
                                                     </div>
-                                                )
+                                                ),
                                             )}
                                         </div>
 

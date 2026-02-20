@@ -168,9 +168,10 @@ export default function Dashboard({
                             <span className="font-bold text-primary">
                                 Barangay{' '}
                                 {(
-                                    (auth.user as SharedData["auth"]["user"] & { barangay?: { name?: string } })
-                                ).barangay?.name ||
-                                    'Assigned Area'}
+                                    auth.user as SharedData['auth']['user'] & {
+                                        barangay?: { name?: string };
+                                    }
+                                ).barangay?.name || 'Assigned Area'}
                             </span>
                         </p>
                     </div>
@@ -465,7 +466,7 @@ export default function Dashboard({
                                                             <span
                                                                 className={
                                                                     b.malnutrition_rate >
-                                                                        10
+                                                                    10
                                                                         ? 'font-bold text-destructive'
                                                                         : 'font-medium text-primary'
                                                                 }
@@ -478,7 +479,7 @@ export default function Dashboard({
                                                         </td>
                                                         <td className="px-4 py-3 text-right">
                                                             {b.malnutrition_rate >
-                                                                10 ? (
+                                                            10 ? (
                                                                 <TrendingUp className="h-3 w-3 text-destructive" />
                                                             ) : (
                                                                 <TrendingDown className="h-3 w-3 text-primary" />

@@ -104,7 +104,9 @@ const classificationColors: Record<string, string> = {
 };
 
 export default function Show({ session, stats, recentMeasurements }: Props) {
-    const { flash } = usePage().props as { flash?: { success?: string; error?: string } };
+    const { flash } = usePage().props as {
+        flash?: { success?: string; error?: string };
+    };
 
     const breadcrumbs: BreadcrumbItem[] = [
         { title: 'Dashboard', href: '/dashboard' },
@@ -155,10 +157,12 @@ export default function Show({ session, stats, recentMeasurements }: Props) {
                             </div>
                             <p className="text-muted-foreground">
                                 {session.barangay.name} •{' '}
-                                {new Date(session.session_date).toLocaleDateString(
-                                    'en-US',
-                                    { month: 'long', year: 'numeric' }
-                                )}
+                                {new Date(
+                                    session.session_date,
+                                ).toLocaleDateString('en-US', {
+                                    month: 'long',
+                                    year: 'numeric',
+                                })}
                             </p>
                         </div>
                     </div>
@@ -170,7 +174,9 @@ export default function Show({ session, stats, recentMeasurements }: Props) {
                                     Start Session
                                 </Button>
                                 <Button variant="outline" asChild>
-                                    <Link href={`/opt-sessions/${session.id}/edit`}>
+                                    <Link
+                                        href={`/opt-sessions/${session.id}/edit`}
+                                    >
                                         <Edit className="mr-2 h-4 w-4" />
                                         Edit
                                     </Link>
@@ -180,7 +186,9 @@ export default function Show({ session, stats, recentMeasurements }: Props) {
                         {session.status === 'in_progress' && (
                             <>
                                 <Button asChild>
-                                    <Link href={`/import?session=${session.id}`}>
+                                    <Link
+                                        href={`/import?session=${session.id}`}
+                                    >
                                         <Upload className="mr-2 h-4 w-4" />
                                         Import Data
                                     </Link>
@@ -234,8 +242,8 @@ export default function Show({ session, stats, recentMeasurements }: Props) {
                                 {stats.coverage.toFixed(1)}%
                             </div>
                             <p className="text-xs text-muted-foreground">
-                                {stats.measured_children} / {stats.target_children}{' '}
-                                children
+                                {stats.measured_children} /{' '}
+                                {stats.target_children} children
                             </p>
                         </CardContent>
                     </Card>
@@ -297,7 +305,9 @@ export default function Show({ session, stats, recentMeasurements }: Props) {
                                 <dt className="text-sm font-medium text-muted-foreground">
                                     Barangay
                                 </dt>
-                                <dd className="mt-1">{session.barangay.name}</dd>
+                                <dd className="mt-1">
+                                    {session.barangay.name}
+                                </dd>
                             </div>
                             <div>
                                 <dt className="text-sm font-medium text-muted-foreground">
@@ -305,7 +315,7 @@ export default function Show({ session, stats, recentMeasurements }: Props) {
                                 </dt>
                                 <dd className="mt-1">
                                     {new Date(
-                                        session.session_date
+                                        session.session_date,
                                     ).toLocaleDateString()}
                                 </dd>
                             </div>
@@ -321,7 +331,9 @@ export default function Show({ session, stats, recentMeasurements }: Props) {
                                 <dt className="text-sm font-medium text-muted-foreground">
                                     Created By
                                 </dt>
-                                <dd className="mt-1">{session.created_by.name}</dd>
+                                <dd className="mt-1">
+                                    {session.created_by.name}
+                                </dd>
                             </div>
                         </dl>
                         {session.notes && (
@@ -345,7 +357,7 @@ export default function Show({ session, stats, recentMeasurements }: Props) {
                     </CardHeader>
                     <CardContent>
                         {recentMeasurements.length === 0 ? (
-                            <div className="text-center py-8 text-muted-foreground">
+                            <div className="py-8 text-center text-muted-foreground">
                                 No measurements recorded yet
                             </div>
                         ) : (
@@ -368,31 +380,37 @@ export default function Show({ session, stats, recentMeasurements }: Props) {
                                                     href={`/children/${measurement.child.id}`}
                                                     className="hover:underline"
                                                 >
-                                                    {measurement.child.full_name}
+                                                    {
+                                                        measurement.child
+                                                            .full_name
+                                                    }
                                                 </Link>
                                             </TableCell>
                                             <TableCell>
-                                                {measurement.child.sex === 'male'
+                                                {measurement.child.sex ===
+                                                'male'
                                                     ? 'M'
                                                     : 'F'}
                                             </TableCell>
                                             <TableCell>
                                                 {new Date(
-                                                    measurement.measurement_date
+                                                    measurement.measurement_date,
                                                 ).toLocaleDateString()}
                                             </TableCell>
                                             <TableCell>
                                                 {measurement.weight_kg} kg
                                             </TableCell>
                                             <TableCell>
-                                                {measurement.height_length_cm} cm
+                                                {measurement.height_length_cm}{' '}
+                                                cm
                                             </TableCell>
                                             <TableCell>
                                                 <Badge
                                                     variant="outline"
                                                     className={
                                                         classificationColors[
-                                                            measurement.opt_classification
+                                                            measurement
+                                                                .opt_classification
                                                         ] || ''
                                                     }
                                                 >

@@ -16,13 +16,17 @@ import { useAppearance } from '@/hooks/use-appearance';
 import { about, dashboard, features, home, login, register } from '@/routes';
 import { type SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { LayoutDashboard, LogIn, Menu, Monitor, Moon, Sun, UserPlus } from 'lucide-react';
+import {
+    LayoutDashboard,
+    LogIn,
+    Menu,
+    Monitor,
+    Moon,
+    Sun,
+    UserPlus,
+} from 'lucide-react';
 
-export function Header({
-    canRegister = true,
-}: {
-    canRegister?: boolean;
-}) {
+export function Header({ canRegister = true }: { canRegister?: boolean }) {
     const { auth } = usePage<SharedData>().props;
     const { appearance, updateAppearance } = useAppearance();
 
@@ -44,7 +48,7 @@ export function Header({
 
     return (
         <nav className="sticky top-0 z-50 border-b bg-background/80 backdrop-blur-md">
-                <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
+            <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
                 {/* Logo */}
                 <Link
                     href="/"
@@ -151,11 +155,7 @@ export function Header({
                                 </Link>
                             </Button>
                             {canRegister && (
-                                <Button
-                                    size="sm"
-                                    className="px-5"
-                                    asChild
-                                >
+                                <Button size="sm" className="px-5" asChild>
                                     <Link href={register()}>
                                         <UserPlus className="mr-2 h-4 w-4" />
                                         Register
@@ -258,10 +258,7 @@ export function Header({
                                 <div className="my-2 border-t" />
 
                                 {auth.user ? (
-                                    <Button
-                                        className="w-full"
-                                        asChild
-                                    >
+                                    <Button className="w-full" asChild>
                                         <Link href={dashboard()}>
                                             <LayoutDashboard className="mr-2 h-4 w-4" />
                                             Dashboard
@@ -280,10 +277,7 @@ export function Header({
                                             </Link>
                                         </Button>
                                         {canRegister && (
-                                            <Button
-                                                className="w-full"
-                                                asChild
-                                            >
+                                            <Button className="w-full" asChild>
                                                 <Link href={register()}>
                                                     <UserPlus className="mr-2 h-4 w-4" />
                                                     Register

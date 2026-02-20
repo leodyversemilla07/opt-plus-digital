@@ -1,10 +1,3 @@
-import { CartesianGrid, Line, LineChart, XAxis, YAxis } from 'recharts';
-import {
-    ChartConfig,
-    ChartContainer,
-    ChartTooltip,
-    ChartTooltipContent,
-} from '@/components/ui/chart';
 import {
     Card,
     CardContent,
@@ -12,6 +5,13 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
+import {
+    ChartConfig,
+    ChartContainer,
+    ChartTooltip,
+    ChartTooltipContent,
+} from '@/components/ui/chart';
+import { CartesianGrid, Line, LineChart, XAxis, YAxis } from 'recharts';
 
 interface Measurement {
     measurement_date: string;
@@ -35,7 +35,7 @@ export default function GrowthChart({
     const sortedMeasurements = [...measurements].sort(
         (a, b) =>
             new Date(a.measurement_date).getTime() -
-            new Date(b.measurement_date).getTime()
+            new Date(b.measurement_date).getTime(),
     );
 
     const getChartTitle = () => {
@@ -54,10 +54,10 @@ export default function GrowthChart({
     const getChartDescription = () => {
         if (measurements.length === 0) return 'No data available';
         const firstDate = new Date(
-            sortedMeasurements[0].measurement_date
+            sortedMeasurements[0].measurement_date,
         ).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
         const lastDate = new Date(
-            sortedMeasurements[sortedMeasurements.length - 1].measurement_date
+            sortedMeasurements[sortedMeasurements.length - 1].measurement_date,
         ).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
         return `${firstDate} - ${lastDate}`;
     };
@@ -101,7 +101,8 @@ export default function GrowthChart({
     const chartConfig = {
         [getDataKey()]: {
             label: getChartTitle(),
-            color: sex === 'male' ? 'hsl(var(--chart-1))' : 'hsl(var(--chart-5))',
+            color:
+                sex === 'male' ? 'hsl(var(--chart-1))' : 'hsl(var(--chart-5))',
         },
     } satisfies ChartConfig;
 
@@ -130,7 +131,10 @@ export default function GrowthChart({
                 <CardDescription>{getChartDescription()}</CardDescription>
             </CardHeader>
             <CardContent>
-                <ChartContainer config={chartConfig} className="h-[300px] w-full">
+                <ChartContainer
+                    config={chartConfig}
+                    className="h-[300px] w-full"
+                >
                     <LineChart
                         data={chartData}
                         margin={{
@@ -162,11 +166,7 @@ export default function GrowthChart({
                                 position: 'insideLeft',
                                 style: { textAnchor: 'middle' },
                             }}
-                            domain={
-                                isZScore
-                                    ? [-4, 4]
-                                    : ['auto', 'auto']
-                            }
+                            domain={isZScore ? [-4, 4] : ['auto', 'auto']}
                             ticks={
                                 isZScore
                                     ? [-4, -3, -2, -1, 0, 1, 2, 3, 4]

@@ -273,12 +273,15 @@ export default function MeasurementEdit({
                                         id="has_edema"
                                         checked={data.has_edema}
                                         onCheckedChange={(checked) =>
-                                            setData('has_edema', checked === true)
+                                            setData(
+                                                'has_edema',
+                                                checked === true,
+                                            )
                                         }
                                     />
                                     <Label
                                         htmlFor="has_edema"
-                                        className="text-sm font-medium leading-none"
+                                        className="text-sm leading-none font-medium"
                                     >
                                         Bilateral Pitting Edema Present
                                     </Label>
@@ -324,12 +327,15 @@ export default function MeasurementEdit({
                                         id="has_disability"
                                         checked={data.has_disability}
                                         onCheckedChange={(checked) =>
-                                            setData('has_disability', checked === true)
+                                            setData(
+                                                'has_disability',
+                                                checked === true,
+                                            )
                                         }
                                     />
                                     <Label
                                         htmlFor="has_disability"
-                                        className="text-sm font-medium leading-none"
+                                        className="text-sm leading-none font-medium"
                                     >
                                         Child has Disability
                                     </Label>
@@ -344,7 +350,10 @@ export default function MeasurementEdit({
                                             rows={2}
                                             value={data.disability_notes}
                                             onChange={(e) =>
-                                                setData('disability_notes', e.target.value)
+                                                setData(
+                                                    'disability_notes',
+                                                    e.target.value,
+                                                )
                                             }
                                             placeholder="Describe the disability..."
                                         />

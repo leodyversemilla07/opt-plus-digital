@@ -19,12 +19,7 @@ import {
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
-import {
-    AlertTriangle,
-    FileDown,
-    FileSpreadsheet,
-    Phone,
-} from 'lucide-react';
+import { AlertTriangle, FileDown, FileSpreadsheet, Phone } from 'lucide-react';
 
 interface TargetListProps {
     children: Array<{
@@ -96,9 +91,7 @@ export default function TargetList({ children, barangayId }: TargetListProps) {
 
                 <Card className="border-red-200 dark:border-red-900/50">
                     <CardHeader>
-                        <CardTitle>
-                            Children Requiring Attention
-                        </CardTitle>
+                        <CardTitle>Children Requiring Attention</CardTitle>
                         <CardDescription>
                             Showing {children.length} high-risk children
                             identified from latest measurements

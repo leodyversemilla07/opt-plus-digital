@@ -143,7 +143,10 @@ export default function Home({
             </header>
 
             {/* Features Grid */}
-            <section id="features" className="bg-secondary/30 py-12 sm:py-16 md:py-24">
+            <section
+                id="features"
+                className="bg-secondary/30 py-12 sm:py-16 md:py-24"
+            >
                 <div className="mx-auto max-w-7xl px-4 sm:px-6">
                     <div className="mb-12 text-center sm:mb-16">
                         <h2 className="mb-4 text-2xl font-semibold sm:text-3xl">

@@ -5,14 +5,11 @@ import { NutritionalStatusBadge } from '@/components/ui/nutritional-status-badge
 import { useOnlineStatus } from '@/hooks/use-online-status';
 import AppLayout from '@/layouts/app-layout';
 import { offlineDB } from '@/lib/offline-db';
-import {
-    edit as childrenEdit,
-    index as childrenIndex,
-} from '@/routes/children';
+import { edit as childrenEdit } from '@/routes/children';
 import { create as measurementsCreate } from '@/routes/children/measurements';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link } from '@inertiajs/react';
-import { ArrowLeft, Cloud, Download, Edit, Plus, QrCode } from 'lucide-react';
+import { Cloud, Download, Edit, Plus, QrCode } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 interface Measurement {

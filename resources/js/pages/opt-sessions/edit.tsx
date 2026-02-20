@@ -127,7 +127,7 @@ export default function Edit({ session, barangays }: Props) {
                                             setData('barangay_id', value);
                                             generateSessionName(
                                                 value,
-                                                data.session_date
+                                                data.session_date,
                                             );
                                         }}
                                     >
@@ -182,11 +182,11 @@ export default function Edit({ session, barangays }: Props) {
                                         onChange={(e) => {
                                             setData(
                                                 'session_date',
-                                                e.target.value
+                                                e.target.value,
                                             );
                                             generateSessionName(
                                                 data.barangay_id,
-                                                e.target.value
+                                                e.target.value,
                                             );
                                         }}
                                     />
@@ -206,7 +206,10 @@ export default function Edit({ session, barangays }: Props) {
                                         type="date"
                                         value={data.start_date}
                                         onChange={(e) =>
-                                            setData('start_date', e.target.value)
+                                            setData(
+                                                'start_date',
+                                                e.target.value,
+                                            )
                                         }
                                     />
                                     {errors.start_date && (
@@ -249,7 +252,7 @@ export default function Edit({ session, barangays }: Props) {
                                         onChange={(e) =>
                                             setData(
                                                 'target_children',
-                                                e.target.value
+                                                e.target.value,
                                             )
                                         }
                                         placeholder="Auto-calculated if empty"
@@ -309,7 +312,7 @@ export default function Edit({ session, barangays }: Props) {
                                     variant="outline"
                                     onClick={() =>
                                         router.visit(
-                                            `/opt-sessions/${session.id}`
+                                            `/opt-sessions/${session.id}`,
                                         )
                                     }
                                 >

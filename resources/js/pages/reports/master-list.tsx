@@ -19,12 +19,7 @@ import {
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
-import {
-    FileDown,
-    FileSpreadsheet,
-    Filter,
-    Search,
-} from 'lucide-react';
+import { FileDown, FileSpreadsheet, Filter, Search } from 'lucide-react';
 
 interface MasterListProps {
     children: Array<{

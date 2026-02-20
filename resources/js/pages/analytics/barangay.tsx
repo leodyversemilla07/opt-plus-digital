@@ -1,33 +1,46 @@
+import {
+    HighRiskChildrenList,
+    NutritionalStatusCard,
+    StatCard,
+} from '@/components/dashboard-cards';
+import { Button } from '@/components/ui/button';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
-import { type BreadcrumbItem } from '@/types';
-import { Head, Link } from '@inertiajs/react';
 import { dashboard } from '@/routes';
 import { barangay as analyticsBarangay } from '@/routes/analytics';
-import { index as childrenIndex, create as childrenCreate } from '@/routes/children';
-import { index as reportsIndex } from '@/routes/reports';
-import { StatCard, NutritionalStatusCard, HighRiskChildrenList } from '@/components/dashboard-cards';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { 
-    Activity, 
-    TrendingUp,
-    ArrowLeft,
-    Users,
-    AlertTriangle
-} from 'lucide-react';
-import { Line, Bar } from 'react-chartjs-2';
 import {
-    Chart as ChartJS,
-    CategoryScale,
-    LinearScale,
-    PointElement,
-    LineElement,
+    create as childrenCreate,
+    index as childrenIndex,
+} from '@/routes/children';
+import { index as reportsIndex } from '@/routes/reports';
+import { type BreadcrumbItem } from '@/types';
+import { Head, Link } from '@inertiajs/react';
+import {
     BarElement,
+    CategoryScale,
+    Chart as ChartJS,
+    Filler,
+    Legend,
+    LinearScale,
+    LineElement,
+    PointElement,
     Title,
     Tooltip,
-    Legend,
-    Filler,
 } from 'chart.js';
+import {
+    Activity,
+    AlertTriangle,
+    ArrowLeft,
+    TrendingUp,
+    Users,
+} from 'lucide-react';
+import { Bar, Line } from 'react-chartjs-2';
 
 ChartJS.register(
     CategoryScale,
@@ -38,7 +51,7 @@ ChartJS.register(
     Title,
     Tooltip,
     Legend,
-    Filler
+    Filler,
 );
 
 interface Barangay {
@@ -118,21 +131,27 @@ export default function BarangayAnalytics({
         },
     ];
 
-    const coverageRate = totalChildren > 0 
-        ? ((measuredChildren / totalChildren) * 100).toFixed(1)
-        : '0.0';
+    const coverageRate =
+        totalChildren > 0
+            ? ((measuredChildren / totalChildren) * 100).toFixed(1)
+            : '0.0';
 
-    const malnutritionRate = nutritionalStatus.total > 0
-        ? (((nutritionalStatus.mam + nutritionalStatus.sam) / nutritionalStatus.total) * 100).toFixed(1)
-        : '0.0';
+    const malnutritionRate =
+        nutritionalStatus.total > 0
+            ? (
+                  ((nutritionalStatus.mam + nutritionalStatus.sam) /
+                      nutritionalStatus.total) *
+                  100
+              ).toFixed(1)
+            : '0.0';
 
     // Monthly trends line chart
     const trendChartData = {
-        labels: monthlyTrends.map(t => t.label),
+        labels: monthlyTrends.map((t) => t.label),
         datasets: [
             {
                 label: 'Total Measurements',
-                data: monthlyTrends.map(t => t.measurements),
+                data: monthlyTrends.map((t) => t.measurements),
                 borderColor: 'rgb(59, 130, 246)',
                 backgroundColor: 'rgba(59, 130, 246, 0.1)',
                 fill: true,
@@ -161,21 +180,21 @@ export default function BarangayAnalytics({
 
     // Nutritional status bar chart
     const statusChartData = {
-        labels: monthlyTrends.map(t => t.label),
+        labels: monthlyTrends.map((t) => t.label),
         datasets: [
             {
                 label: 'Normal',
-                data: monthlyTrends.map(t => t.normal),
+                data: monthlyTrends.map((t) => t.normal),
                 backgroundColor: 'rgba(34, 197, 94, 0.8)',
             },
             {
                 label: 'MAM',
-                data: monthlyTrends.map(t => t.mam),
+                data: monthlyTrends.map((t) => t.mam),
                 backgroundColor: 'rgba(249, 115, 22, 0.8)',
             },
             {
                 label: 'SAM',
-                data: monthlyTrends.map(t => t.sam),
+                data: monthlyTrends.map((t) => t.sam),
                 backgroundColor: 'rgba(239, 68, 68, 0.8)',
             },
         ],
@@ -213,21 +232,26 @@ export default function BarangayAnalytics({
                         <div className="flex items-center gap-2">
                             <Link href={dashboard.url()}>
                                 <Button variant="ghost" size="sm">
-                                    <ArrowLeft className="h-4 w-4 mr-2" />
+                                    <ArrowLeft className="mr-2 h-4 w-4" />
                                     Back to Dashboard
                                 </Button>
                             </Link>
                         </div>
-                        <h1 className="text-3xl font-bold tracking-tight mt-2">
+                        <h1 className="mt-2 text-3xl font-bold tracking-tight">
                             {barangay.name} Analytics
                         </h1>
-                        <p className="text-muted-foreground mt-1">
-                            {barangay.municipality_city} • PSGC: {barangay.psgc_code}
+                        <p className="mt-1 text-muted-foreground">
+                            {barangay.municipality_city} • PSGC:{' '}
+                            {barangay.psgc_code}
                         </p>
                     </div>
-                    <Link href={childrenIndex.url({ query: { barangay_id: barangay.id } })}>
+                    <Link
+                        href={childrenIndex.url({
+                            query: { barangay_id: barangay.id },
+                        })}
+                    >
                         <Button>
-                            <Users className="h-4 w-4 mr-2" />
+                            <Users className="mr-2 h-4 w-4" />
                             View All Children
                         </Button>
                     </Link>
@@ -247,11 +271,11 @@ export default function BarangayAnalytics({
                         description={`${measuredChildren} of ${totalChildren} measured`}
                         icon={<Activity className="h-4 w-4" />}
                         className={
-                            parseFloat(coverageRate) < 50 
-                                ? 'border-red-500' 
-                                : parseFloat(coverageRate) < 80 
-                                ? 'border-orange-500' 
-                                : 'border-green-500'
+                            parseFloat(coverageRate) < 50
+                                ? 'border-red-500'
+                                : parseFloat(coverageRate) < 80
+                                  ? 'border-orange-500'
+                                  : 'border-green-500'
                         }
                     />
                     <StatCard
@@ -260,11 +284,11 @@ export default function BarangayAnalytics({
                         description={`${nutritionalStatus.mam + nutritionalStatus.sam} children affected`}
                         icon={<AlertTriangle className="h-4 w-4" />}
                         className={
-                            parseFloat(malnutritionRate) > 20 
-                                ? 'border-red-500' 
-                                : parseFloat(malnutritionRate) > 10 
-                                ? 'border-orange-500' 
-                                : 'border-green-500'
+                            parseFloat(malnutritionRate) > 20
+                                ? 'border-red-500'
+                                : parseFloat(malnutritionRate) > 10
+                                  ? 'border-orange-500'
+                                  : 'border-green-500'
                         }
                     />
                     <StatCard
@@ -272,7 +296,9 @@ export default function BarangayAnalytics({
                         value={highRiskChildren.length}
                         description="Requiring immediate attention"
                         icon={<AlertTriangle className="h-4 w-4" />}
-                        className={highRiskChildren.length > 0 ? 'border-red-500' : ''}
+                        className={
+                            highRiskChildren.length > 0 ? 'border-red-500' : ''
+                        }
                     />
                 </div>
 
@@ -298,7 +324,10 @@ export default function BarangayAnalytics({
                         </CardHeader>
                         <CardContent>
                             <div className="h-[300px]">
-                                <Line data={trendChartData} options={trendChartOptions} />
+                                <Line
+                                    data={trendChartData}
+                                    options={trendChartOptions}
+                                />
                             </div>
                         </CardContent>
                     </Card>
@@ -309,12 +338,16 @@ export default function BarangayAnalytics({
                     <CardHeader>
                         <CardTitle>Nutritional Status Trends</CardTitle>
                         <CardDescription>
-                            Distribution of nutritional status over the last 6 months
+                            Distribution of nutritional status over the last 6
+                            months
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
                         <div className="h-[350px]">
-                            <Bar data={statusChartData} options={statusChartOptions} />
+                            <Bar
+                                data={statusChartData}
+                                options={statusChartOptions}
+                            />
                         </div>
                     </CardContent>
                 </Card>
@@ -325,14 +358,14 @@ export default function BarangayAnalytics({
                 {/* Action Buttons */}
                 <div className="flex gap-4">
                     <Link href={reportsIndex.url()}>
-                        <Button variant="outline">
-                            Generate Report
-                        </Button>
+                        <Button variant="outline">Generate Report</Button>
                     </Link>
-                    <Link href={childrenCreate.url({ query: { barangay: barangay.id } })}>
-                        <Button>
-                            Add Child
-                        </Button>
+                    <Link
+                        href={childrenCreate.url({
+                            query: { barangay: barangay.id },
+                        })}
+                    >
+                        <Button>Add Child</Button>
                     </Link>
                 </div>
             </div>

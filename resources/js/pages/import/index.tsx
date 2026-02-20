@@ -72,7 +72,13 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function Index({ barangays, optSessions }: Props) {
-    const { flash } = usePage().props as { flash?: { success?: string; error?: string; importResult?: ImportResult } };
+    const { flash } = usePage().props as {
+        flash?: {
+            success?: string;
+            error?: string;
+            importResult?: ImportResult;
+        };
+    };
     const [file, setFile] = useState<File | null>(null);
     const [barangayId, setBarangayId] = useState('');
     const [optSessionId, setOptSessionId] = useState('');
@@ -104,9 +110,10 @@ export default function Index({ barangays, optSessions }: Props) {
                 method: 'POST',
                 body: formData,
                 headers: {
-                    'X-CSRF-TOKEN': document
-                        .querySelector('meta[name="csrf-token"]')
-                        ?.getAttribute('content') || '',
+                    'X-CSRF-TOKEN':
+                        document
+                            .querySelector('meta[name="csrf-token"]')
+                            ?.getAttribute('content') || '',
                 },
             });
 
@@ -149,7 +156,7 @@ export default function Index({ barangays, optSessions }: Props) {
     };
 
     const filteredSessions = optSessions.filter(
-        (session) => !barangayId || session.barangay_id === barangayId
+        (session) => !barangayId || session.barangay_id === barangayId,
     );
 
     return (
@@ -163,7 +170,8 @@ export default function Index({ barangays, optSessions }: Props) {
                             Import Data
                         </h1>
                         <p className="text-muted-foreground">
-                            Import children and measurements from OPT Plus Excel files
+                            Import children and measurements from OPT Plus Excel
+                            files
                         </p>
                     </div>
                     <Button variant="outline" asChild>
@@ -201,7 +209,10 @@ export default function Index({ barangays, optSessions }: Props) {
                             <div className="grid grid-cols-4 gap-4">
                                 <div className="text-center">
                                     <div className="text-2xl font-bold">
-                                        {flash.importResult.summary.total_processed}
+                                        {
+                                            flash.importResult.summary
+                                                .total_processed
+                                        }
                                     </div>
                                     <div className="text-sm text-muted-foreground">
                                         Total Processed
@@ -233,23 +244,27 @@ export default function Index({ barangays, optSessions }: Props) {
                                 </div>
                             </div>
 
-                            {flash.importResult.errors && flash.importResult.errors.length > 0 && (
-                                <div className="mt-4">
-                                    <h4 className="font-medium mb-2">Errors:</h4>
-                                    <div className="max-h-48 overflow-auto rounded border p-2">
-                                        {flash.importResult.errors.map(
-                                            (error, index) => (
-                                                <div
-                                                    key={index}
-                                                    className="text-sm text-red-600"
-                                                >
-                                                    Row {error.row}: {error.message}
-                                                </div>
-                                            )
-                                        )}
+                            {flash.importResult.errors &&
+                                flash.importResult.errors.length > 0 && (
+                                    <div className="mt-4">
+                                        <h4 className="mb-2 font-medium">
+                                            Errors:
+                                        </h4>
+                                        <div className="max-h-48 overflow-auto rounded border p-2">
+                                            {flash.importResult.errors.map(
+                                                (error, index) => (
+                                                    <div
+                                                        key={index}
+                                                        className="text-sm text-red-600"
+                                                    >
+                                                        Row {error.row}:{' '}
+                                                        {error.message}
+                                                    </div>
+                                                ),
+                                            )}
+                                        </div>
                                     </div>
-                                </div>
-                            )}
+                                )}
                         </CardContent>
                     </Card>
                 )}
@@ -259,8 +274,8 @@ export default function Index({ barangays, optSessions }: Props) {
                     <CardHeader>
                         <CardTitle>Upload Excel File</CardTitle>
                         <CardDescription>
-                            Select an OPT Plus Excel file (.xlsx or .xls) to import
-                            children and measurements data.
+                            Select an OPT Plus Excel file (.xlsx or .xls) to
+                            import children and measurements data.
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -300,7 +315,9 @@ export default function Index({ barangays, optSessions }: Props) {
 
                             {/* Barangay Selection */}
                             <div className="space-y-2">
-                                <Label htmlFor="barangay">Target Barangay</Label>
+                                <Label htmlFor="barangay">
+                                    Target Barangay
+                                </Label>
                                 <Select
                                     value={barangayId}
                                     onValueChange={setBarangayId}
@@ -344,7 +361,7 @@ export default function Index({ barangays, optSessions }: Props) {
                                             >
                                                 {session.name} (
                                                 {new Date(
-                                                    session.session_date
+                                                    session.session_date,
                                                 ).toLocaleDateString()}
                                                 )
                                             </SelectItem>
@@ -360,7 +377,8 @@ export default function Index({ barangays, optSessions }: Props) {
                                     !file ||
                                     !barangayId ||
                                     isUploading ||
-                                    (validationResult !== null && !validationResult.valid)
+                                    (validationResult !== null &&
+                                        !validationResult.valid)
                                 }
                             >
                                 {isUploading ? (
@@ -385,10 +403,10 @@ export default function Index({ barangays, optSessions }: Props) {
                         <CardTitle>Import Instructions</CardTitle>
                     </CardHeader>
                     <CardContent className="prose prose-sm max-w-none">
-                        <ol className="list-decimal list-inside space-y-2">
+                        <ol className="list-inside list-decimal space-y-2">
                             <li>
-                                Download the import template or use your existing
-                                OPT Plus Excel file.
+                                Download the import template or use your
+                                existing OPT Plus Excel file.
                             </li>
                             <li>
                                 Ensure the file contains a sheet named "OPT Plus
@@ -396,7 +414,7 @@ export default function Index({ barangays, optSessions }: Props) {
                             </li>
                             <li>
                                 The following columns are required:
-                                <ul className="list-disc list-inside ml-4 mt-1">
+                                <ul className="mt-1 ml-4 list-inside list-disc">
                                     <li>Child Name (Column E)</li>
                                     <li>Sex (Column G)</li>
                                     <li>Date of Birth (Column H)</li>
@@ -406,16 +424,14 @@ export default function Index({ barangays, optSessions }: Props) {
                                 </ul>
                             </li>
                             <li>
-                                Select the target barangay where the data will be
-                                imported.
+                                Select the target barangay where the data will
+                                be imported.
                             </li>
                             <li>
                                 Optionally link the import to an OPT session for
                                 tracking.
                             </li>
-                            <li>
-                                Click "Import Data" to process the file.
-                            </li>
+                            <li>Click "Import Data" to process the file.</li>
                         </ol>
                     </CardContent>
                 </Card>

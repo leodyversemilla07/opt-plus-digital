@@ -1,8 +1,8 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import GuestLayout from '@/layouts/guest-layout';
 import { login } from '@/routes';
 import { type SharedData } from '@/types';
-import GuestLayout from '@/layouts/guest-layout';
 import { Head, Link, usePage } from '@inertiajs/react';
 import {
     BarChart3,
@@ -213,7 +213,9 @@ function DetailCard({
                     <div className="rounded-lg bg-primary/10 p-2 text-primary">
                         {icon}
                     </div>
-                    <h3 className="text-base font-semibold sm:text-lg">{title}</h3>
+                    <h3 className="text-base font-semibold sm:text-lg">
+                        {title}
+                    </h3>
                 </div>
                 <ul className="space-y-2">
                     {items.map((item) => (

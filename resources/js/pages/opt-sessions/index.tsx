@@ -1,11 +1,6 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import {
-    Card,
-    CardContent,
-    CardHeader,
-    CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
     Select,
     SelectContent,
@@ -84,7 +79,7 @@ export default function Index({ sessions, years, filters }: Props) {
         router.get(
             '/opt-sessions',
             { ...filters, [key]: value === 'all' ? undefined : value },
-            { preserveState: true }
+            { preserveState: true },
         );
     };
 
@@ -204,16 +199,20 @@ export default function Index({ sessions, years, filters }: Props) {
                                     <TableRow>
                                         <TableCell
                                             colSpan={8}
-                                            className="text-center py-8"
+                                            className="py-8 text-center"
                                         >
                                             <div className="flex flex-col items-center gap-2">
                                                 <Calendar className="h-8 w-8 text-muted-foreground" />
                                                 <p className="text-muted-foreground">
                                                     No OPT sessions found
                                                 </p>
-                                                <Button asChild variant="outline">
+                                                <Button
+                                                    asChild
+                                                    variant="outline"
+                                                >
                                                     <Link href="/opt-sessions/create">
-                                                        Create your first session
+                                                        Create your first
+                                                        session
                                                     </Link>
                                                 </Button>
                                             </div>
@@ -230,7 +229,7 @@ export default function Index({ sessions, years, filters }: Props) {
                                             </TableCell>
                                             <TableCell>
                                                 {new Date(
-                                                    session.session_date
+                                                    session.session_date,
                                                 ).toLocaleDateString('en-US', {
                                                     month: 'short',
                                                     year: 'numeric',
@@ -240,10 +239,16 @@ export default function Index({ sessions, years, filters }: Props) {
                                                 <Badge
                                                     variant="outline"
                                                     className={
-                                                        statusColors[session.status]
+                                                        statusColors[
+                                                            session.status
+                                                        ]
                                                     }
                                                 >
-                                                    {statusLabels[session.status]}
+                                                    {
+                                                        statusLabels[
+                                                            session.status
+                                                        ]
+                                                    }
                                                 </Badge>
                                             </TableCell>
                                             <TableCell className="text-center">
@@ -257,15 +262,15 @@ export default function Index({ sessions, years, filters }: Props) {
                                                     className={
                                                         session.coverage_percentage >=
                                                         80
-                                                            ? 'text-green-600 font-medium'
+                                                            ? 'font-medium text-green-600'
                                                             : session.coverage_percentage >=
-                                                              50
-                                                            ? 'text-yellow-600'
-                                                            : 'text-red-600'
+                                                                50
+                                                              ? 'text-yellow-600'
+                                                              : 'text-red-600'
                                                     }
                                                 >
                                                     {session.coverage_percentage.toFixed(
-                                                        1
+                                                        1,
                                                     )}
                                                     %
                                                 </span>
@@ -293,8 +298,9 @@ export default function Index({ sessions, years, filters }: Props) {
 
                 {/* Pagination info */}
                 {sessions.total > 0 && (
-                    <div className="text-sm text-muted-foreground text-center">
-                        Showing {sessions.data.length} of {sessions.total} sessions
+                    <div className="text-center text-sm text-muted-foreground">
+                        Showing {sessions.data.length} of {sessions.total}{' '}
+                        sessions
                     </div>
                 )}
             </div>

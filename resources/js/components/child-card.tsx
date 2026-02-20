@@ -1,8 +1,8 @@
-import { Link } from '@inertiajs/react';
-import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Calendar, MapPin, QrCode, Users, Eye } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Link } from '@inertiajs/react';
+import { Calendar, Eye, MapPin, QrCode, Users } from 'lucide-react';
 
 interface Child {
     id: string;
@@ -29,7 +29,10 @@ interface ChildCardProps {
     showActions?: boolean;
 }
 
-export default function ChildCard({ child, showActions = true }: ChildCardProps) {
+export default function ChildCard({
+    child,
+    showActions = true,
+}: ChildCardProps) {
     const getAgeDisplay = (ageInMonths: number) => {
         const years = Math.floor(ageInMonths / 12);
         const months = ageInMonths % 12;
@@ -52,7 +55,10 @@ export default function ChildCard({ child, showActions = true }: ChildCardProps)
         };
 
         return (
-            <Badge variant={variants[classification] || 'default'} className="text-xs">
+            <Badge
+                variant={variants[classification] || 'default'}
+                className="text-xs"
+            >
                 {classification.replace(/_/g, ' ').toUpperCase()}
             </Badge>
         );
@@ -70,7 +76,9 @@ export default function ChildCard({ child, showActions = true }: ChildCardProps)
                             </h3>
                             <Badge
                                 variant={
-                                    child.sex === 'male' ? 'default' : 'secondary'
+                                    child.sex === 'male'
+                                        ? 'default'
+                                        : 'secondary'
                                 }
                                 className="text-xs"
                             >
@@ -95,7 +103,7 @@ export default function ChildCard({ child, showActions = true }: ChildCardProps)
                                 <Calendar className="h-4 w-4" />
                                 <span>
                                     {new Date(
-                                        child.date_of_birth
+                                        child.date_of_birth,
                                     ).toLocaleDateString()}{' '}
                                     ({getAgeDisplay(child.age_in_months)})
                                 </span>
@@ -136,11 +144,12 @@ export default function ChildCard({ child, showActions = true }: ChildCardProps)
                                     Latest Status:
                                 </span>
                                 {getStatusBadge(
-                                    child.latest_measurement.opt_classification
+                                    child.latest_measurement.opt_classification,
                                 )}
                                 <span className="ml-auto text-xs text-muted-foreground">
                                     {new Date(
-                                        child.latest_measurement.measurement_date
+                                        child.latest_measurement
+                                            .measurement_date,
                                     ).toLocaleDateString()}
                                 </span>
                             </div>

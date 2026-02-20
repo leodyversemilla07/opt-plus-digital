@@ -208,8 +208,8 @@ export default function Form1C({ report, barangayId }: Props) {
                             OPT Plus Form 1C
                         </h1>
                         <p className="mt-1 text-muted-foreground">
-                            List of Affected/At-Risk Children • {report.barangay}{' '}
-                            • {report.generated_at}
+                            List of Affected/At-Risk Children •{' '}
+                            {report.barangay} • {report.generated_at}
                         </p>
                     </div>
                     <div className="flex gap-2">
@@ -369,7 +369,9 @@ export default function Form1C({ report, barangayId }: Props) {
                                 className="mt-4 overflow-x-auto"
                             >
                                 <ChildTable
-                                    children={report.categories.overweight_obese}
+                                    children={
+                                        report.categories.overweight_obese
+                                    }
                                 />
                             </TabsContent>
                         </Tabs>
