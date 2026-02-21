@@ -195,14 +195,12 @@ export default function Dashboard({
                         value={overallStats.total_children.toLocaleString()}
                         description="Target population"
                         icon={<Users className="h-5 w-5 text-primary" />}
-                        className="border-l-4 border-l-primary shadow-md"
                     />
                     <StatCard
                         title="F1K (0-23 mos)"
                         value={f1kStatistics.total_children_0to23.toLocaleString()}
                         description="First 1000 Days"
                         icon={<Users className="h-5 w-5 text-primary" />}
-                        className="border-l-4 border-l-primary shadow-md"
                     />
                     <StatCard
                         title="Coverage Rate"
@@ -211,21 +209,18 @@ export default function Dashboard({
                         icon={
                             <BarChart3 className="h-5 w-5 text-secondary-foreground" />
                         }
-                        className="border-l-4 border-l-secondary-foreground shadow-md"
                     />
                     <StatCard
                         title="Measured (Month)"
                         value={overallStats.children_measured_this_month.toLocaleString()}
                         description="Progress this month"
                         icon={<TrendingUp className="h-5 w-5 text-green-600" />}
-                        className="border-l-4 border-l-green-600 shadow-md"
                     />
                     <StatCard
                         title="High Risk"
                         value={nutritionalStatus.mam + nutritionalStatus.sam}
                         description="Children needing attention"
                         icon={<Activity className="h-5 w-5 text-destructive" />}
-                        className="border-l-4 border-l-destructive shadow-md"
                     />
                 </div>
 

@@ -17,10 +17,8 @@ import {
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
-import { index as childrenIndex } from '@/routes/children';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, useForm } from '@inertiajs/react';
-import { ArrowLeft } from 'lucide-react';
 import { FormEventHandler } from 'react';
 
 interface Barangay {
@@ -73,18 +71,6 @@ export default function Create({ barangays }: Props) {
             <Head title="Register Child" />
 
             <div className="flex flex-col gap-6 p-6">
-                <div className="mx-auto w-full max-w-4xl">
-                    {/* Header */}
-                    <div className="flex items-center gap-2">
-                        <Link href={childrenIndex.url()}>
-                            <Button variant="ghost" size="sm">
-                                <ArrowLeft className="mr-2 h-4 w-4" />
-                                Back to Children
-                            </Button>
-                        </Link>
-                    </div>
-                </div>
-
                 <div className="mx-auto w-full max-w-4xl">
                     {/* Form */}
                     <form onSubmit={submit} className="space-y-6">

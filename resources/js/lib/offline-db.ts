@@ -28,7 +28,7 @@ interface MeasurementData {
     [key: string]: unknown;
 }
 
-interface ChildData {
+export interface ChildData {
     id: string;
     first_name: string;
     middle_name?: string;

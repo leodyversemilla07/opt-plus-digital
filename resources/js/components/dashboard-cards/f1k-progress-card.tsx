@@ -50,7 +50,7 @@ export default function F1KProgressCard({
     };
 
     return (
-        <Card className="border-l-4 border-l-primary shadow-md">
+        <Card>
             <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-foreground">
                     <Baby className="h-5 w-5 text-primary" />
@@ -62,13 +62,21 @@ export default function F1KProgressCard({
             </CardHeader>
             <CardContent className="space-y-6">
                 {/* Coverage Stats */}
-                <div className="grid gap-4 md:grid-cols-2">
+                <div className="grid gap-4 md:grid-cols-3">
                     <div className="rounded-lg border bg-background p-4">
                         <p className="text-sm text-muted-foreground">
                             Total F1K Children
                         </p>
                         <p className="text-2xl font-bold text-foreground">
                             {totalChildren0to23.toLocaleString()}
+                        </p>
+                    </div>
+                    <div className="rounded-lg border bg-background p-4">
+                        <p className="text-sm text-muted-foreground">
+                            Measured Children
+                        </p>
+                        <p className="text-2xl font-bold text-foreground">
+                            {measuredChildren0to23.toLocaleString()}
                         </p>
                     </div>
                     <div
@@ -104,7 +112,7 @@ export default function F1KProgressCard({
                     </p>
                     <ChartContainer
                         config={chartConfig}
-                        className="h-[200px] w-full text-foreground"
+                        className="h-50 w-full text-foreground"
                     >
                         <BarChart data={chartData} layout="vertical">
                             <CartesianGrid

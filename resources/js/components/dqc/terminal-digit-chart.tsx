@@ -142,7 +142,7 @@ export default function TerminalDigitChart({ data }: TerminalDigitChartProps) {
 
                 <ChartContainer
                     config={chartConfig}
-                    className="h-[350px] w-full text-foreground"
+                    className="h-87.5 w-full text-foreground"
                 >
                     <BarChart data={chartData}>
                         <CartesianGrid strokeDasharray="3 3" vertical={false} />

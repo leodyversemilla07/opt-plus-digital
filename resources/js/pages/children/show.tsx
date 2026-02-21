@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { NutritionalStatusBadge } from '@/components/ui/nutritional-status-badge';
 import { useOnlineStatus } from '@/hooks/use-online-status';
 import AppLayout from '@/layouts/app-layout';
-import { offlineDB } from '@/lib/offline-db';
+import { type ChildData, offlineDB } from '@/lib/offline-db';
 import { edit as childrenEdit } from '@/routes/children';
 import { create as measurementsCreate } from '@/routes/children/measurements';
 import { type BreadcrumbItem } from '@/types';
@@ -71,7 +71,6 @@ interface Props {
 export default function Show({ child, latestMeasurement }: Props) {
     const isOnline = useOnlineStatus();
     const [isCached, setIsCached] = useState(false);
-    const [isCaching, setIsCaching] = useState(false);
     const [cacheTimestamp, setCacheTimestamp] = useState<Date | null>(null);
 
     const breadcrumbs: BreadcrumbItem[] = [
@@ -103,7 +102,7 @@ export default function Show({ child, latestMeasurement }: Props) {
                     await offlineDB.cacheChild({
                         ...child,
                         cachedAt: new Date().toISOString(),
-                    } as any);
+                    } as ChildData);
                     setIsCached(true);
                     setCacheTimestamp(new Date());
                 } catch (error) {
@@ -116,24 +115,6 @@ export default function Show({ child, latestMeasurement }: Props) {
 
         cacheChildData();
     }, [child, isOnline]);
-
-    const handleCacheForOffline = async () => {
-        setIsCaching(true);
-        try {
-            await offlineDB.cacheChild({
-                ...child,
-                cachedAt: new Date().toISOString(),
-            } as any);
-            setIsCached(true);
-            setCacheTimestamp(new Date());
-            alert('Child data cached for offline access');
-        } catch (error) {
-            console.error('Failed to cache child:', error);
-            alert('Failed to cache child data. Please try again.');
-        } finally {
-            setIsCaching(false);
-        }
-    };
 
     const getCacheFreshness = () => {
         if (!cacheTimestamp) return '';
@@ -207,7 +188,7 @@ export default function Show({ child, latestMeasurement }: Props) {
                     <div className="space-y-6 md:col-span-2">
                         {latestMeasurement && (
                             <Card className="border-primary/20 shadow-lg shadow-primary/5">
-                                <CardHeader className="border-b bg-primary/5 pb-4">
+                                <CardHeader>
                                     <CardTitle className="text-lg">
                                         Latest Nutritional Status
                                     </CardTitle>

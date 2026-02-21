@@ -13,13 +13,19 @@ import {
     FileWarning,
 } from 'lucide-react';
 
+interface Duplicate {
+    child_name: string;
+    date_of_birth: string;
+    barangay: string;
+}
+
 interface DQCAlertCardProps {
     summary: {
         total_measurements: number;
         flagged_records_count: number;
         overaged_records_count: number;
         stunted_records_count: number;
-        duplicates: any[];
+        duplicates: Duplicate[];
         terminal_digit_analysis: {
             weight: { has_preference: boolean };
             height: { has_preference: boolean };
