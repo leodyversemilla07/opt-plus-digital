@@ -19,7 +19,7 @@ export default defineConfig({
         tailwindcss(),
         wayfinder({
             formVariants: true,
-            command: 'C:\\Users\\Leodyver\\.config\\herd\\bin\\php84\\php.exe artisan wayfinder:generate',
+            command: 'php artisan wayfinder:generate',
         }),
     ],
     esbuild: {

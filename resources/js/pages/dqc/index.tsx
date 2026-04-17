@@ -35,30 +35,69 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
+interface TerminalDigitAnalysis {
+    weight: {
+        counts: number[];
+        percentages: number[];
+        has_preference: boolean;
+        max_percentage: number;
+    };
+    height: {
+        counts: number[];
+        percentages: number[];
+        has_preference: boolean;
+        max_percentage: number;
+    };
+}
+
+interface AttentionItem {
+    child: {
+        id: string;
+        full_name: string;
+        barangay: {
+            name: string;
+        };
+    };
+    measurement: {
+        age_in_months: number;
+    };
+    reason: string;
+    priority: number;
+    days_since_measurement: number;
+}
+
+interface FlaggedMeasurement {
+    id: string;
+    child_name: string;
+    child_id?: string;
+    age_months: number;
+    weight_kg: number;
+    height_cm: number;
+    wfa_zscore: number | null;
+    opt_classification: string;
+    measurement_date: string;
+}
+
 interface DQCPageProps {
-    user: any;
     dqcSummary: {
         total_measurements: number;
         flagged_records_count: number;
         overaged_records_count: number;
         stunted_records_count: number;
-        duplicates: any[];
-        terminal_digit_analysis: any;
-        children_needing_attention: any[];
+        duplicates: Array<{
+            child_name: string;
+            date_of_birth: string;
+            barangay: string;
+        }>;
+        terminal_digit_analysis: TerminalDigitAnalysis;
+        children_needing_attention: AttentionItem[];
     };
-    flaggedMeasurements: any[];
-    overagedChildren: any[];
-    stuntedChildren: any[];
-    barangayId: string | null;
+    flaggedMeasurements: FlaggedMeasurement[];
 }
 
 export default function DQCPage({
-    user,
     dqcSummary,
     flaggedMeasurements,
-    overagedChildren,
-    stuntedChildren,
-    barangayId,
 }: DQCPageProps) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -229,7 +268,10 @@ export default function DQCPage({
                                 </TableHeader>
                                 <TableBody>
                                     {dqcSummary.children_needing_attention.map(
-                                        (item: any, index: number) => (
+                                        (
+                                            item: AttentionItem,
+                                            index: number,
+                                        ) => (
                                             <TableRow
                                                 key={item.child.id}
                                                 className={`transition-colors hover:bg-muted/50 ${
@@ -331,64 +373,75 @@ export default function DQCPage({
                                 <TableBody>
                                     {flaggedMeasurements
                                         .slice(0, 10)
-                                        .map((m: any) => (
-                                            <TableRow
-                                                key={m.id}
-                                                className="transition-colors hover:bg-muted/50"
-                                            >
-                                                <TableCell className="font-medium">
-                                                    {m.child_name}
-                                                </TableCell>
-                                                <TableCell>
-                                                    {m.age_months} mos
-                                                </TableCell>
-                                                <TableCell>
-                                                    {m.weight_kg}
-                                                </TableCell>
-                                                <TableCell>
-                                                    {m.height_cm}
-                                                </TableCell>
-                                                <TableCell>
-                                                    <Badge
-                                                        variant="destructive"
-                                                        className="text-xs"
-                                                    >
-                                                        {Math.abs(
-                                                            m.wfa_zscore,
-                                                        ).toFixed(2)}
-                                                    </Badge>
-                                                </TableCell>
-                                                <TableCell>
-                                                    <Badge
-                                                        variant={
-                                                            m.opt_classification ===
-                                                            'sam'
-                                                                ? 'destructive'
-                                                                : 'secondary'
-                                                        }
-                                                        className="text-xs"
-                                                    >
-                                                        {m.opt_classification?.toUpperCase()}
-                                                    </Badge>
-                                                </TableCell>
-                                                <TableCell>
-                                                    {m.measurement_date}
-                                                </TableCell>
-                                                <TableCell className="text-right">
-                                                    <Button
-                                                        variant="ghost"
-                                                        size="icon"
-                                                        asChild
-                                                    >
-                                                        <Link
-                                                            href={`/children/${m.child.id}`}
+                                        .map((measurement: FlaggedMeasurement) => {
+                                            const childProfileUrl = measurement.child_id
+                                                ? `/children/${measurement.child_id}`
+                                                : '#';
+
+                                            return (
+                                                <TableRow
+                                                    key={measurement.id}
+                                                    className="transition-colors hover:bg-muted/50"
+                                                >
+                                                    <TableCell className="font-medium">
+                                                        {measurement.child_name}
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        {measurement.age_months}{' '}
+                                                        mos
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        {measurement.weight_kg}
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        {measurement.height_cm}
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <Badge
+                                                            variant="destructive"
+                                                            className="text-xs"
                                                         >
-                                                            <ArrowRight className="h-4 w-4" />
-                                                        </Link>
-                                                    </Button>
-                                                </TableCell>
-                                            </TableRow>
-                                        ))}
+                                                            {Math.abs(
+                                                                measurement.wfa_zscore ??
+                                                                    0,
+                                                            ).toFixed(2)}
+                                                        </Badge>
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <Badge
+                                                            variant={
+                                                                measurement.opt_classification ===
+                                                                'sam'
+                                                                    ? 'destructive'
+                                                                    : 'secondary'
+                                                            }
+                                                            className="text-xs"
+                                                        >
+                                                            {measurement.opt_classification.toUpperCase()}
+                                                        </Badge>
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        {measurement.measurement_date}
+                                                    </TableCell>
+                                                    <TableCell className="text-right">
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="icon"
+                                                            asChild
+                                                            disabled={
+                                                                !measurement.child_id
+                                                            }
+                                                        >
+                                                            <Link
+                                                                href={childProfileUrl}
+                                                            >
+                                                                <ArrowRight className="h-4 w-4" />
+                                                            </Link>
+                                                        </Button>
+                                                    </TableCell>
+                                                </TableRow>
+                                            );
+                                        })}
                                 </TableBody>
                             </Table>
                             {flaggedMeasurements.length > 10 && (

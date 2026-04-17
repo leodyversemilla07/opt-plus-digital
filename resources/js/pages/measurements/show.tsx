@@ -37,13 +37,11 @@ interface MeasurementShowProps {
         notes: string | null;
         measured_by: { name: string } | null;
     };
-    previousMeasurement: any;
 }
 
 export default function MeasurementShow({
     child,
     measurement,
-    previousMeasurement,
 }: MeasurementShowProps) {
     const breadcrumbs: BreadcrumbItem[] = [
         { title: 'Children', href: '/children' },

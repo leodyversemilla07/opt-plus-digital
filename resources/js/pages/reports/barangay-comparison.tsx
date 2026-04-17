@@ -25,26 +25,33 @@ import {
     TrendingUp,
 } from 'lucide-react';
 
+interface RankedBarangay {
+    id: string;
+    name: string;
+    total_children: number;
+    measured_children: number;
+    coverage_rate: number;
+    malnutrition_rate: number;
+    sam_count: number;
+    mam_count: number;
+    normal_count: number;
+    overweight_count: number;
+}
+
+interface BarangaySummaryItem {
+    name: string;
+    malnutrition_rate: number;
+}
+
 interface BarangayComparisonProps {
     report: {
         report_title: string;
         generated_at: string;
         total_barangays: number;
-        barangays: Array<{
-            id: string;
-            name: string;
-            total_children: number;
-            measured_children: number;
-            coverage_rate: number;
-            malnutrition_rate: number;
-            sam_count: number;
-            mam_count: number;
-            normal_count: number;
-            overweight_count: number;
-        }>;
+        barangays: RankedBarangay[];
         summary: {
-            highest_malnutrition: any;
-            lowest_malnutrition: any;
+            highest_malnutrition: BarangaySummaryItem | null;
+            lowest_malnutrition: BarangaySummaryItem | null;
             average_coverage: number;
             average_malnutrition_rate: number;
         };
@@ -118,9 +125,9 @@ export default function BarangayComparison({
                                     'N/A'}
                             </div>
                             <p className="mt-1 text-xs text-muted-foreground">
-                                {report.summary.highest_malnutrition?.malnutrition_rate.toFixed(
+                                {report.summary.highest_malnutrition?.malnutrition_rate?.toFixed(
                                     1,
-                                ) || 0}
+                                ) ?? '0.0'}
                                 % rate
                             </p>
                         </CardContent>
@@ -137,9 +144,9 @@ export default function BarangayComparison({
                                     'N/A'}
                             </div>
                             <p className="mt-1 text-xs text-muted-foreground">
-                                {report.summary.lowest_malnutrition?.malnutrition_rate.toFixed(
+                                {report.summary.lowest_malnutrition?.malnutrition_rate?.toFixed(
                                     1,
-                                ) || 0}
+                                ) ?? '0.0'}
                                 % rate
                             </p>
                         </CardContent>

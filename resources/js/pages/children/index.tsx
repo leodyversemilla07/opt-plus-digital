@@ -90,7 +90,6 @@ export default function Index({ children, filters, barangays }: Props) {
     const [isIndigenous, setIsIndigenous] = useState(
         filters.is_indigenous_people?.toString() || 'all',
     );
-    const [f1kOnly, setF1kOnly] = useState(filters.f1k || false);
     const [cachedCount, setCachedCount] = useState(0);
     const [isCaching, setIsCaching] = useState(false);
 

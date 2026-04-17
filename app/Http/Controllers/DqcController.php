@@ -42,6 +42,7 @@ class DqcController extends Controller
             'dqcSummary' => $dqcSummary,
             'flaggedMeasurements' => $flaggedMeasurements->map(fn($m) => [
                 'id' => $m->id,
+                'child_id' => $m->child->id,
                 'child_name' => $m->child->full_name,
                 'barangay' => $m->child->barangay->name,
                 'measurement_date' => $m->measurement_date->format('M d, Y'),
