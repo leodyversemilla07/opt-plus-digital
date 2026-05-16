@@ -14,10 +14,12 @@ import { dashboard } from '@/routes';
 import children from '@/routes/children';
 import reports from '@/routes/reports';
 import users from '@/routes/users';
+import * as notifications from '@/routes/notifications/index';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
 import {
     Baby,
+    Bell,
     FileBarChart,
     LayoutDashboard,
     Settings,
@@ -35,6 +37,11 @@ const mainNavItems: NavItem[] = [
         title: 'Children Registry',
         href: children.index(),
         icon: Baby,
+    },
+    {
+        title: 'Notifications',
+        href: notifications.index(),
+        icon: Bell,
     },
     {
         title: 'Reports',

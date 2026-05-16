@@ -3,6 +3,8 @@
 namespace App\Observers;
 
 use App\Models\Measurement;
+use App\Models\User;
+use App\Notifications\SevereMalnutritionAlert;
 use App\Services\WHOCalculatorService;
 use Illuminate\Support\Facades\Cache;
 
@@ -26,11 +28,15 @@ class MeasurementObserver
 
     /**
      * Handle the Measurement "created" event.
-     * Clear relevant caches after measurement is created
+     * Clear relevant caches and notify relevant users if SAM detected.
      */
     public function created(Measurement $measurement): void
     {
         $this->clearAnalyticsCaches($measurement);
+
+        if ($measurement->isSeverelyMalnourished()) {
+            $this->notifySevereMalnutrition($measurement);
+        }
     }
 
     /**
@@ -47,11 +53,16 @@ class MeasurementObserver
 
     /**
      * Handle the Measurement "updated" event.
-     * Clear relevant caches after measurement is updated
+     * Clear relevant caches and notify relevant users if newly classified as SAM.
      */
     public function updated(Measurement $measurement): void
     {
         $this->clearAnalyticsCaches($measurement);
+
+        // Only notify if classification changed TO sam (not just any update)
+        if ($measurement->isSeverelyMalnourished() && $measurement->wasChanged('opt_classification')) {
+            $this->notifySevereMalnutrition($measurement);
+        }
     }
 
     /**
@@ -127,6 +138,48 @@ class MeasurementObserver
                 Cache::forget("analytics:high_risk:all:limit:{$limit}");
                 Cache::forget("analytics:high_risk:barangay:{$barangayId}:limit:{$limit}");
             }
+        }
+    }
+
+    /**
+     * Notify relevant users about a severe malnutrition (SAM) detection.
+     *
+     * Notifies active users who have view reports or view analytics permissions
+     * and are assigned to the same barangay as the child. Also notifies the
+     * user who registered the child.
+     */
+    protected function notifySevereMalnutrition(Measurement $measurement): void
+    {
+        $child = $measurement->child;
+
+        if (! $child) {
+            return;
+        }
+
+        $recipients = User::query()
+            ->where('is_active', true)
+            ->where(function ($query) {
+                $query->permission('view reports')
+                    ->orWhere(fn ($q) => $q->permission('view analytics'));
+            })
+            ->where(function ($query) use ($child) {
+                $query->where('barangay_id', $child->barangay_id)
+                    ->orWhereHas('roles', function ($q) {
+                        $q->where('name', 'admin');
+                    });
+            })
+            ->get();
+
+        // Also notify the user who created the child record
+        if ($child->created_by_user_id) {
+            $creator = User::find($child->created_by_user_id);
+            if ($creator && ! $recipients->contains('id', $creator->id)) {
+                $recipients->push($creator);
+            }
+        }
+
+        if ($recipients->isNotEmpty()) {
+            \Illuminate\Support\Facades\Notification::send($recipients, new SevereMalnutritionAlert($measurement));
         }
     }
 }

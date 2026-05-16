@@ -35,9 +35,14 @@ class OptSessionController extends Controller
             ->withQueryString();
 
         // Get available years for filtering
-        $years = OptSession::selectRaw('DISTINCT YEAR(session_date) as year')
-            ->orderBy('year', 'desc')
-            ->pluck('year');
+        $years = OptSession::query()
+            ->orderBy('session_date')
+            ->pluck('session_date')
+            ->map(fn ($date) => (int) $date->format('Y'))
+            ->unique()
+            ->sort()
+            ->reverse()
+            ->values();
 
         return Inertia::render('opt-sessions/index', [
             'sessions' => $sessions,
