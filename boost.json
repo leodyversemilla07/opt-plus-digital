@@ -3,6 +3,7 @@
         "copilot",
         "opencode"
     ],
+    "cloud": false,
     "guidelines": true,
     "packages": [
         "nativephp/mobile"
