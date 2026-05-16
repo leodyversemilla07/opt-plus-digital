@@ -14,6 +14,7 @@ import { dashboard } from '@/routes';
 import children from '@/routes/children';
 import reports from '@/routes/reports';
 import users from '@/routes/users';
+import * as auditLogs from '@/routes/audit-logs/index';
 import * as notifications from '@/routes/notifications/index';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
@@ -21,6 +22,7 @@ import {
     Baby,
     Bell,
     FileBarChart,
+    History,
     LayoutDashboard,
     Settings,
     UserCog,
@@ -47,6 +49,11 @@ const mainNavItems: NavItem[] = [
         title: 'Reports',
         href: reports.index(),
         icon: FileBarChart,
+    },
+    {
+        title: 'Audit Logs',
+        href: auditLogs.index(),
+        icon: History,
     },
     {
         title: 'User Management',

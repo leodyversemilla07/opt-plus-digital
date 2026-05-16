@@ -45,20 +45,24 @@ class RolePermissionSeeder extends Seeder
 
             // Settings
             'manage settings',
+
+            // Audit Logs
+            'view audit logs',
+            'export audit logs',
         ];
 
         foreach ($permissions as $permission) {
-            Permission::create(['name' => $permission]);
+            Permission::findOrCreate($permission);
         }
 
         // Create roles and assign permissions
 
         // Admin - Full access
-        $admin = Role::create(['name' => 'admin']);
+        $admin = Role::findOrCreate('admin');
         $admin->givePermissionTo(Permission::all());
 
         // Municipal Health Officer - View and manage municipality-wide data
-        $municipal = Role::create(['name' => 'municipal']);
+        $municipal = Role::findOrCreate('municipal');
         $municipal->givePermissionTo([
             'view children',
             'create children',
@@ -74,10 +78,11 @@ class RolePermissionSeeder extends Seeder
             'view users',
             'create users',
             'edit users',
+            'view audit logs',
         ]);
 
         // Barangay Nutrition Scholar (BNS) - Manage barangay data
-        $bns = Role::create(['name' => 'bns']);
+        $bns = Role::findOrCreate('bns');
         $bns->givePermissionTo([
             'view children',
             'create children',
@@ -92,7 +97,7 @@ class RolePermissionSeeder extends Seeder
         ]);
 
         // Barangay Health Worker (BHW) - Field data collection
-        $bhw = Role::create(['name' => 'bhw']);
+        $bhw = Role::findOrCreate('bhw');
         $bhw->givePermissionTo([
             'view children',
             'create children',

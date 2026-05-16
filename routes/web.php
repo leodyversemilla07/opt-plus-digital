@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\ChildController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DqcController;
@@ -129,6 +130,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::post('{id}/read', [NotificationController::class, 'markAsRead'])->name('mark-as-read');
             Route::post('mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('mark-all-read');
             Route::get('{id}/redirect', [NotificationController::class, 'redirect'])->name('redirect');
+        });
+
+    // Audit Logs
+    Route::prefix('audit-logs')
+        ->name('audit-logs.')
+        ->middleware('permission:view audit logs')
+        ->group(function () {
+            Route::get('/', [AuditLogController::class, 'index'])->name('index');
+            Route::get('{audit_log}', [AuditLogController::class, 'show'])->name('show');
         });
 });
 
