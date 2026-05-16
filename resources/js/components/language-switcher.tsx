@@ -18,10 +18,7 @@ export function LanguageSwitcher({ variant = 'icon' }: { variant?: 'icon' | 'min
 
     const switchLanguage = (langCode: string) => {
         i18n.changeLanguage(langCode);
-        document.documentElement.lang = langCode;
     };
-
-    const currentLang = languages.find((l) => l.code === i18n.language) ?? languages[0];
 
     if (variant === 'minimal') {
         return (
