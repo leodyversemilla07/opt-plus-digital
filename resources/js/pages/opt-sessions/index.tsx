@@ -156,10 +156,6 @@ export default function Index({ sessions, years, filters }: Props) {
         );
     };
 
-    const canStart = selectedIds.size > 0;
-    const canComplete = selectedIds.size > 0;
-    const canCancel = selectedIds.size > 0;
-
     const confirmTitle = {
         start: 'Batch Start Sessions',
         complete: 'Batch Complete Sessions',
