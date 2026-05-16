@@ -28,6 +28,7 @@ export interface SharedData {
     auth: Auth;
     sidebarOpen: boolean;
     unreadNotificationsCount: number;
+    locale: string;
     [key: string]: unknown;
 }
 

@@ -49,6 +49,7 @@ class HandleInertiaRequests extends Middleware
             'unreadNotificationsCount' => $request->user()
                 ? $request->user()->unreadNotifications()->count()
                 : 0,
+            'locale' => app()->getLocale(),
         ];
     }
 }

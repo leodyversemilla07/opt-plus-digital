@@ -3,6 +3,8 @@ import '../css/app.css';
 import { createInertiaApp } from '@inertiajs/react';
 import { initializeTheme } from './hooks/use-appearance';
 
+import './i18n';
+
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
 createInertiaApp({
