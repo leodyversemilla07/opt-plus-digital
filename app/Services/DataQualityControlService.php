@@ -184,6 +184,22 @@ class DataQualityControlService
     }
 
     /**
+     * Count measurements pending DQC certification.
+     */
+    public function countPendingCertifications(?string $barangayId = null): int
+    {
+        $query = Measurement::pendingCertification();
+
+        if ($barangayId) {
+            $query->whereHas('child', function ($q) use ($barangayId) {
+                $q->where('barangay_id', $barangayId);
+            });
+        }
+
+        return $query->count();
+    }
+
+    /**
      * Get malnourished children (MAM + SAM)
      */
     private function getMalnourishedChildren(?string $barangayId, int $limit): Collection
@@ -269,6 +285,7 @@ class DataQualityControlService
                 'flagged_records_count' => $this->findFlaggedMeasurements($barangayId)->count(),
                 'overaged_records_count' => $this->findOveragedChildren($barangayId)->count(),
                 'stunted_records_count' => $this->findStuntedChildren($barangayId)->count(),
+                'pending_certifications_count' => $this->countPendingCertifications($barangayId),
                 'children_needing_attention' => $this->getChildrenNeedingAttention($barangayId, 10),
             ];
         });

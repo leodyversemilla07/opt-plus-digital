@@ -19,12 +19,15 @@ import {
 } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, router } from '@inertiajs/react';
 import {
     AlertCircle,
     ArrowRight,
     CheckCircle,
+    Eye,
     RefreshCw,
+    ShieldCheck,
+    ShieldX,
     UserCheck,
 } from 'lucide-react';
 
@@ -76,6 +79,21 @@ interface FlaggedMeasurement {
     wfa_zscore: number | null;
     opt_classification: string;
     measurement_date: string;
+    dqc_status?: string;
+}
+
+interface PendingCertification {
+    id: string;
+    child_name: string;
+    child_id: string;
+    barangay: string;
+    measurement_date: string;
+    age_months: number;
+    weight_kg: number;
+    height_cm: number;
+    opt_classification: string;
+    measured_by: string;
+    days_since_measurement: number | null;
 }
 
 interface DQCPageProps {
@@ -84,6 +102,7 @@ interface DQCPageProps {
         flagged_records_count: number;
         overaged_records_count: number;
         stunted_records_count: number;
+        pending_certifications_count: number;
         duplicates: Array<{
             child_name: string;
             date_of_birth: string;
@@ -93,11 +112,13 @@ interface DQCPageProps {
         children_needing_attention: AttentionItem[];
     };
     flaggedMeasurements: FlaggedMeasurement[];
+    pendingCertifications: PendingCertification[];
 }
 
 export default function DQCPage({
     dqcSummary,
     flaggedMeasurements,
+    pendingCertifications,
 }: DQCPageProps) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -127,7 +148,7 @@ export default function DQCPage({
                 </div>
 
                 {/* DQC Summary Stats */}
-                <div className="grid gap-4 md:grid-cols-4">
+                <div className="grid gap-4 md:grid-cols-5">
                     <Card className="border-l-4 border-l-primary shadow-md">
                         <CardHeader className="pb-3">
                             <CardTitle className="text-sm font-medium text-muted-foreground">
@@ -227,6 +248,36 @@ export default function DQCPage({
                             )}
                         </CardContent>
                     </Card>
+                    {/* Pending Certifications Card */}
+                    <Card
+                        className={`border-l-4 shadow-md ${
+                            dqcSummary.pending_certifications_count > 0
+                                ? 'border-l-yellow-500'
+                                : 'border-l-green-600'
+                        }`}
+                    >
+                        <CardHeader className="pb-3">
+                            <CardTitle className="text-sm font-medium text-muted-foreground">
+                                Pending Certification
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <p
+                                className={`text-3xl font-bold ${
+                                    dqcSummary.pending_certifications_count > 0
+                                        ? 'text-yellow-600'
+                                        : 'text-green-600'
+                                }`}
+                            >
+                                {dqcSummary.pending_certifications_count.toLocaleString()}
+                            </p>
+                            {dqcSummary.pending_certifications_count > 0 && (
+                                <p className="mt-2 text-xs text-muted-foreground">
+                                    Require eye-check verification
+                                </p>
+                            )}
+                        </CardContent>
+                    </Card>
                 </div>
 
                 {/* DQC Alert Card */}
@@ -234,6 +285,105 @@ export default function DQCPage({
 
                 {/* Terminal Digit Chart */}
                 <TerminalDigitChart data={dqcSummary.terminal_digit_analysis} />
+
+                {/* Pending Certifications */}
+                {pendingCertifications.length > 0 && (
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2 text-foreground">
+                                <Eye className="h-5 w-5 text-yellow-500" />
+                                Pending Eye-Check Certification
+                            </CardTitle>
+                            <CardDescription>
+                                Measurements awaiting DQC verification — review and certify or reject
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <Table>
+                                <TableHeader>
+                                    <TableRow>
+                                        <TableHead>Child</TableHead>
+                                        <TableHead>Barangay</TableHead>
+                                        <TableHead>Date</TableHead>
+                                        <TableHead>Age</TableHead>
+                                        <TableHead>Weight</TableHead>
+                                        <TableHead>Height</TableHead>
+                                        <TableHead>Classification</TableHead>
+                                        <TableHead>Measured By</TableHead>
+                                        <TableHead className="text-right">Actions</TableHead>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                    {pendingCertifications.map((item) => (
+                                        <TableRow key={item.id}>
+                                            <TableCell className="font-medium">
+                                                {item.child_name}
+                                            </TableCell>
+                                            <TableCell>{item.barangay}</TableCell>
+                                            <TableCell>{item.measurement_date}</TableCell>
+                                            <TableCell>{item.age_months} mos</TableCell>
+                                            <TableCell>{item.weight_kg} kg</TableCell>
+                                            <TableCell>{item.height_cm} cm</TableCell>
+                                            <TableCell>
+                                                <Badge
+                                                    variant={
+                                                        item.opt_classification === 'sam'
+                                                            ? 'destructive'
+                                                            : item.opt_classification === 'mam'
+                                                              ? 'secondary'
+                                                              : 'outline'
+                                                    }
+                                                    className="text-xs"
+                                                >
+                                                    {item.opt_classification.toUpperCase()}
+                                                </Badge>
+                                            </TableCell>
+                                            <TableCell className="text-xs text-muted-foreground">
+                                                {item.measured_by}
+                                            </TableCell>
+                                            <TableCell className="text-right">
+                                                <div className="flex items-center justify-end gap-1">
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="sm"
+                                                        className="text-green-600 hover:text-green-700 hover:bg-green-50"
+                                                        onClick={() => {
+                                                            router.post(
+                                                                `/dqc/measurements/${item.id}/certify`,
+                                                                {},
+                                                                { preserveState: true },
+                                                            );
+                                                        }}
+                                                        title="Certify as eye-checked"
+                                                    >
+                                                        <ShieldCheck className="h-4 w-4" />
+                                                    </Button>
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="sm"
+                                                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                                                        onClick={() => {
+                                                            if (confirm('Reject this measurement? This will flag it for review.')) {
+                                                                router.post(
+                                                                    `/dqc/measurements/${item.id}/reject`,
+                                                                    {},
+                                                                    { preserveState: true },
+                                                                );
+                                                            }
+                                                        }}
+                                                        title="Reject measurement"
+                                                    >
+                                                        <ShieldX className="h-4 w-4" />
+                                                    </Button>
+                                                </div>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </CardContent>
+                    </Card>
+                )}
 
                 {/* Children Needing Attention */}
                 <Card>

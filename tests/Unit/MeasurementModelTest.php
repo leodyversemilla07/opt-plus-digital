@@ -31,6 +31,10 @@ test('measurement has fillable attributes', function () {
         'notes',
         'measured_by_user_id',
         'synced_at',
+        'dqc_status',
+        'dqc_certified_by_user_id',
+        'dqc_certified_at',
+        'dqc_notes',
     ];
 
     $measurement = new Measurement;
@@ -54,7 +58,8 @@ test('measurement casts attributes correctly', function () {
         ->and($casts)->toHaveKey('has_disability', 'boolean')
         ->and($casts)->toHaveKey('is_flagged', 'boolean')
         ->and($casts)->toHaveKey('is_overaged', 'boolean')
-        ->and($casts)->toHaveKey('synced_at', 'datetime');
+        ->and($casts)->toHaveKey('synced_at', 'datetime')
+        ->and($casts)->toHaveKey('dqc_certified_at', 'datetime');
 });
 
 test('measurement uses uuid for primary key', function () {

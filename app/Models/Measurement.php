@@ -41,6 +41,10 @@ class Measurement extends Model
         'notes',
         'measured_by_user_id',
         'synced_at',
+        'dqc_status',
+        'dqc_certified_by_user_id',
+        'dqc_certified_at',
+        'dqc_notes',
     ];
 
     protected $casts = [
@@ -58,6 +62,7 @@ class Measurement extends Model
         'is_flagged' => 'boolean',
         'is_overaged' => 'boolean',
         'synced_at' => 'datetime',
+        'dqc_certified_at' => 'datetime',
     ];
 
     public function child(): BelongsTo
@@ -83,5 +88,66 @@ class Measurement extends Model
     public function isSeverelyMalnourished(): bool
     {
         return $this->opt_classification === 'sam';
+    }
+
+    public function dqcCertifiedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'dqc_certified_by_user_id');
+    }
+
+    /**
+     * Mark this measurement as DQC-certified (eye-checked).
+     */
+    public function certify(int $userId, ?string $notes = null): void
+    {
+        $this->update([
+            'dqc_status' => 'certified',
+            'dqc_certified_by_user_id' => $userId,
+            'dqc_certified_at' => now(),
+            'dqc_notes' => $notes,
+        ]);
+    }
+
+    /**
+     * Mark this measurement as rejected by DQC.
+     */
+    public function reject(int $userId, ?string $notes = null): void
+    {
+        $this->update([
+            'dqc_status' => 'rejected',
+            'dqc_certified_by_user_id' => $userId,
+            'dqc_certified_at' => now(),
+            'dqc_notes' => $notes,
+        ]);
+    }
+
+    public function isPendingCertification(): bool
+    {
+        return $this->dqc_status === 'pending';
+    }
+
+    public function isCertified(): bool
+    {
+        return $this->dqc_status === 'certified';
+    }
+
+    public function isRejected(): bool
+    {
+        return $this->dqc_status === 'rejected';
+    }
+
+    public function scopePendingCertification($query)
+    {
+        return $query->where('dqc_status', 'pending');
+    }
+
+    public function scopeCertified($query)
+    {
+        return $query->where('dqc_status', 'certified');
+    }
+
+    public function scopeRejected($query)
+    {
+        return $query->where('dqc_status', 'rejected');
     }
 }

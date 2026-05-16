@@ -50,6 +50,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware('permission:view reports')
         ->group(function () {
             Route::get('/', [DqcController::class, 'index'])->name('index');
+            Route::post('measurements/{measurement}/certify', [DqcController::class, 'certify'])
+                ->name('measurements.certify');
+            Route::post('measurements/{measurement}/reject', [DqcController::class, 'reject'])
+                ->name('measurements.reject');
             Route::get('/export/summary', [DqcController::class, 'exportSummary'])
                 ->middleware('permission:export reports')
                 ->name('export.summary');
