@@ -214,7 +214,7 @@ export default function Edit({ user, currentRole, roles, barangays }: Props) {
                                         <Select
                                             value={data.role}
                                             onValueChange={(value) =>
-                                                setData('role', value)
+                                                setData('role', value ?? '')
                                             }
                                         >
                                             <SelectTrigger id="role">
@@ -252,7 +252,7 @@ export default function Edit({ user, currentRole, roles, barangays }: Props) {
                                                     'barangay_id',
                                                     value === 'none'
                                                         ? ''
-                                                        : value,
+                                                        : (value ?? ''),
                                                 )
                                             }
                                         >

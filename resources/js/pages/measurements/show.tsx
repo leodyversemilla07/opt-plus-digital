@@ -78,12 +78,10 @@ export default function MeasurementShow({
                             variant="ghost"
                             size="sm"
                             className="mb-2"
-                            asChild
+                            render={<Link href={`/children/${child.id}/measurements`} />}
                         >
-                            <Link href={`/children/${child.id}/measurements`}>
-                                <ArrowLeft className="mr-2 h-4 w-4" /> Back to
-                                History
-                            </Link>
+                            <ArrowLeft className="mr-2 h-4 w-4" /> Back to
+                            History
                         </Button>
                         <h1 className="text-3xl font-bold tracking-tight">
                             Measurement Details
@@ -94,26 +92,22 @@ export default function MeasurementShow({
                         </p>
                     </div>
                     <div className="flex gap-2">
-                        <Button variant="outline" size="sm" asChild>
-                            <Link
+                        <Button variant="outline" size="sm" render={<Link
                                 href={`/children/${child.id}/measurements/${measurement.id}/edit`}
-                            >
-                                <Edit className="mr-2 h-4 w-4" /> Edit
-                            </Link>
+                            />}>
+                            <Edit className="mr-2 h-4 w-4" /> Edit
                         </Button>
                         <Button
                             variant="outline"
                             size="sm"
                             className="border-red-200 text-red-600 hover:bg-red-50"
-                            asChild
-                        >
-                            <Link
+                            render={<Link
                                 href={`/children/${child.id}/measurements/${measurement.id}`}
                                 method="delete"
                                 as="button"
-                            >
-                                <Trash2 className="mr-2 h-4 w-4" /> Delete
-                            </Link>
+                            />}
+                        >
+                            <Trash2 className="mr-2 h-4 w-4" /> Delete
                         </Button>
                     </div>
                 </div>

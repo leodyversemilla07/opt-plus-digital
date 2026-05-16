@@ -343,24 +343,20 @@ export default function MonitoringList({ type, children, barangayId }: Props) {
                                                     <Button
                                                         variant="outline"
                                                         size="sm"
-                                                        asChild
-                                                    >
-                                                        <Link
+                                                        render={<Link
                                                             href={`/children/${child.id}`}
-                                                        >
-                                                            View
-                                                        </Link>
+                                                        />}
+                                                    >
+                                                        View
                                                     </Button>
                                                     <Button
                                                         variant="default"
                                                         size="sm"
-                                                        asChild
-                                                    >
-                                                        <Link
+                                                        render={<Link
                                                             href={`/children/${child.id}/measurements/create`}
-                                                        >
-                                                            Measure
-                                                        </Link>
+                                                        />}
+                                                    >
+                                                        Measure
                                                     </Button>
                                                 </div>
                                             </TableCell>

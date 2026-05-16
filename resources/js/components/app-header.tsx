@@ -75,7 +75,7 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                     {/* Mobile Menu */}
                     <div className="lg:hidden">
                         <Sheet>
-                            <SheetTrigger asChild>
+                            <SheetTrigger>
                                 <Button
                                     variant="ghost"
                                     size="icon"
@@ -197,7 +197,7 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                                 {rightNavItems.map((item) => (
                                     <TooltipProvider
                                         key={item.title}
-                                        delayDuration={0}
+
                                     >
                                         <Tooltip>
                                             <TooltipTrigger>
@@ -227,7 +227,7 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                             </div>
                         </div>
                         <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
+                            <DropdownMenuTrigger>
                                 <Button
                                     variant="ghost"
                                     className="size-10 rounded-full p-1"

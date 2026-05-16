@@ -199,7 +199,7 @@ export default function Create({ barangays }: Props) {
                                         <Select
                                             value={data.sex}
                                             onValueChange={(value) =>
-                                                setData('sex', value)
+                                                setData('sex', value ?? '')
                                             }
                                         >
                                             <SelectTrigger id="sex">
@@ -316,7 +316,7 @@ export default function Create({ barangays }: Props) {
                                         <Select
                                             value={data.barangay_id}
                                             onValueChange={(value) =>
-                                                setData('barangay_id', value)
+                                                setData('barangay_id', value ?? '')
                                             }
                                         >
                                             <SelectTrigger id="barangay_id">

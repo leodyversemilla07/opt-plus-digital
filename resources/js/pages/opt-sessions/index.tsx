@@ -183,11 +183,9 @@ export default function Index({ sessions, years, filters }: Props) {
                             Manage Operation Timbang Plus weighing sessions
                         </p>
                     </div>
-                    <Button asChild>
-                        <Link href="/opt-sessions/create">
-                            <Plus className="mr-2 h-4 w-4" />
-                            New Session
-                        </Link>
+                    <Button render={<Link href="/opt-sessions/create" />}>
+                        <Plus className="mr-2 h-4 w-4" />
+                        New Session
                     </Button>
                 </div>
 
@@ -202,7 +200,7 @@ export default function Index({ sessions, years, filters }: Props) {
                                 <Select
                                     value={filters.status || 'all'}
                                     onValueChange={(value) =>
-                                        handleFilterChange('status', value)
+                                        handleFilterChange('status', value ?? '')
                                     }
                                 >
                                     <SelectTrigger>
@@ -231,7 +229,7 @@ export default function Index({ sessions, years, filters }: Props) {
                                 <Select
                                     value={filters.year || 'all'}
                                     onValueChange={(value) =>
-                                        handleFilterChange('year', value)
+                                        handleFilterChange('year', value ?? '')
                                     }
                                 >
                                     <SelectTrigger>
@@ -349,13 +347,11 @@ export default function Index({ sessions, years, filters }: Props) {
                                                 <Calendar className="h-8 w-8 text-muted-foreground/50" />
                                                 <p>No OPT sessions found</p>
                                                 <Button
-                                                    asChild
+                                                    render={<Link href="/opt-sessions/create" />}
                                                     variant="outline"
                                                 >
-                                                    <Link href="/opt-sessions/create">
-                                                        Create your first
-                                                        session
-                                                    </Link>
+                                                    Create your first
+                                                    session
                                                 </Button>
                                             </div>
                                         </TableCell>
@@ -441,13 +437,11 @@ export default function Index({ sessions, years, filters }: Props) {
                                                 <Button
                                                     variant="ghost"
                                                     size="sm"
-                                                    asChild
-                                                >
-                                                    <Link
+                                                    render={<Link
                                                         href={`/opt-sessions/${session.id}`}
-                                                    >
-                                                        <Eye className="h-4 w-4" />
-                                                    </Link>
+                                                    />}
+                                                >
+                                                    <Eye className="h-4 w-4" />
                                                 </Button>
                                             </TableCell>
                                         </TableRow>

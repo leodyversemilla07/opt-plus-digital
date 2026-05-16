@@ -191,7 +191,7 @@ export default function AuditLogsIndex({ logs, actions, types, filters }: Props)
                             </label>
                             <Select
                                 value={actionFilter}
-                                onValueChange={setActionFilter}
+                                onValueChange={(value) => setActionFilter(value ?? '')}
                             >
                                 <SelectTrigger>
                                     <SelectValue placeholder="All actions" />
@@ -213,7 +213,7 @@ export default function AuditLogsIndex({ logs, actions, types, filters }: Props)
                             </label>
                             <Select
                                 value={typeFilter}
-                                onValueChange={setTypeFilter}
+                                onValueChange={(value) => setTypeFilter(value ?? '')}
                             >
                                 <SelectTrigger>
                                     <SelectValue placeholder="All types" />
@@ -347,13 +347,11 @@ export default function AuditLogsIndex({ logs, actions, types, filters }: Props)
                                                 <Button
                                                     variant="ghost"
                                                     size="sm"
-                                                    asChild
-                                                >
-                                                    <Link
+                                                    render={<Link
                                                         href={auditLogsShow.url({ audit_log: log.id })}
-                                                    >
-                                                        <Eye className="h-4 w-4" />
-                                                    </Link>
+                                                    />}
+                                                >
+                                                    <Eye className="h-4 w-4" />
                                                 </Button>
                                             </TableCell>
                                         </TableRow>

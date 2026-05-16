@@ -54,8 +54,8 @@ export default function Create({ barangays }: Props) {
     };
 
     // Auto-generate session name when barangay and date are selected
-    const handleBarangayChange = (barangayId: string) => {
-        setData('barangay_id', barangayId);
+    const handleBarangayChange = (barangayId: string | null) => {
+        setData('barangay_id', barangayId ?? '');
         const barangay = barangays.find((b) => b.id === barangayId);
         if (barangay && data.session_date) {
             const date = new Date(data.session_date);

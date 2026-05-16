@@ -111,11 +111,9 @@ export default function MassMailIndex({ mails, recipientTypes }: Props) {
                             Compose and send bulk email notifications
                         </p>
                     </div>
-                    <Button asChild>
-                        <Link href={massMailIndex.url() + '/create'}>
-                            <Plus className="mr-2 h-4 w-4" />
-                            New Mass Mail
-                        </Link>
+                    <Button render={<Link href={massMailIndex.url() + '/create'} />}>
+                        <Plus className="mr-2 h-4 w-4" />
+                        New Mass Mail
                     </Button>
                 </div>
 
@@ -188,11 +186,9 @@ export default function MassMailIndex({ mails, recipientTypes }: Props) {
                                                 variant="link"
                                                 size="sm"
                                                 className="mt-1"
-                                                asChild
+                                                render={<Link href={massMailIndex.url() + '/create'} />}
                                             >
-                                                <Link href={massMailIndex.url() + '/create'}>
-                                                    Create your first mailing
-                                                </Link>
+                                                Create your first mailing
                                             </Button>
                                         </TableCell>
                                     </TableRow>
@@ -244,15 +240,13 @@ export default function MassMailIndex({ mails, recipientTypes }: Props) {
                                                 <Button
                                                     variant="ghost"
                                                     size="sm"
-                                                    asChild
-                                                >
-                                                    <Link
+                                                    render={<Link
                                                         href={massMailShow.url({
                                                             mass_mail: mail.id,
                                                         })}
-                                                    >
-                                                        <Eye className="h-4 w-4" />
-                                                    </Link>
+                                                    />}
+                                                >
+                                                    <Eye className="h-4 w-4" />
                                                 </Button>
                                             </TableCell>
                                         </TableRow>

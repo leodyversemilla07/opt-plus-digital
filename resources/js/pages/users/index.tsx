@@ -166,7 +166,7 @@ export default function Index({ users, filters }: Props) {
                                         />
                                     </div>
                                 </div>
-                                <Select value={role} onValueChange={setRole}>
+                                <Select value={role} onValueChange={(value) => setRole(value ?? '')}>
                                     <SelectTrigger>
                                         <SelectValue placeholder="All Roles" />
                                     </SelectTrigger>
@@ -186,7 +186,7 @@ export default function Index({ users, filters }: Props) {
                                 </Select>
                                 <Select
                                     value={status}
-                                    onValueChange={setStatus}
+                                    onValueChange={(value) => setStatus(value ?? '')}
                                 >
                                     <SelectTrigger>
                                         <SelectValue placeholder="All Status" />

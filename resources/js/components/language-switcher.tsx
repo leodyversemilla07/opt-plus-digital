@@ -40,7 +40,7 @@ export function LanguageSwitcher({ variant = 'icon' }: { variant?: 'icon' | 'min
 
     return (
         <DropdownMenu>
-            <DropdownMenuTrigger asChild>
+            <DropdownMenuTrigger>
                 <Button variant="ghost" size="icon" className="h-9 w-9">
                     <Languages className="h-5 w-5" />
                     <span className="sr-only">{t('settings.language')}</span>

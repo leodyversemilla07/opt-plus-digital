@@ -79,10 +79,8 @@ export default function UserShow({ user, permissions }: UserShowProps) {
                             ))}
                         </div>
                     </div>
-                    <Button asChild>
-                        <Link href={`/users/${user.id}/edit`}>
-                            <Edit className="mr-2 h-4 w-4" /> Edit User
-                        </Link>
+                    <Button render={<Link href={`/users/${user.id}/edit`} />}>
+                        <Edit className="mr-2 h-4 w-4" /> Edit User
                     </Button>
                 </div>
 
@@ -200,17 +198,15 @@ export default function UserShow({ user, permissions }: UserShowProps) {
                                 variant={
                                     user.is_active ? 'destructive' : 'default'
                                 }
-                                asChild
-                            >
-                                <Link
+                                render={<Link
                                     href={`/users/${user.id}/toggle-status`}
                                     method="post"
                                     as="button"
-                                >
-                                    {user.is_active
-                                        ? 'Deactivate Account'
-                                        : 'Activate Account'}
-                                </Link>
+                                />}
+                            >
+                                {user.is_active
+                                    ? 'Deactivate Account'
+                                    : 'Activate Account'}
                             </Button>
                         </div>
                     </CardContent>

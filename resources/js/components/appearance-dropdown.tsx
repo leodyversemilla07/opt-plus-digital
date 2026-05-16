@@ -29,7 +29,7 @@ export default function AppearanceToggleDropdown({
     return (
         <div className={className} {...props}>
             <DropdownMenu>
-                <DropdownMenuTrigger asChild>
+                <DropdownMenuTrigger>
                     <Button
                         variant="ghost"
                         size="icon"

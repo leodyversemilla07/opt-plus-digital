@@ -108,32 +108,28 @@ export default function Home({
                             <Button
                                 size="lg"
                                 className="px-8 shadow-sm"
-                                asChild
+                                render={<Link href={dashboard()} />}
                             >
-                                <Link href={dashboard()}>
-                                    <LayoutDashboard className="mr-2 h-5 w-5" />
-                                    Go to Dashboard
-                                </Link>
+                                <LayoutDashboard className="mr-2 h-5 w-5" />
+                                Go to Dashboard
                             </Button>
                         ) : (
                             <>
                                 <Button
                                     size="lg"
                                     className="px-8 shadow-sm"
-                                    asChild
+                                    render={<Link href={login()} />}
                                 >
-                                    <Link href={login()}>Get Started</Link>
+                                    Get Started
                                 </Button>
                                 {canRegister && (
                                     <Button
                                         size="lg"
                                         variant="outline"
                                         className="px-8"
-                                        asChild
+                                        render={<Link href={register()} />}
                                     >
-                                        <Link href={register()}>
-                                            Register Account
-                                        </Link>
+                                        Register Account
                                     </Button>
                                 )}
                             </>

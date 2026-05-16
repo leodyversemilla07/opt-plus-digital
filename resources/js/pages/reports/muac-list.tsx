@@ -285,13 +285,11 @@ export default function MUACList({ children, barangayId }: Props) {
                                                 <Button
                                                     variant="outline"
                                                     size="sm"
-                                                    asChild
-                                                >
-                                                    <Link
+                                                    render={<Link
                                                         href={`/children/${child.id}`}
-                                                    >
-                                                        View
-                                                    </Link>
+                                                    />}
+                                                >
+                                                    View
                                                 </Button>
                                             </TableCell>
                                         </TableRow>

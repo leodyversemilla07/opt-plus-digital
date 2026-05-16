@@ -86,21 +86,16 @@ class ChildController extends Controller
             'first_name' => 'required|string|max:100',
             'middle_name' => 'nullable|string|max:100',
             'last_name' => 'required|string|max:100',
-            'suffix' => 'nullable|string|max:10',
             'sex' => 'required|in:male,female',
             'date_of_birth' => 'required|date|before:today',
-            'birth_weight_kg' => 'nullable|numeric|min:0.5|max:10',
-            'birth_length_cm' => 'nullable|numeric|min:30|max:70',
+            'address' => 'required|string|max:500',
             'barangay_id' => 'required|exists:barangays,id',
             'purok_sitio' => 'nullable|string|max:100',
-            'mother_name' => 'nullable|string|max:200',
+            'mother_caregiver_name' => 'required|string|max:200',
             'father_name' => 'nullable|string|max:200',
-            'guardian_name' => 'nullable|string|max:200',
-            'guardian_relationship' => 'nullable|string|max:50',
             'contact_number' => 'nullable|string|max:20',
             'is_indigenous_people' => 'boolean',
-            'indigenous_group' => 'nullable|string|max:100',
-            'notes' => 'nullable|string|max:500',
+            'ip_tribe_name' => 'nullable|string|max:100',
         ]);
 
         // Add created_by_user_id
@@ -163,21 +158,16 @@ class ChildController extends Controller
             'first_name' => 'required|string|max:100',
             'middle_name' => 'nullable|string|max:100',
             'last_name' => 'required|string|max:100',
-            'suffix' => 'nullable|string|max:10',
             'sex' => 'required|in:male,female',
             'date_of_birth' => 'required|date|before:today',
-            'birth_weight_kg' => 'nullable|numeric|min:0.5|max:10',
-            'birth_length_cm' => 'nullable|numeric|min:30|max:70',
+            'address' => 'required|string|max:500',
             'barangay_id' => 'required|exists:barangays,id',
             'purok_sitio' => 'nullable|string|max:100',
-            'mother_name' => 'nullable|string|max:200',
+            'mother_caregiver_name' => 'required|string|max:200',
             'father_name' => 'nullable|string|max:200',
-            'guardian_name' => 'nullable|string|max:200',
-            'guardian_relationship' => 'nullable|string|max:50',
             'contact_number' => 'nullable|string|max:20',
             'is_indigenous_people' => 'boolean',
-            'indigenous_group' => 'nullable|string|max:100',
-            'notes' => 'nullable|string|max:500',
+            'ip_tribe_name' => 'nullable|string|max:100',
         ]);
 
         $child->update($validated);
@@ -216,7 +206,8 @@ class ChildController extends Controller
         $potentialDuplicates = Child::query()
             ->where('first_name', 'like', '%'.$request->first_name.'%')
             ->where('last_name', 'like', '%'.$request->last_name.'%')
-            ->whereRaw('ABS(DATEDIFF(date_of_birth, ?)) <= 30', [$request->date_of_birth])
+            ->whereDate('date_of_birth', '>=', \Carbon\Carbon::parse($request->date_of_birth)->subDays(30))
+            ->whereDate('date_of_birth', '<=', \Carbon\Carbon::parse($request->date_of_birth)->addDays(30))
             ->with('barangay:id,name')
             ->get();
 

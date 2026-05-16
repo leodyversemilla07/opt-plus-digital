@@ -124,9 +124,9 @@ export default function Edit({ session, barangays }: Props) {
                                     <Select
                                         value={data.barangay_id}
                                         onValueChange={(value) => {
-                                            setData('barangay_id', value);
+                                            setData('barangay_id', value ?? '');
                                             generateSessionName(
-                                                value,
+                                                value ?? '',
                                                 data.session_date,
                                             );
                                         }}

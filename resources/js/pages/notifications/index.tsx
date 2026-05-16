@@ -181,9 +181,7 @@ export default function NotificationsIndex({ notifications: notificationsData, u
                                                     variant="link"
                                                     size="sm"
                                                     className="h-auto p-0 text-xs"
-                                                    asChild
-                                                >
-                                                    <Link
+                                                    render={<Link
                                                         href={notifications.redirect.url({ id: notification.id })}
                                                         onClick={() => {
                                                             if (!notification.read_at) {
@@ -191,10 +189,10 @@ export default function NotificationsIndex({ notifications: notificationsData, u
                                                             }
                                                         }}
                                                         className="flex items-center gap-1"
-                                                    >
-                                                        View Child Profile
-                                                        <ChevronRight className="h-3 w-3" />
-                                                    </Link>
+                                                    />}
+                                                >
+                                                    View Child Profile
+                                                    <ChevronRight className="h-3 w-3" />
                                                 </Button>
                                             )}
 

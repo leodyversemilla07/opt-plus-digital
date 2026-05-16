@@ -199,7 +199,7 @@ export default function Create({ roles, barangays }: Props) {
                                         <Select
                                             value={data.role}
                                             onValueChange={(value) =>
-                                                setData('role', value)
+                                                setData('role', value ?? '')
                                             }
                                         >
                                             <SelectTrigger id="role">
@@ -240,7 +240,7 @@ export default function Create({ roles, barangays }: Props) {
                                                     'barangay_id',
                                                     value === 'none'
                                                         ? ''
-                                                        : value,
+                                                        : (value ?? ''),
                                                 )
                                             }
                                         >

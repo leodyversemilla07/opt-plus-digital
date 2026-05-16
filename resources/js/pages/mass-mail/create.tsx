@@ -33,6 +33,13 @@ interface Barangay {
     name: string;
 }
 
+interface MassMailForm {
+    subject: string;
+    message_body: string;
+    recipient_type: string;
+    recipient_criteria: Record<string, string | number | string[]>;
+}
+
 interface Props {
     barangays: Barangay[];
     classifications: Record<string, string>;
@@ -43,11 +50,11 @@ export default function MassMailCreate({ barangays, classifications, recipientTy
     const [recipientCount, setRecipientCount] = useState<number | null>(null);
     const [countLoading, setCountLoading] = useState(false);
 
-    const { data, setData, post, processing, errors, reset } = useForm({
+    const { data, setData, post, processing, errors, reset } = useForm<MassMailForm>({
         subject: '',
         message_body: '',
         recipient_type: '',
-        recipient_criteria: {} as Record<string, unknown>,
+        recipient_criteria: {},
     });
 
     const [criteriaBarangayId, setCriteriaBarangayId] = useState<string>('');
@@ -55,7 +62,7 @@ export default function MassMailCreate({ barangays, classifications, recipientTy
     const [criteriaRoles, setCriteriaRoles] = useState<string[]>([]);
 
     const updateCriteria = () => {
-        const criteria: Record<string, unknown> = {};
+        const criteria: Record<string, string | number | string[]> = {};
 
         if (criteriaBarangayId) {
             criteria.barangay_id = Number(criteriaBarangayId);
@@ -70,8 +77,8 @@ export default function MassMailCreate({ barangays, classifications, recipientTy
         setData('recipient_criteria', criteria);
     };
 
-    const handleRecipientTypeChange = (value: string) => {
-        setData('recipient_type', value);
+    const handleRecipientTypeChange = (value: string | null) => {
+        setData('recipient_type', value ?? '');
         setRecipientCount(null);
         setCriteriaBarangayId('');
         setCriteriaClassification('');
@@ -190,7 +197,7 @@ export default function MassMailCreate({ barangays, classifications, recipientTy
                                     <Select
                                         value={criteriaBarangayId}
                                         onValueChange={(value) => {
-                                            setCriteriaBarangayId(value);
+                                            setCriteriaBarangayId(value ?? '');
                                         }}
                                     >
                                         <SelectTrigger id="barangay" className="mt-1.5">
@@ -215,7 +222,7 @@ export default function MassMailCreate({ barangays, classifications, recipientTy
                                     <Select
                                         value={criteriaClassification}
                                         onValueChange={(value) => {
-                                            setCriteriaClassification(value);
+                                            setCriteriaClassification(value ?? '');
                                         }}
                                     >
                                         <SelectTrigger id="classification" className="mt-1.5">
@@ -257,7 +264,7 @@ export default function MassMailCreate({ barangays, classifications, recipientTy
                                         <Select
                                             value={criteriaBarangayId}
                                             onValueChange={(value) => {
-                                                setCriteriaBarangayId(value);
+                                                setCriteriaBarangayId(value ?? '');
                                             }}
                                         >
                                             <SelectTrigger id="barangay-role" className="mt-1.5">

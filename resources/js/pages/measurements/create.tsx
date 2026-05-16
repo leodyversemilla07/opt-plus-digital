@@ -312,7 +312,7 @@ export default function CreateMeasurement({ child }: CreateMeasurementProps) {
                                                 onValueChange={(value) =>
                                                     setData(
                                                         'measurement_method',
-                                                        value,
+                                                        value ?? '',
                                                     )
                                                 }
                                             >
@@ -377,7 +377,7 @@ export default function CreateMeasurement({ child }: CreateMeasurementProps) {
                                                         ) =>
                                                             setData(
                                                                 'edema_grade',
-                                                                value,
+                                                                value ?? '',
                                                             )
                                                         }
                                                     >

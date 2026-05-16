@@ -81,12 +81,10 @@ export default function MeasurementEdit({
             <Head title={`Edit Measurement: ${child.full_name}`} />
             <div className="flex flex-col gap-6 p-6">
                 <div>
-                    <Button variant="ghost" size="sm" className="mb-2" asChild>
-                        <Link
+                    <Button variant="ghost" size="sm" className="mb-2" render={<Link
                             href={`/children/${child.id}/measurements/${measurement.id}`}
-                        >
-                            <ArrowLeft className="mr-2 h-4 w-4" /> Back
-                        </Link>
+                        />}>
+                        <ArrowLeft className="mr-2 h-4 w-4" /> Back
                     </Button>
                     <h1 className="text-3xl font-bold tracking-tight">
                         Edit Measurement
@@ -185,7 +183,7 @@ export default function MeasurementEdit({
                                 <Select
                                     value={data.measurement_type}
                                     onValueChange={(value) =>
-                                        setData('measurement_type', value)
+                                        setData('measurement_type', value ?? '')
                                     }
                                 >
                                     <SelectTrigger>
@@ -235,7 +233,7 @@ export default function MeasurementEdit({
                                 <Select
                                     value={data.measurement_method}
                                     onValueChange={(value) =>
-                                        setData('measurement_method', value)
+                                        setData('measurement_method', value ?? '')
                                     }
                                 >
                                     <SelectTrigger>
@@ -294,7 +292,7 @@ export default function MeasurementEdit({
                                         <Select
                                             value={data.edema_grade}
                                             onValueChange={(value) =>
-                                                setData('edema_grade', value)
+                                                setData('edema_grade', value ?? '')
                                             }
                                         >
                                             <SelectTrigger>
@@ -385,12 +383,10 @@ export default function MeasurementEdit({
                             </div>
 
                             <div className="flex justify-end gap-3 pt-4">
-                                <Button type="button" variant="outline" asChild>
-                                    <Link
+                                <Button type="button" variant="outline" render={<Link
                                         href={`/children/${child.id}/measurements/${measurement.id}`}
-                                    >
-                                        Cancel
-                                    </Link>
+                                    />}>
+                                    Cancel
                                 </Button>
                                 <Button type="submit" disabled={processing}>
                                     {processing ? (

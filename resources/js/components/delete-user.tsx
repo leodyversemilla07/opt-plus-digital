@@ -34,7 +34,7 @@ export default function DeleteUser() {
                 </div>
 
                 <Dialog>
-                    <DialogTrigger asChild>
+                    <DialogTrigger>
                         <Button
                             variant="destructive"
                             data-test="delete-user-button"
@@ -85,7 +85,7 @@ export default function DeleteUser() {
                                     </div>
 
                                     <DialogFooter className="gap-2">
-                                        <DialogClose asChild>
+                                        <DialogClose>
                                             <Button
                                                 variant="secondary"
                                                 onClick={() =>
@@ -99,14 +99,9 @@ export default function DeleteUser() {
                                         <Button
                                             variant="destructive"
                                             disabled={processing}
-                                            asChild
+                                            render={<button type="submit" data-test="confirm-delete-user-button" />}
                                         >
-                                            <button
-                                                type="submit"
-                                                data-test="confirm-delete-user-button"
-                                            >
-                                                Delete account
-                                            </button>
+                                            Delete account
                                         </Button>
                                     </DialogFooter>
                                 </>

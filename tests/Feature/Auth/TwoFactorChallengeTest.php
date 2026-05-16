@@ -43,3 +43,43 @@ test('two factor challenge can be rendered', function () {
             ->component('auth/two-factor-challenge')
         );
 });
+
+test('two factor challenge redirects authenticated user to dashboard', function () {
+    if (! Features::canManageTwoFactorAuthentication()) {
+        $this->markTestSkipped('Two-factor authentication is not enabled.');
+    }
+
+    $user = User::factory()->create();
+
+    $this->actingAs($user)
+        ->get(route('two-factor.login'))
+        ->assertRedirect(route('dashboard', absolute: false));
+});
+
+test('two factor challenge with recovery code fails with invalid code', function () {
+    if (! Features::canManageTwoFactorAuthentication()) {
+        $this->markTestSkipped('Two-factor authentication is not enabled.');
+    }
+
+    Features::twoFactorAuthentication([
+        'confirm' => true,
+        'confirmPassword' => true,
+    ]);
+
+    $user = User::factory()->create();
+
+    $user->forceFill([
+        'two_factor_secret' => encrypt('test-secret'),
+        'two_factor_recovery_codes' => encrypt(json_encode(['code1', 'code2'])),
+        'two_factor_confirmed_at' => now(),
+    ])->save();
+
+    $this->post(route('login'), [
+        'email' => $user->email,
+        'password' => 'password',
+    ]);
+
+    $this->post(route('two-factor.login'), [
+        'recovery_code' => 'invalid-code',
+    ])->assertSessionHasErrors('recovery_code');
+});

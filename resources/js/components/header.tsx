@@ -116,7 +116,7 @@ export function Header({ canRegister = true }: { canRegister?: boolean }) {
                 <div className="hidden items-center gap-3 md:flex">
                     <TooltipProvider>
                         <Tooltip>
-                            <TooltipTrigger asChild>
+                            <TooltipTrigger>
                                 <Button
                                     variant="ghost"
                                     size="icon"
@@ -135,11 +135,9 @@ export function Header({ canRegister = true }: { canRegister?: boolean }) {
                         </Tooltip>
                     </TooltipProvider>
                     {auth.user ? (
-                        <Button size="sm" className="px-5" asChild>
-                            <Link href={dashboard()}>
-                                <LayoutDashboard className="mr-2 h-4 w-4" />
-                                Dashboard
-                            </Link>
+                        <Button size="sm" className="px-5" render={<Link href={dashboard()} />}>
+                            <LayoutDashboard className="mr-2 h-4 w-4" />
+                            Dashboard
                         </Button>
                     ) : (
                         <>
@@ -147,19 +145,15 @@ export function Header({ canRegister = true }: { canRegister?: boolean }) {
                                 variant="ghost"
                                 size="sm"
                                 className="px-5"
-                                asChild
+                                render={<Link href={login()} />}
                             >
-                                <Link href={login()}>
-                                    <LogIn className="mr-2 h-4 w-4" />
-                                    Log in
-                                </Link>
+                                <LogIn className="mr-2 h-4 w-4" />
+                                Log in
                             </Button>
                             {canRegister && (
-                                <Button size="sm" className="px-5" asChild>
-                                    <Link href={register()}>
-                                        <UserPlus className="mr-2 h-4 w-4" />
-                                        Register
-                                    </Link>
+                                <Button size="sm" className="px-5" render={<Link href={register()} />}>
+                                    <UserPlus className="mr-2 h-4 w-4" />
+                                    Register
                                 </Button>
                             )}
                         </>
@@ -169,7 +163,7 @@ export function Header({ canRegister = true }: { canRegister?: boolean }) {
                 {/* Mobile Menu */}
                 <div className="md:hidden">
                     <Sheet>
-                        <SheetTrigger asChild>
+                        <SheetTrigger>
                             <Button
                                 variant="ghost"
                                 size="icon"
@@ -258,30 +252,24 @@ export function Header({ canRegister = true }: { canRegister?: boolean }) {
                                 <div className="my-2 border-t" />
 
                                 {auth.user ? (
-                                    <Button className="w-full" asChild>
-                                        <Link href={dashboard()}>
-                                            <LayoutDashboard className="mr-2 h-4 w-4" />
-                                            Dashboard
-                                        </Link>
+                                    <Button className="w-full" render={<Link href={dashboard()} />}>
+                                        <LayoutDashboard className="mr-2 h-4 w-4" />
+                                        Dashboard
                                     </Button>
                                 ) : (
                                     <>
                                         <Button
                                             variant="outline"
                                             className="w-full"
-                                            asChild
+                                            render={<Link href={login()} />}
                                         >
-                                            <Link href={login()}>
-                                                <LogIn className="mr-2 h-4 w-4" />
-                                                Log in
-                                            </Link>
+                                            <LogIn className="mr-2 h-4 w-4" />
+                                            Log in
                                         </Button>
                                         {canRegister && (
-                                            <Button className="w-full" asChild>
-                                                <Link href={register()}>
-                                                    <UserPlus className="mr-2 h-4 w-4" />
-                                                    Register
-                                                </Link>
+                                            <Button className="w-full" render={<Link href={register()} />}>
+                                                <UserPlus className="mr-2 h-4 w-4" />
+                                                Register
                                             </Button>
                                         )}
                                     </>

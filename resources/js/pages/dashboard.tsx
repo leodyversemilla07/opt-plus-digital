@@ -203,11 +203,9 @@ export default function Dashboard({
                         <Button
                             size="sm"
                             className="rounded-full px-6 shadow-lg shadow-primary/20"
-                            asChild
+                            render={<Link href="/children/create" />}
                         >
-                            <Link href="/children/create">
-                                <Plus className="mr-2 h-4 w-4" /> Add Child
-                            </Link>
+                            <Plus className="mr-2 h-4 w-4" /> Add Child
                         </Button>
                     </div>
                 </div>
@@ -519,10 +517,8 @@ export default function Dashboard({
                                         Top malnutrition rates
                                     </CardDescription>
                                 </div>
-                                <Button variant="ghost" size="icon" asChild>
-                                    <Link href="/reports/barangay-comparison">
-                                        <ArrowRight className="h-4 w-4" />
-                                    </Link>
+                                <Button variant="ghost" size="icon" render={<Link href="/reports/barangay-comparison" />}>
+                                    <ArrowRight className="h-4 w-4" />
                                 </Button>
                             </CardHeader>
                             <CardContent className="p-0 text-foreground">

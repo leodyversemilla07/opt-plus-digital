@@ -333,7 +333,7 @@ export default function Edit({ child, barangays }: Props) {
                                         <Select
                                             value={data.barangay_id}
                                             onValueChange={(value) =>
-                                                setData('barangay_id', value)
+                                                setData('barangay_id', value ?? '')
                                             }
                                         >
                                             <SelectTrigger>

@@ -341,13 +341,11 @@ export default function F1KList({ children, statistics, barangayId }: Props) {
                                                 <Button
                                                     variant="outline"
                                                     size="sm"
-                                                    asChild
-                                                >
-                                                    <Link
+                                                    render={<Link
                                                         href={`/children/${child.id}/measurements/create`}
-                                                    >
-                                                        Measure
-                                                    </Link>
+                                                    />}
+                                                >
+                                                    Measure
                                                 </Button>
                                             </TableCell>
                                         </TableRow>

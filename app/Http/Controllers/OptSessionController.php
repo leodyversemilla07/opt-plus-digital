@@ -91,8 +91,11 @@ class OptSessionController extends Controller
 
         // Calculate target children if not provided
         if (empty($validated['target_children'])) {
+            $sessionDate = \Carbon\Carbon::parse($validated['session_date']);
+            $cutoffDate = $sessionDate->copy()->subMonths(60);
+
             $validated['target_children'] = Child::where('barangay_id', $validated['barangay_id'])
-                ->whereRaw("TIMESTAMPDIFF(MONTH, date_of_birth, ?) < 60", [$validated['session_date']])
+                ->where('date_of_birth', '>=', $cutoffDate->toDateString())
                 ->count();
         }
 

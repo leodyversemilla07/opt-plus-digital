@@ -465,13 +465,11 @@ export default function DQCPage({
                                                     <Button
                                                         variant="ghost"
                                                         size="icon"
-                                                        asChild
-                                                    >
-                                                        <Link
+                                                        render={<Link
                                                             href={`/children/${item.child.id}`}
-                                                        >
-                                                            <ArrowRight className="h-4 w-4" />
-                                                        </Link>
+                                                        />}
+                                                    >
+                                                        <ArrowRight className="h-4 w-4" />
                                                     </Button>
                                                 </TableCell>
                                             </TableRow>
@@ -577,16 +575,14 @@ export default function DQCPage({
                                                         <Button
                                                             variant="ghost"
                                                             size="icon"
-                                                            asChild
+                                                            render={<Link
+                                                                href={childProfileUrl}
+                                                            />}
                                                             disabled={
                                                                 !measurement.child_id
                                                             }
                                                         >
-                                                            <Link
-                                                                href={childProfileUrl}
-                                                            >
-                                                                <ArrowRight className="h-4 w-4" />
-                                                            </Link>
+                                                            <ArrowRight className="h-4 w-4" />
                                                         </Button>
                                                     </TableCell>
                                                 </TableRow>
