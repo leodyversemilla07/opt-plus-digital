@@ -129,6 +129,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('opt-sessions/{opt_session}/cancel', [OptSessionController::class, 'cancel'])
         ->middleware('permission:create children')
         ->name('opt-sessions.cancel');
+    Route::post('opt-sessions/{opt_session}/duplicate', [OptSessionController::class, 'duplicate'])
+        ->middleware('permission:create children')
+        ->name('opt-sessions.duplicate');
+
+    // Quick measurement entry
+    Route::post('opt-sessions/{opt_session}/measurements/quick', [MeasurementController::class, 'quickStore'])
+        ->middleware('permission:create children')
+        ->name('opt-sessions.measurements.quick');
+    Route::get('opt-sessions/{opt_session}/children-available', [MeasurementController::class, 'childrenForSession'])
+        ->middleware('permission:create children')
+        ->name('opt-sessions.children-available');
 
     // Children
     Route::resource('children', ChildController::class);

@@ -120,6 +120,7 @@ class AnalyticsService
                     $join->on('measurements.child_id', '=', 'latest.child_id')
                         ->on('measurements.measurement_date', '=', 'latest.max_date');
                 })
+                ->with('child.barangay')
                 ->whereIn('opt_classification', ['sam', 'mam'])
                 ->orderBy('measurements.measurement_date', 'desc')
                 ->take($limit)
@@ -128,7 +129,6 @@ class AnalyticsService
             $results = [];
             foreach ($highRisk as $measurement) {
                 $child = $measurement->child;
-                $child->load('barangay');
 
                 $results[] = [
                     'child' => [

@@ -443,17 +443,74 @@ export default function Index({ sessions, years, filters }: Props) {
                                                 </span>
                                             </TableCell>
                                             <TableCell className="text-right">
-                                                <Button
-                                                    variant="ghost"
-                                                    size="sm"
-                                                    render={
-                                                        <Link
-                                                            href={`/opt-sessions/${session.id}`}
-                                                        />
-                                                    }
-                                                >
-                                                    <Eye className="h-4 w-4" />
-                                                </Button>
+                                                <div className="flex items-center justify-end gap-1">
+                                                    {session.status === 'scheduled' && (
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="sm"
+                                                            onClick={() =>
+                                                                router.post(
+                                                                    `/opt-sessions/${session.id}/start`,
+                                                                    undefined,
+                                                                    {
+                                                                        preserveState: true,
+                                                                    },
+                                                                )
+                                                            }
+                                                            title="Start session"
+                                                        >
+                                                            <Play className="h-4 w-4 text-green-600" />
+                                                        </Button>
+                                                    )}
+                                                    {session.status === 'in_progress' && (
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="sm"
+                                                            onClick={() =>
+                                                                router.post(
+                                                                    `/opt-sessions/${session.id}/complete`,
+                                                                    undefined,
+                                                                    {
+                                                                        preserveState: true,
+                                                                    },
+                                                                )
+                                                            }
+                                                            title="Complete session"
+                                                        >
+                                                            <CheckCheck className="h-4 w-4 text-blue-600" />
+                                                        </Button>
+                                                    )}
+                                                    {(session.status === 'scheduled' ||
+                                                        session.status === 'in_progress') && (
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="sm"
+                                                            onClick={() =>
+                                                                router.post(
+                                                                    `/opt-sessions/${session.id}/cancel`,
+                                                                    undefined,
+                                                                    {
+                                                                        preserveState: true,
+                                                                    },
+                                                                )
+                                                            }
+                                                            title="Cancel session"
+                                                        >
+                                                            <SquareX className="h-4 w-4 text-red-600" />
+                                                        </Button>
+                                                    )}
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="sm"
+                                                        render={
+                                                            <Link
+                                                                href={`/opt-sessions/${session.id}`}
+                                                            />
+                                                        }
+                                                    >
+                                                        <Eye className="h-4 w-4" />
+                                                    </Button>
+                                                </div>
                                             </TableCell>
                                         </TableRow>
                                     ))

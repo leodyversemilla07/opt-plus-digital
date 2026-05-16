@@ -15,6 +15,7 @@ beforeEach(function () {
     $this->barangay = Barangay::factory()->create();
     $this->user = User::factory()->create(['barangay_id' => $this->barangay->id]);
     $this->user->givePermissionTo('create children');
+    $this->user->givePermissionTo(['view measurements', 'create measurements']);
     $this->session = OptSession::factory()->scheduled()->create([
         'barangay_id' => $this->barangay->id,
         'created_by_user_id' => $this->user->id,
@@ -188,7 +189,9 @@ test('session show page loads with stats and measurements', function () {
             ->component('opt-sessions/show')
             ->has('session')
             ->has('stats')
-            ->has('recentMeasurements')
+            ->loadDeferredProps(function ($page) {
+                $page->has('recentMeasurements');
+            })
         );
 });
 
@@ -419,4 +422,91 @@ test('batch operations respect barangay access restrictions', function () {
         ->assertSessionHas('success');
 
     expect($session->fresh()->status)->toBe('scheduled');
+});
+
+// ─── Duplicate ───────────────────────────────────────────────
+
+test('session can be duplicated', function () {
+    $session = OptSession::factory()->scheduled()->create([
+        'barangay_id' => $this->barangay->id,
+        'created_by_user_id' => $this->user->id,
+        'name' => 'June 2026 OPT',
+        'target_children' => 150,
+        'venue' => 'Barangay Hall',
+        'notes' => 'Quarterly check',
+    ]);
+
+    $this->actingAs($this->user)
+        ->post(route('opt-sessions.duplicate', $session))
+        ->assertSessionHas('success');
+
+    $duplicated = OptSession::where('name', 'June 2026 OPT (Copy)')->first();
+    expect($duplicated)->not->toBeNull();
+    expect($duplicated->barangay_id)->toBe($session->barangay_id);
+    expect($duplicated->target_children)->toBe(150);
+    expect($duplicated->venue)->toBe('Barangay Hall');
+    expect($duplicated->notes)->toBe('Quarterly check');
+    expect($duplicated->status)->toBe('scheduled');
+});
+
+test('duplicate enforces barangay access', function () {
+    $otherBarangay = Barangay::factory()->create();
+    $session = OptSession::factory()->create(['barangay_id' => $otherBarangay->id]);
+
+    $this->actingAs($this->user)
+        ->post(route('opt-sessions.duplicate', $session))
+        ->assertForbidden();
+});
+
+// ─── Quick Measurement ───────────────────────────────────────
+
+test('quick measurement can be added to in-progress session', function () {
+    $session = OptSession::factory()->inProgress()->create([
+        'barangay_id' => $this->barangay->id,
+        'created_by_user_id' => $this->user->id,
+    ]);
+    $child = Child::factory()->create(['barangay_id' => $this->barangay->id]);
+
+    $this->actingAs($this->user)
+        ->post(route('opt-sessions.measurements.quick', $session), [
+            'child_id' => $child->id,
+            'opt_session_id' => $session->id,
+            'measurement_date' => '2026-05-16',
+            'weight_kg' => 12.5,
+            'height_length_cm' => 95.0,
+        ])
+        ->assertSessionHas('success');
+
+    expect($session->measurements()->count())->toBe(1);
+});
+
+test('quick measurement validates required fields', function () {
+    $session = OptSession::factory()->inProgress()->create([
+        'barangay_id' => $this->barangay->id,
+    ]);
+
+    $this->actingAs($this->user)
+        ->post(route('opt-sessions.measurements.quick', $session), [])
+        ->assertSessionHasErrors(['child_id', 'measurement_date', 'weight_kg', 'height_length_cm']);
+});
+
+test('children available endpoint returns unmeasured children', function () {
+    $session = OptSession::factory()->inProgress()->create([
+        'barangay_id' => $this->barangay->id,
+        'created_by_user_id' => $this->user->id,
+    ]);
+    $measured = Child::factory()->create(['barangay_id' => $this->barangay->id]);
+    $unmeasured = Child::factory()->create(['barangay_id' => $this->barangay->id]);
+
+    // Measure one child
+    Measurement::factory()->create([
+        'child_id' => $measured->id,
+        'opt_session_id' => $session->id,
+    ]);
+
+    $this->actingAs($this->user)
+        ->get(route('opt-sessions.children-available', $session))
+        ->assertOk()
+        ->assertJsonCount(1, 'children')
+        ->assertJsonFragment(['id' => $unmeasured->id]);
 });

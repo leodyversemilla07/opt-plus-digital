@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Child;
 use App\Models\Measurement;
+use App\Models\OptSession;
+use Illuminate\Http\JsonResponse;
 use App\Services\MeasurementService;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\RedirectResponse;
@@ -189,5 +191,50 @@ class MeasurementController extends Controller
         return redirect()
             ->route('children.measurements.index', $child)
             ->with('success', 'Measurement deleted successfully');
+    }
+
+    /**
+     * Store a quick measurement from the session show page.
+     */
+    public function quickStore(Request $request): RedirectResponse
+    {
+        $this->authorize('create', Measurement::class);
+
+        $validated = $request->validate([
+            'child_id' => ['required', 'exists:children,id'],
+            'opt_session_id' => ['required', 'exists:opt_sessions,id'],
+            'measurement_date' => 'required|date|before_or_equal:today',
+            'weight_kg' => 'required|numeric|min:1|max:30',
+            'height_length_cm' => 'required|numeric|min:40|max:125',
+            'muac_cm' => 'nullable|numeric|min:10|max:20',
+            'has_edema' => 'nullable|boolean',
+            'notes' => 'nullable|string|max:500',
+        ]);
+
+        $child = Child::findOrFail($validated['child_id']);
+
+        // Determine measurement type based on age
+        $validated['measurement_type'] = $child->age_in_months >= 24 ? 'height' : 'length';
+        $validated['measured_by_user_id'] = $request->user()->id;
+
+        $measurement = $this->measurementService->createMeasurement($child, $validated);
+
+        return redirect()->route('opt-sessions.show', $validated['opt_session_id'])
+            ->with('success', 'Measurement recorded for '.$child->full_name);
+    }
+
+    /**
+     * Get children available for measurement in a session (API endpoint).
+     */
+    public function childrenForSession(OptSession $optSession): JsonResponse
+    {
+        $alreadyMeasured = $optSession->measurements()->pluck('child_id');
+
+        $children = Child::where('barangay_id', $optSession->barangay_id)
+            ->whereNotIn('id', $alreadyMeasured)
+            ->orderBy('full_name')
+            ->get(['id', 'full_name', 'sex', 'date_of_birth']);
+
+        return response()->json(['children' => $children]);
     }
 }

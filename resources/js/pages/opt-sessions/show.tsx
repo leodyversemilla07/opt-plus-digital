@@ -24,11 +24,14 @@ import {
     AlertCircle,
     ArrowLeft,
     CheckCircle,
+    Copy,
     Edit,
     Play,
+    Plus,
     Upload,
     X,
 } from 'lucide-react';
+import { useState, useEffect } from 'react';
 
 interface Measurement {
     id: string;
@@ -133,6 +136,81 @@ export default function Show({ session, stats, recentMeasurements }: Props) {
         }
     };
 
+    const handleDuplicate = () => {
+        router.post(`/opt-sessions/${session.id}/duplicate`);
+    };
+
+    // Quick Measurement Form
+    const [quickForm, setQuickForm] = useState({
+        child_id: '',
+        measurement_date: new Date().toISOString().split('T')[0],
+        weight_kg: '',
+        height_length_cm: '',
+    });
+    const [quickSubmitting, setQuickSubmitting] = useState(false);
+    const [availableChildren, setAvailableChildren] = useState<
+        Array<{ id: string; full_name: string; sex: string }>
+    >([]);
+
+    useEffect(() => {
+        if (session.status === 'in_progress') {
+            fetch(`/opt-sessions/${session.id}/children-available`)
+                .then((res) => res.json())
+                .then((data) => {
+                    setAvailableChildren(data.children);
+                })
+                .catch(() => {
+                    // silently fail — children dropdown will just be empty
+                });
+        }
+    }, [session.id, session.status]);
+
+    const handleQuickFormChange = (
+        e: React.ChangeEvent<
+            HTMLInputElement | HTMLSelectElement
+        >,
+    ) => {
+        const { name, value } = e.target;
+        setQuickForm((prev) => ({ ...prev, [name]: value }));
+    };
+
+    const handleQuickMeasurement = (e: React.FormEvent) => {
+        e.preventDefault();
+
+        if (!quickForm.child_id) return;
+
+        setQuickSubmitting(true);
+        router.post(
+            `/opt-sessions/${session.id}/measurements/quick`,
+            {
+                child_id: quickForm.child_id,
+                opt_session_id: session.id,
+                measurement_date: quickForm.measurement_date,
+                weight_kg: quickForm.weight_kg,
+                height_length_cm: quickForm.height_length_cm,
+            } as Record<string, string>,
+            {
+                preserveState: true,
+                onFinish: () => {
+                    setQuickSubmitting(false);
+                    setQuickForm({
+                        child_id: '',
+                        measurement_date:
+                            new Date().toISOString().split('T')[0],
+                        weight_kg: '',
+                        height_length_cm: '',
+                    });
+                    // Refresh available children
+                    fetch(`/opt-sessions/${session.id}/children-available`)
+                        .then((res) => res.json())
+                        .then((data) => {
+                            setAvailableChildren(data.children);
+                        });
+                },
+            },
+        );
+    };
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={session.name} />
@@ -211,6 +289,15 @@ export default function Show({ session, stats, recentMeasurements }: Props) {
                                     {t('opt_session.complete')}
                                 </Button>
                             </>
+                        )}
+                        {session.status !== 'cancelled' && (
+                            <Button
+                                variant="outline"
+                                onClick={handleDuplicate}
+                            >
+                                <Copy className="mr-2 h-4 w-4" />
+                                Duplicate
+                            </Button>
                         )}
                         {session.status !== 'completed' &&
                             session.status !== 'cancelled' && (
@@ -356,6 +443,118 @@ export default function Show({ session, stats, recentMeasurements }: Props) {
                         )}
                     </CardContent>
                 </Card>
+
+                {/* Quick Add Measurement (in-progress sessions only) */}
+                {session.status === 'in_progress' && (
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2">
+                                <Plus className="h-5 w-5" />
+                                Quick Add Measurement
+                            </CardTitle>
+                            <CardDescription>
+                                Quickly record a measurement for a child in this session
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <form
+                                onSubmit={handleQuickMeasurement}
+                                className="space-y-4"
+                            >
+                                <div className="grid gap-4 md:grid-cols-2">
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-medium">
+                                            Child
+                                        </label>
+                                        <select
+                                            name="child_id"
+                                            required
+                                            value={quickForm.child_id}
+                                            onChange={handleQuickFormChange}
+                                            className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors"
+                                        >
+                                            <option value="">
+                                                Select a child...
+                                            </option>
+                                            {availableChildren.map((child) => (
+                                                <option
+                                                    key={child.id}
+                                                    value={child.id}
+                                                >
+                                                    {child.full_name} ({child.sex === 'male' ? 'M' : 'F'})
+                                                </option>
+                                            ))}
+                                        </select>
+                                        {availableChildren.length === 0 && (
+                                            <p className="text-xs text-muted-foreground">
+                                                All children in this barangay have been measured
+                                            </p>
+                                        )}
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-medium">
+                                            Measurement Date
+                                        </label>
+                                        <input
+                                            type="date"
+                                            name="measurement_date"
+                                            required
+                                            value={quickForm.measurement_date}
+                                            onChange={handleQuickFormChange}
+                                            className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors"
+                                        />
+                                    </div>
+                                </div>
+                                <div className="grid gap-4 md:grid-cols-2">
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-medium">
+                                            Weight (kg)
+                                        </label>
+                                        <input
+                                            type="number"
+                                            name="weight_kg"
+                                            step="0.01"
+                                            min="1"
+                                            max="30"
+                                            required
+                                            value={quickForm.weight_kg}
+                                            onChange={handleQuickFormChange}
+                                            placeholder="e.g. 12.5"
+                                            className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-medium">
+                                            Height / Length (cm)
+                                        </label>
+                                        <input
+                                            type="number"
+                                            name="height_length_cm"
+                                            step="0.1"
+                                            min="40"
+                                            max="125"
+                                            required
+                                            value={quickForm.height_length_cm}
+                                            onChange={handleQuickFormChange}
+                                            placeholder="e.g. 95.5"
+                                            className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors"
+                                        />
+                                    </div>
+                                </div>
+                                <div className="flex justify-end">
+                                    <Button
+                                        type="submit"
+                                        disabled={quickSubmitting}
+                                    >
+                                        {quickSubmitting
+                                            ? 'Saving...'
+                                            : 'Record Measurement'}
+                                    </Button>
+                                </div>
+                            </form>
+                        </CardContent>
+                    </Card>
+                )}
 
                 {/* Recent Measurements */}
                 <Card>

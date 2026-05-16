@@ -8,10 +8,10 @@ use App\Models\OptSession;
 use App\Services\AuditLogService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
-
 class OptSessionController extends Controller
 {
     /**
@@ -21,30 +21,41 @@ class OptSessionController extends Controller
     {
         $user = $request->user();
 
-        $sessions = OptSession::query()
-            ->with(['barangay', 'createdBy'])
-            ->when($user->barangay_id, function ($query) use ($user) {
-                $query->where('barangay_id', $user->barangay_id);
-            })
-            ->when($request->status, function ($query, $status) {
-                $query->where('status', $status);
-            })
-            ->when($request->year, function ($query, $year) {
-                $query->whereYear('session_date', $year);
-            })
-            ->orderBy('session_date', 'desc')
-            ->paginate(15)
-            ->withQueryString();
+        $cacheKey = 'opt_sessions:index:'
+            .$user->id.':'
+            .($user->barangay_id ?? 'all').':'
+            .($request->status ?? 'all').':'
+            .($request->year ?? 'all').':'
+            .$request->get('page', 1);
+
+        $sessions = Cache::remember($cacheKey, 60, function () use ($request, $user) {
+            return OptSession::query()
+                ->with(['barangay', 'createdBy'])
+                ->when($user->barangay_id, function ($query) use ($user) {
+                    $query->where('barangay_id', $user->barangay_id);
+                })
+                ->when($request->status, function ($query, $status) {
+                    $query->where('status', $status);
+                })
+                ->when($request->year, function ($query, $year) {
+                    $query->whereYear('session_date', $year);
+                })
+                ->orderBy('session_date', 'desc')
+                ->paginate(15)
+                ->withQueryString();
+        });
 
         // Get available years for filtering
-        $years = OptSession::query()
-            ->orderBy('session_date')
-            ->pluck('session_date')
-            ->map(fn ($date) => (int) $date->format('Y'))
-            ->unique()
-            ->sort()
-            ->reverse()
-            ->values();
+        $years = Cache::remember('opt_sessions:years', 300, function () {
+            return OptSession::query()
+                ->orderBy('session_date')
+                ->pluck('session_date')
+                ->map(fn ($date) => (int) $date->format('Y'))
+                ->unique()
+                ->sort()
+                ->reverse()
+                ->values();
+        });
 
         return Inertia::render('opt-sessions/index', [
             'sessions' => $sessions,
@@ -131,12 +142,14 @@ class OptSessionController extends Controller
             'obese_count' => $optSession->measurements->where('opt_classification', 'obese')->count(),
         ];
 
-        // Get recent measurements
-        $recentMeasurements = $optSession->measurements()
-            ->with('child')
-            ->orderBy('created_at', 'desc')
-            ->limit(10)
-            ->get();
+        // Get recent measurements (deferred — not critical for initial render)
+        $recentMeasurements = Inertia::defer(function () use ($optSession) {
+            return $optSession->measurements()
+                ->with('child')
+                ->orderBy('created_at', 'desc')
+                ->limit(10)
+                ->get();
+        });
 
         return Inertia::render('opt-sessions/show', [
             'session' => $optSession,
@@ -241,6 +254,34 @@ class OptSessionController extends Controller
     }
 
     /**
+     * Duplicate a session for a new month.
+     */
+    public function duplicate(Request $request, OptSession $optSession)
+    {
+        $user = $request->user();
+
+        if (! $this->canAccessBarangay($user, $optSession->barangay_id)) {
+            abort(403, 'You do not have access to duplicate this session.');
+        }
+
+        $newSession = OptSession::create([
+            'barangay_id' => $optSession->barangay_id,
+            'name' => $optSession->name.' (Copy)',
+            'session_date' => now()->addMonth(),
+            'status' => 'scheduled',
+            'target_children' => $optSession->target_children,
+            'venue' => $optSession->venue,
+            'notes' => $optSession->notes,
+            'created_by_user_id' => $user->id,
+        ]);
+
+        AuditLogService::logAction('duplicated', $newSession, user: $user);
+
+        return redirect()->route('opt-sessions.show', $newSession)
+            ->with('success', 'Session duplicated successfully.');
+    }
+
+    /**
      * Cancel an OPT session.
      */
     public function cancel(OptSession $optSession)
@@ -310,6 +351,7 @@ class OptSessionController extends Controller
 
         $sessions = OptSession::whereIn('id', $validated['ids'])
             ->where('status', 'in_progress')
+            ->withCount('measurements')
             ->get();
 
         if ($sessions->isEmpty()) {
@@ -322,8 +364,11 @@ class OptSessionController extends Controller
                 $session->update([
                     'status' => 'completed',
                     'end_date' => now(),
+                    'measured_children' => $session->measurements_count,
+                    'coverage_percentage' => $session->target_children > 0
+                        ? ($session->measurements_count / $session->target_children) * 100
+                        : 0,
                 ]);
-                $session->updateStatistics();
                 AuditLogService::logAction('batch_completed', $session, user: $user);
                 $count++;
             }
