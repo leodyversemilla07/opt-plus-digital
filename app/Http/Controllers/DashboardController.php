@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\OptSession;
 use App\Services\AnalyticsService;
+use App\Services\DataQualityControlService;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -13,7 +15,8 @@ class DashboardController extends Controller
     use AuthorizesRequests;
 
     public function __construct(
-        private AnalyticsService $analyticsService
+        private AnalyticsService $analyticsService,
+        private DataQualityControlService $dqcService
     ) {}
 
     /**
@@ -23,33 +26,48 @@ class DashboardController extends Controller
     {
         $this->authorize('view analytics');
         $user = $request->user();
+        $barangayId = $user->barangay_id;
 
         // Get overall statistics
         $overallStats = $this->analyticsService->getOverallStatistics();
 
         // Get nutritional status breakdown
-        $nutritionalStatus = $this->analyticsService->getLatestMeasurementsStatistics();
+        $nutritionalStatus = $this->analyticsService->getLatestMeasurementsStatistics($barangayId);
 
         // Get high-risk children
-        $highRiskChildren = $this->analyticsService->getHighRiskChildren(limit: 5);
+        $highRiskChildren = $this->analyticsService->getHighRiskChildren($barangayId, limit: 5);
 
         // Get monthly trends
-        $monthlyTrends = $this->analyticsService->getMonthlyTrends();
+        $monthlyTrends = $this->analyticsService->getMonthlyTrends($barangayId);
 
         // Get age group breakdown
-        $ageGroupBreakdown = $this->analyticsService->getAgeGroupBreakdown();
+        $ageGroupBreakdown = $this->analyticsService->getAgeGroupBreakdown($barangayId);
 
         // Get sex-disaggregated statistics
-        $sexDisaggregated = $this->analyticsService->getSexDisaggregatedStats();
+        $sexDisaggregated = $this->analyticsService->getSexDisaggregatedStats($barangayId);
 
         // Get F1K statistics (0-23 months)
-        $f1kStatistics = $this->analyticsService->getF1KStatistics();
+        $f1kStatistics = $this->analyticsService->getF1KStatistics($barangayId);
 
         // Get barangay comparison (for municipal/admin users)
         $barangayComparison = [];
-        if (in_array($user->role ?? 'bhw', ['municipal', 'admin'])) {
+        if ($user->hasRole(['municipal', 'admin'])) {
             $barangayComparison = $this->analyticsService->getBarangayComparison();
         }
+
+        // DQC: Pending certifications count
+        $pendingCertifications = $this->dqcService->countPendingCertifications($barangayId);
+
+        // Recent system activity
+        $recentActivity = $this->analyticsService->getRecentActivity(8);
+
+        // Recent OPT sessions
+        $recentSessions = OptSession::with('barangay')
+            ->when($barangayId, fn ($q) => $q->where('barangay_id', $barangayId))
+            ->latest()
+            ->take(3)
+            ->get()
+            ->toArray();
 
         return Inertia::render('dashboard', [
             'user' => $user,
@@ -61,6 +79,9 @@ class DashboardController extends Controller
             'sexDisaggregated' => $sexDisaggregated,
             'f1kStatistics' => $f1kStatistics,
             'barangayComparison' => $barangayComparison,
+            'pendingCertifications' => $pendingCertifications,
+            'recentActivity' => $recentActivity,
+            'recentSessions' => $recentSessions,
         ]);
     }
 

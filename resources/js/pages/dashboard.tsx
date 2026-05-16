@@ -23,7 +23,12 @@ import { Head, Link, usePage } from '@inertiajs/react';
 import {
     Activity,
     ArrowRight,
+    Baby,
     BarChart3,
+    ClipboardCheck,
+    FileText,
+    FlaskConical,
+    Mail,
     Plus,
     TrendingDown,
     TrendingUp,
@@ -126,6 +131,22 @@ interface DashboardProps {
         malnourished_f1k: number;
         stunted_f1k: number;
     };
+    pendingCertifications: number;
+    recentActivity: {
+        type: string;
+        description: string;
+        entity: string;
+        barangay: string | null;
+        date: string;
+        url: string | null;
+    }[];
+    recentSessions: {
+        id: number;
+        name: string;
+        status: string;
+        barangay: { name: string } | null;
+        measurement_date: string;
+    }[];
 }
 
 export default function Dashboard({
@@ -137,6 +158,9 @@ export default function Dashboard({
     ageGroupBreakdown,
     sexDisaggregated,
     f1kStatistics,
+    pendingCertifications,
+    recentActivity,
+    recentSessions,
 }: DashboardProps) {
     const { auth } = usePage<SharedData>().props;
 
@@ -189,7 +213,7 @@ export default function Dashboard({
                 </div>
 
                 {/* Statistics Cards */}
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-6">
                     <StatCard
                         title="Total Children"
                         value={overallStats.total_children.toLocaleString()}
@@ -200,7 +224,7 @@ export default function Dashboard({
                         title="F1K (0-23 mos)"
                         value={f1kStatistics.total_children_0to23.toLocaleString()}
                         description="First 1000 Days"
-                        icon={<Users className="h-5 w-5 text-primary" />}
+                        icon={<Baby className="h-5 w-5 text-primary" />}
                     />
                     <StatCard
                         title="Coverage Rate"
@@ -222,6 +246,64 @@ export default function Dashboard({
                         description="Children needing attention"
                         icon={<Activity className="h-5 w-5 text-destructive" />}
                     />
+                    <StatCard
+                        title="DQC Pending"
+                        value={pendingCertifications}
+                        description="Eye-check certifications"
+                        icon={<ClipboardCheck className="h-5 w-5 text-amber-600" />}
+                    />
+                </div>
+
+                {/* Quick Actions */}
+                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                    <Link
+                        href="/children/create"
+                        className="flex items-center gap-3 rounded-lg border bg-background p-4 transition-colors hover:bg-accent hover:border-primary"
+                    >
+                        <div className="rounded-lg bg-blue-100 p-2.5 dark:bg-blue-900/20">
+                            <Plus className="h-5 w-5 text-blue-600" />
+                        </div>
+                        <div>
+                            <p className="text-sm font-medium">Register Child</p>
+                            <p className="text-xs text-muted-foreground">Add new child record</p>
+                        </div>
+                    </Link>
+                    <Link
+                        href="/opt-sessions/create"
+                        className="flex items-center gap-3 rounded-lg border bg-background p-4 transition-colors hover:bg-accent hover:border-primary"
+                    >
+                        <div className="rounded-lg bg-green-100 p-2.5 dark:bg-green-900/20">
+                            <FlaskConical className="h-5 w-5 text-green-600" />
+                        </div>
+                        <div>
+                            <p className="text-sm font-medium">Start OPT Session</p>
+                            <p className="text-xs text-muted-foreground">Begin new measurement round</p>
+                        </div>
+                    </Link>
+                    <Link
+                        href="/reports"
+                        className="flex items-center gap-3 rounded-lg border bg-background p-4 transition-colors hover:bg-accent hover:border-primary"
+                    >
+                        <div className="rounded-lg bg-purple-100 p-2.5 dark:bg-purple-900/20">
+                            <FileText className="h-5 w-5 text-purple-600" />
+                        </div>
+                        <div>
+                            <p className="text-sm font-medium">Generate Report</p>
+                            <p className="text-xs text-muted-foreground">View nutrition reports</p>
+                        </div>
+                    </Link>
+                    <Link
+                        href="/mass-mail/create"
+                        className="flex items-center gap-3 rounded-lg border bg-background p-4 transition-colors hover:bg-accent hover:border-primary"
+                    >
+                        <div className="rounded-lg bg-rose-100 p-2.5 dark:bg-rose-900/20">
+                            <Mail className="h-5 w-5 text-rose-600" />
+                        </div>
+                        <div>
+                            <p className="text-sm font-medium">Send Mass Mail</p>
+                            <p className="text-xs text-muted-foreground">Notify parents & workers</p>
+                        </div>
+                    </Link>
                 </div>
 
                 {/* Main Content Grid */}
@@ -489,6 +571,71 @@ export default function Dashboard({
                         </Card>
                     )}
                 </div>
+
+                {/* Recent Activity */}
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2 text-foreground">
+                            <Activity className="h-5 w-5 text-primary" />
+                            Recent Activity
+                        </CardTitle>
+                        <CardDescription>
+                            Latest measurements and system events
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent className="p-0">
+                        {recentActivity.length === 0 ? (
+                            <div className="p-6 text-center text-sm text-muted-foreground">
+                                No recent activity recorded
+                            </div>
+                        ) : (
+                            <div className="divide-y">
+                                {recentActivity.map((activity, index) => (
+                                    <div
+                                        key={index}
+                                        className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-muted/50"
+                                    >
+                                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted">
+                                            {activity.type === 'measurement' ? (
+                                                <FlaskConical className="h-4 w-4 text-blue-600" />
+                                            ) : (
+                                                <Mail className="h-4 w-4 text-rose-600" />
+                                            )}
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <p className="truncate text-sm font-medium">
+                                                {activity.url ? (
+                                                    <Link
+                                                        href={activity.url}
+                                                        className="hover:underline"
+                                                    >
+                                                        {activity.description}
+                                                    </Link>
+                                                ) : (
+                                                    activity.description
+                                                )}
+                                            </p>
+                                            <p className="text-xs text-muted-foreground">
+                                                <span className="capitalize">{activity.type.replace('_', ' ')}</span>
+                                                {activity.barangay && (
+                                                    <> &middot; {activity.barangay}</>
+                                                )}
+                                                {activity.entity && (
+                                                    <> &middot; {activity.entity}</>
+                                                )}
+                                            </p>
+                                        </div>
+                                        <span className="shrink-0 text-xs text-muted-foreground">
+                                            {activity.date
+                                                ? new Date(activity.date).toLocaleDateString()
+                                                : ''}
+                                        </span>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </CardContent>
+                </Card>
             </div>
         </AppLayout>
     );

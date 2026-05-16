@@ -478,4 +478,51 @@ class AnalyticsService
 
         return round(($childrenWithMeasurements / $totalChildren) * 100, 1);
     }
+
+    /**
+     * Get recent system activity for the dashboard feed
+     */
+    public function getRecentActivity(int $limit = 10): array
+    {
+        $activities = [];
+
+        // Recent measurements
+        $recentMeasurements = Measurement::with(['child.barangay'])
+            ->latest('measurement_date')
+            ->take($limit)
+            ->get()
+            ->map(fn ($m) => [
+                'type' => 'measurement',
+                'description' => 'Measurement recorded for '.($m->child?->full_name ?? 'Unknown'),
+                'entity' => $m->opt_classification,
+                'barangay' => $m->child?->barangay?->name,
+                'date' => $m->measurement_date?->toISOString(),
+                'created_at' => $m->created_at?->toISOString(),
+                'url' => $m->child_id ? "/children/{$m->child_id}" : null,
+            ]);
+
+        $activities = array_merge($activities, $recentMeasurements->toArray());
+
+        // Recent imports (if the service reports them)
+        $recentImports = \App\Models\MassMail::with('creator')
+            ->latest()
+            ->take(3)
+            ->get()
+            ->map(fn ($m) => [
+                'type' => 'mass_mail',
+                'description' => "Mass mail sent: {$m->subject}",
+                'entity' => "{$m->total_recipients} recipients",
+                'barangay' => null,
+                'date' => $m->created_at?->toISOString(),
+                'created_at' => $m->created_at?->toISOString(),
+                'url' => "/mass-mail/{$m->id}",
+            ]);
+
+        $activities = array_merge($activities, $recentImports->toArray());
+
+        // Sort by date descending and limit
+        usort($activities, fn ($a, $b) => strcmp($b['created_at'] ?? '', $a['created_at'] ?? ''));
+
+        return array_slice($activities, 0, $limit);
+    }
 }
