@@ -16,14 +16,17 @@ import reports from '@/routes/reports';
 import users from '@/routes/users';
 import * as auditLogs from '@/routes/audit-logs/index';
 import * as notifications from '@/routes/notifications/index';
+import * as massMail from '@/routes/mass-mail/index';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
 import {
     Baby,
     Bell,
     FileBarChart,
+    FileCheck,
     History,
     LayoutDashboard,
+    Mail,
     Settings,
     UserCog,
 } from 'lucide-react';
@@ -49,6 +52,16 @@ const mainNavItems: NavItem[] = [
         title: 'Reports',
         href: reports.index(),
         icon: FileBarChart,
+    },
+    {
+        title: 'Data Quality Control',
+        href: '/dqc',
+        icon: FileCheck,
+    },
+    {
+        title: 'Mass Mail',
+        href: massMail.index(),
+        icon: Mail,
     },
     {
         title: 'Audit Logs',

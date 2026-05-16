@@ -5,6 +5,7 @@ use App\Http\Controllers\ChildController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DqcController;
 use App\Http\Controllers\ImportController;
+use App\Http\Controllers\MassMailController;
 use App\Http\Controllers\MeasurementController;
 use App\Http\Controllers\OptSessionController;
 use App\Http\Controllers\ReportController;
@@ -154,6 +155,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->group(function () {
             Route::get('/', [AuditLogController::class, 'index'])->name('index');
             Route::get('{audit_log}', [AuditLogController::class, 'show'])->name('show');
+        });
+
+    // Mass Mail
+    Route::prefix('mass-mail')
+        ->name('mass-mail.')
+        ->middleware('permission:send mass mail')
+        ->group(function () {
+            Route::get('/', [MassMailController::class, 'index'])->name('index');
+            Route::get('/create', [MassMailController::class, 'create'])->name('create');
+            Route::post('/preview-recipients', [MassMailController::class, 'previewRecipients'])->name('preview-recipients');
+            Route::post('/', [MassMailController::class, 'store'])->name('store');
+            Route::get('{mass_mail}', [MassMailController::class, 'show'])->name('show');
         });
 });
 

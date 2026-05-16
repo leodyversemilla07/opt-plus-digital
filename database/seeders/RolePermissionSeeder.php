@@ -49,6 +49,9 @@ class RolePermissionSeeder extends Seeder
             // Audit Logs
             'view audit logs',
             'export audit logs',
+
+            // Mass Mail
+            'send mass mail',
         ];
 
         foreach ($permissions as $permission) {
