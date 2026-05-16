@@ -1,6 +1,8 @@
 <?php
 
 use App\Models\Child;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 test('child has fillable attributes', function () {
     $fillable = [
@@ -105,15 +107,15 @@ test('child is not eligible for OPT when age is 60+ months', function () {
 
 test('child belongs to barangay', function () {
     $child = new Child;
-    expect($child->barangay())->toBeInstanceOf(Illuminate\Database\Eloquent\Relations\BelongsTo::class);
+    expect($child->barangay())->toBeInstanceOf(BelongsTo::class);
 });
 
 test('child has many measurements', function () {
     $child = new Child;
-    expect($child->measurements())->toBeInstanceOf(Illuminate\Database\Eloquent\Relations\HasMany::class);
+    expect($child->measurements())->toBeInstanceOf(HasMany::class);
 });
 
 test('child belongs to user who created it', function () {
     $child = new Child;
-    expect($child->createdBy())->toBeInstanceOf(Illuminate\Database\Eloquent\Relations\BelongsTo::class);
+    expect($child->createdBy())->toBeInstanceOf(BelongsTo::class);
 });

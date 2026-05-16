@@ -1,7 +1,4 @@
-import {
-    Badge,
-    type BadgeProps,
-} from '@/components/ui/badge';
+import { Badge, type BadgeProps } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -27,14 +24,7 @@ import {
 } from '@/routes/audit-logs/index';
 import { BreadcrumbItem } from '@/types';
 import { Head, Link, router } from '@inertiajs/react';
-import {
-    Calendar,
-    Eye,
-    Filter,
-    History,
-    Search,
-    Shield,
-} from 'lucide-react';
+import { Calendar, Eye, Filter, History, Search, Shield } from 'lucide-react';
 import { useState } from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -112,7 +102,12 @@ function timeAgo(dateString: string): string {
     return date.toLocaleDateString();
 }
 
-export default function AuditLogsIndex({ logs, actions, types, filters }: Props) {
+export default function AuditLogsIndex({
+    logs,
+    actions,
+    types,
+    filters,
+}: Props) {
     const [search, setSearch] = useState(filters.search || '');
     const [actionFilter, setActionFilter] = useState(filters.action || 'all');
     const [typeFilter, setTypeFilter] = useState(filters.type || 'all');
@@ -139,11 +134,19 @@ export default function AuditLogsIndex({ logs, actions, types, filters }: Props)
         setTypeFilter('all');
         setFromDate('');
         setUntilDate('');
-        router.get(auditLogsIndex.url(), {}, { preserveState: true, replace: true });
+        router.get(
+            auditLogsIndex.url(),
+            {},
+            { preserveState: true, replace: true },
+        );
     };
 
     const hasActiveFilters =
-        search || actionFilter !== 'all' || typeFilter !== 'all' || fromDate || untilDate;
+        search ||
+        actionFilter !== 'all' ||
+        typeFilter !== 'all' ||
+        fromDate ||
+        untilDate;
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -169,17 +172,19 @@ export default function AuditLogsIndex({ logs, actions, types, filters }: Props)
                 {/* Filters */}
                 <Card>
                     <CardContent className="flex flex-wrap items-end gap-3 p-4">
-                        <div className="flex-1 min-w-[200px]">
+                        <div className="min-w-[200px] flex-1">
                             <label className="mb-1 block text-xs font-medium text-muted-foreground">
                                 Search
                             </label>
                             <div className="relative">
-                                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                                <Search className="absolute top-2.5 left-2.5 h-4 w-4 text-muted-foreground" />
                                 <Input
                                     placeholder="Search action, model, IP..."
                                     value={search}
                                     onChange={(e) => setSearch(e.target.value)}
-                                    onKeyDown={(e) => e.key === 'Enter' && applyFilters()}
+                                    onKeyDown={(e) =>
+                                        e.key === 'Enter' && applyFilters()
+                                    }
                                     className="pl-8"
                                 />
                             </div>
@@ -191,16 +196,21 @@ export default function AuditLogsIndex({ logs, actions, types, filters }: Props)
                             </label>
                             <Select
                                 value={actionFilter}
-                                onValueChange={(value) => setActionFilter(value ?? '')}
+                                onValueChange={(value) =>
+                                    setActionFilter(value ?? '')
+                                }
                             >
                                 <SelectTrigger>
                                     <SelectValue placeholder="All actions" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="all">All actions</SelectItem>
+                                    <SelectItem value="all">
+                                        All actions
+                                    </SelectItem>
                                     {actions.map((act) => (
                                         <SelectItem key={act} value={act}>
-                                            {act.charAt(0).toUpperCase() + act.slice(1)}
+                                            {act.charAt(0).toUpperCase() +
+                                                act.slice(1)}
                                         </SelectItem>
                                     ))}
                                 </SelectContent>
@@ -213,13 +223,17 @@ export default function AuditLogsIndex({ logs, actions, types, filters }: Props)
                             </label>
                             <Select
                                 value={typeFilter}
-                                onValueChange={(value) => setTypeFilter(value ?? '')}
+                                onValueChange={(value) =>
+                                    setTypeFilter(value ?? '')
+                                }
                             >
                                 <SelectTrigger>
                                     <SelectValue placeholder="All types" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="all">All types</SelectItem>
+                                    <SelectItem value="all">
+                                        All types
+                                    </SelectItem>
                                     {types.map((typ) => (
                                         <SelectItem key={typ} value={typ}>
                                             {friendlyModelName(typ)}
@@ -280,7 +294,9 @@ export default function AuditLogsIndex({ logs, actions, types, filters }: Props)
                                     <TableHead>User</TableHead>
                                     <TableHead>IP Address</TableHead>
                                     <TableHead>Time</TableHead>
-                                    <TableHead className="w-[80px]">Actions</TableHead>
+                                    <TableHead className="w-[80px]">
+                                        Actions
+                                    </TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -308,14 +324,20 @@ export default function AuditLogsIndex({ logs, actions, types, filters }: Props)
                                     logs.data.map((log) => (
                                         <TableRow key={log.id}>
                                             <TableCell>
-                                                <Badge variant={actionBadgeVariant(log.action)}>
+                                                <Badge
+                                                    variant={actionBadgeVariant(
+                                                        log.action,
+                                                    )}
+                                                >
                                                     {log.action}
                                                 </Badge>
                                             </TableCell>
                                             <TableCell>
                                                 <div className="flex flex-col">
                                                     <span className="text-sm font-medium">
-                                                        {friendlyModelName(log.auditable_type)}
+                                                        {friendlyModelName(
+                                                            log.auditable_type,
+                                                        )}
                                                     </span>
                                                     <span className="text-xs text-muted-foreground">
                                                         #{log.auditable_id}
@@ -326,20 +348,26 @@ export default function AuditLogsIndex({ logs, actions, types, filters }: Props)
                                                 <div className="flex items-center gap-2">
                                                     <Shield className="h-4 w-4 text-muted-foreground" />
                                                     <span className="text-sm">
-                                                        {log.user?.name ?? 'System'}
+                                                        {log.user?.name ??
+                                                            'System'}
                                                     </span>
                                                 </div>
                                             </TableCell>
                                             <TableCell>
-                                                <span className="text-sm font-mono text-muted-foreground">
+                                                <span className="font-mono text-sm text-muted-foreground">
                                                     {log.ip_address ?? '—'}
                                                 </span>
                                             </TableCell>
                                             <TableCell>
                                                 <div className="flex items-center gap-2">
                                                     <Calendar className="h-4 w-4 text-muted-foreground" />
-                                                    <span className="text-sm" title={log.created_at}>
-                                                        {timeAgo(log.created_at)}
+                                                    <span
+                                                        className="text-sm"
+                                                        title={log.created_at}
+                                                    >
+                                                        {timeAgo(
+                                                            log.created_at,
+                                                        )}
                                                     </span>
                                                 </div>
                                             </TableCell>
@@ -347,9 +375,16 @@ export default function AuditLogsIndex({ logs, actions, types, filters }: Props)
                                                 <Button
                                                     variant="ghost"
                                                     size="sm"
-                                                    render={<Link
-                                                        href={auditLogsShow.url({ audit_log: log.id })}
-                                                    />}
+                                                    render={
+                                                        <Link
+                                                            href={auditLogsShow.url(
+                                                                {
+                                                                    audit_log:
+                                                                        log.id,
+                                                                },
+                                                            )}
+                                                        />
+                                                    }
                                                 >
                                                     <Eye className="h-4 w-4" />
                                                 </Button>
@@ -372,9 +407,12 @@ export default function AuditLogsIndex({ logs, actions, types, filters }: Props)
                                             variant="outline"
                                             size="sm"
                                             onClick={() =>
-                                                router.get(logs.prev_page_url!, {
-                                                    preserveState: true,
-                                                })
+                                                router.get(
+                                                    logs.prev_page_url!,
+                                                    {
+                                                        preserveState: true,
+                                                    },
+                                                )
                                             }
                                         >
                                             Previous
@@ -385,9 +423,12 @@ export default function AuditLogsIndex({ logs, actions, types, filters }: Props)
                                             variant="outline"
                                             size="sm"
                                             onClick={() =>
-                                                router.get(logs.next_page_url!, {
-                                                    preserveState: true,
-                                                })
+                                                router.get(
+                                                    logs.next_page_url!,
+                                                    {
+                                                        preserveState: true,
+                                                    },
+                                                )
                                             }
                                         >
                                             Next

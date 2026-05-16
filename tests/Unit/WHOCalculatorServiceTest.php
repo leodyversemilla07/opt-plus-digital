@@ -1,6 +1,7 @@
 <?php
 
 use App\Services\WHOCalculatorService;
+use Database\Seeders\WhoStandardSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class)->in(__FILE__);
@@ -111,7 +112,7 @@ test('calculateAll returns all z-scores and classifications', function () {
     $calculator = new WHOCalculatorService;
 
     // Seed WHO standards data for the test
-    $this->seed(\Database\Seeders\WhoStandardSeeder::class);
+    $this->seed(WhoStandardSeeder::class);
 
     $result = $calculator->calculateAll('male', 365, 9.5, 75.0);
 

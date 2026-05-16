@@ -38,7 +38,7 @@ class SevereMalnutritionAlert extends Notification implements ShouldQueue
         $childUrl = route('children.show', $child);
 
         return (new MailMessage)
-            ->subject('URGENT: Severe Malnutrition Alert - ' . $child->full_name)
+            ->subject('URGENT: Severe Malnutrition Alert - '.$child->full_name)
             ->markdown('mail.notifications.severe-malnutrition', [
                 'measurement' => $this->measurement,
                 'child' => $child,

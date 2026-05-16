@@ -78,7 +78,11 @@ export default function MeasurementShow({
                             variant="ghost"
                             size="sm"
                             className="mb-2"
-                            render={<Link href={`/children/${child.id}/measurements`} />}
+                            render={
+                                <Link
+                                    href={`/children/${child.id}/measurements`}
+                                />
+                            }
                         >
                             <ArrowLeft className="mr-2 h-4 w-4" /> Back to
                             History
@@ -92,20 +96,28 @@ export default function MeasurementShow({
                         </p>
                     </div>
                     <div className="flex gap-2">
-                        <Button variant="outline" size="sm" render={<Link
-                                href={`/children/${child.id}/measurements/${measurement.id}/edit`}
-                            />}>
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            render={
+                                <Link
+                                    href={`/children/${child.id}/measurements/${measurement.id}/edit`}
+                                />
+                            }
+                        >
                             <Edit className="mr-2 h-4 w-4" /> Edit
                         </Button>
                         <Button
                             variant="outline"
                             size="sm"
                             className="border-red-200 text-red-600 hover:bg-red-50"
-                            render={<Link
-                                href={`/children/${child.id}/measurements/${measurement.id}`}
-                                method="delete"
-                                as="button"
-                            />}
+                            render={
+                                <Link
+                                    href={`/children/${child.id}/measurements/${measurement.id}`}
+                                    method="delete"
+                                    as="button"
+                                />
+                            }
                         >
                             <Trash2 className="mr-2 h-4 w-4" /> Delete
                         </Button>

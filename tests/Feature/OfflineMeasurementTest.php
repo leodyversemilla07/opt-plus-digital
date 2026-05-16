@@ -2,13 +2,15 @@
 
 use App\Models\Barangay;
 use App\Models\Child;
+use App\Models\Measurement;
 use App\Models\User;
+use Database\Seeders\RolePermissionSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
-    $this->seed(\Database\Seeders\RolePermissionSeeder::class);
+    $this->seed(RolePermissionSeeder::class);
     $this->barangay = Barangay::factory()->create();
     $this->user = User::factory()->create([
         'barangay_id' => $this->barangay->id,
@@ -109,7 +111,7 @@ test('measurement validates date is not in future', function () {
 
 test('measurement list shows all measurements for child', function () {
     // Create multiple measurements
-    $measurements = \App\Models\Measurement::factory()->count(3)->create([
+    $measurements = Measurement::factory()->count(3)->create([
         'child_id' => $this->child->id,
         'measured_by_user_id' => $this->user->id,
     ]);
@@ -210,13 +212,13 @@ test('multiple measurements can be created for same child', function () {
 });
 
 test('measurements are ordered by date descending', function () {
-    \App\Models\Measurement::factory()->create([
+    Measurement::factory()->create([
         'child_id' => $this->child->id,
         'measured_by_user_id' => $this->user->id,
         'measurement_date' => now()->subMonths(2),
     ]);
 
-    \App\Models\Measurement::factory()->create([
+    Measurement::factory()->create([
         'child_id' => $this->child->id,
         'measured_by_user_id' => $this->user->id,
         'measurement_date' => now(),

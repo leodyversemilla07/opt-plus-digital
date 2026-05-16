@@ -6,6 +6,7 @@ use App\Models\Barangay;
 use App\Models\Child;
 use App\Models\OptSession;
 use App\Services\AuditLogService;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
@@ -85,13 +86,13 @@ class OptSessionController extends Controller
         ]);
 
         // Verify user has access to this barangay
-        if (!$this->canAccessBarangay($user, $validated['barangay_id'])) {
+        if (! $this->canAccessBarangay($user, $validated['barangay_id'])) {
             abort(403, 'You do not have access to create sessions for this barangay.');
         }
 
         // Calculate target children if not provided
         if (empty($validated['target_children'])) {
-            $sessionDate = \Carbon\Carbon::parse($validated['session_date']);
+            $sessionDate = Carbon::parse($validated['session_date']);
             $cutoffDate = $sessionDate->copy()->subMonths(60);
 
             $validated['target_children'] = Child::where('barangay_id', $validated['barangay_id'])

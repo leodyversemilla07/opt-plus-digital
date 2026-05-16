@@ -64,9 +64,7 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
                                     ),
                                 })}
                             >
-                                {item.icon && (
-                                    <item.icon className="h-4 w-4" />
-                                )}
+                                {item.icon && <item.icon className="h-4 w-4" />}
                                 {item.title}
                             </Button>
                         ))}

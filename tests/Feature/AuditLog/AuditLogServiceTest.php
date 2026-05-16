@@ -3,9 +3,10 @@
 use App\Models\AuditLog;
 use App\Models\User;
 use App\Services\AuditLogService;
+use Spatie\Permission\PermissionRegistrar;
 
 beforeEach(function () {
-    app(\Spatie\Permission\PermissionRegistrar::class)->forgetCachedPermissions();
+    app(PermissionRegistrar::class)->forgetCachedPermissions();
 });
 
 test('can log a created action with fluent api', function () {
@@ -100,13 +101,13 @@ test('throws exception when action is missing', function () {
     AuditLogService::make()
         ->on($subject)
         ->log();
-})->throws(\InvalidArgumentException::class, 'Action is required');
+})->throws(InvalidArgumentException::class, 'Action is required');
 
 test('throws exception when subject is missing', function () {
     AuditLogService::make()
         ->withAction('created')
         ->log();
-})->throws(\InvalidArgumentException::class, 'Subject model is required');
+})->throws(InvalidArgumentException::class, 'Subject model is required');
 
 test('can log without a user (system action)', function () {
     $subject = User::factory()->create();

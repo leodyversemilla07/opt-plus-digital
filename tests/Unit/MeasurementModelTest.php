@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Measurement;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 test('measurement has fillable attributes', function () {
     $fillable = [
@@ -75,12 +76,12 @@ test('measurement uses soft deletes', function () {
 
 test('measurement belongs to child', function () {
     $measurement = new Measurement;
-    expect($measurement->child())->toBeInstanceOf(Illuminate\Database\Eloquent\Relations\BelongsTo::class);
+    expect($measurement->child())->toBeInstanceOf(BelongsTo::class);
 });
 
 test('measurement belongs to user who measured', function () {
     $measurement = new Measurement;
-    expect($measurement->measuredBy())->toBeInstanceOf(Illuminate\Database\Eloquent\Relations\BelongsTo::class);
+    expect($measurement->measuredBy())->toBeInstanceOf(BelongsTo::class);
 });
 
 test('measurement identifies malnourished status', function () {

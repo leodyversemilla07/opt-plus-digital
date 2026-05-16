@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class ImportController extends Controller
 {
@@ -22,10 +23,10 @@ class ImportController extends Controller
     public function index(Request $request): Response
     {
         $user = $request->user();
-        
+
         // Get barangays based on user role
         $barangays = $this->getAccessibleBarangays($user);
-        
+
         // Get recent import history (could be stored in a separate table)
         $recentImports = [];
 
@@ -61,7 +62,7 @@ class ImportController extends Controller
         $barangay = Barangay::findOrFail($request->barangay_id);
 
         // Verify user has access to this barangay
-        if (!$this->canAccessBarangay($user, $barangay)) {
+        if (! $this->canAccessBarangay($user, $barangay)) {
             abort(403, 'You do not have access to import data for this barangay.');
         }
 
@@ -84,7 +85,7 @@ class ImportController extends Controller
 
             $summary = $result->getSummary();
 
-            if ($result->hasErrors() && !$result->isSuccessful()) {
+            if ($result->hasErrors() && ! $result->isSuccessful()) {
                 return back()->with('error', 'Import failed. Please check the errors and try again.')
                     ->with('importResult', [
                         'success' => false,
@@ -113,7 +114,7 @@ class ImportController extends Controller
             // Clean up temp file on error
             Storage::delete($tempPath);
 
-            return back()->with('error', 'Import failed: ' . $e->getMessage());
+            return back()->with('error', 'Import failed: '.$e->getMessage());
         }
     }
 
@@ -123,8 +124,8 @@ class ImportController extends Controller
     public function downloadTemplate()
     {
         $templatePath = resource_path('templates/opt-plus-import-template.xlsx');
-        
-        if (!file_exists($templatePath)) {
+
+        if (! file_exists($templatePath)) {
             abort(404, 'Import template not found.');
         }
 
@@ -145,7 +146,7 @@ class ImportController extends Controller
         $fullPath = Storage::path($tempPath);
 
         try {
-            $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($fullPath);
+            $spreadsheet = IOFactory::load($fullPath);
             $sheetNames = $spreadsheet->getSheetNames();
             $rowCount = $spreadsheet->getActiveSheet()->getHighestRow();
 

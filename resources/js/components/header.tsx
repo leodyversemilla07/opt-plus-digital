@@ -135,7 +135,11 @@ export function Header({ canRegister = true }: { canRegister?: boolean }) {
                         </Tooltip>
                     </TooltipProvider>
                     {auth.user ? (
-                        <Button size="sm" className="px-5" render={<Link href={dashboard()} />}>
+                        <Button
+                            size="sm"
+                            className="px-5"
+                            render={<Link href={dashboard()} />}
+                        >
                             <LayoutDashboard className="mr-2 h-4 w-4" />
                             Dashboard
                         </Button>
@@ -151,7 +155,11 @@ export function Header({ canRegister = true }: { canRegister?: boolean }) {
                                 Log in
                             </Button>
                             {canRegister && (
-                                <Button size="sm" className="px-5" render={<Link href={register()} />}>
+                                <Button
+                                    size="sm"
+                                    className="px-5"
+                                    render={<Link href={register()} />}
+                                >
                                     <UserPlus className="mr-2 h-4 w-4" />
                                     Register
                                 </Button>
@@ -252,7 +260,10 @@ export function Header({ canRegister = true }: { canRegister?: boolean }) {
                                 <div className="my-2 border-t" />
 
                                 {auth.user ? (
-                                    <Button className="w-full" render={<Link href={dashboard()} />}>
+                                    <Button
+                                        className="w-full"
+                                        render={<Link href={dashboard()} />}
+                                    >
                                         <LayoutDashboard className="mr-2 h-4 w-4" />
                                         Dashboard
                                     </Button>
@@ -267,7 +278,12 @@ export function Header({ canRegister = true }: { canRegister?: boolean }) {
                                             Log in
                                         </Button>
                                         {canRegister && (
-                                            <Button className="w-full" render={<Link href={register()} />}>
+                                            <Button
+                                                className="w-full"
+                                                render={
+                                                    <Link href={register()} />
+                                                }
+                                            >
                                                 <UserPlus className="mr-2 h-4 w-4" />
                                                 Register
                                             </Button>

@@ -295,7 +295,8 @@ export default function DQCPage({
                                 Pending Eye-Check Certification
                             </CardTitle>
                             <CardDescription>
-                                Measurements awaiting DQC verification — review and certify or reject
+                                Measurements awaiting DQC verification — review
+                                and certify or reject
                             </CardDescription>
                         </CardHeader>
                         <CardContent>
@@ -310,7 +311,9 @@ export default function DQCPage({
                                         <TableHead>Height</TableHead>
                                         <TableHead>Classification</TableHead>
                                         <TableHead>Measured By</TableHead>
-                                        <TableHead className="text-right">Actions</TableHead>
+                                        <TableHead className="text-right">
+                                            Actions
+                                        </TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
@@ -319,17 +322,29 @@ export default function DQCPage({
                                             <TableCell className="font-medium">
                                                 {item.child_name}
                                             </TableCell>
-                                            <TableCell>{item.barangay}</TableCell>
-                                            <TableCell>{item.measurement_date}</TableCell>
-                                            <TableCell>{item.age_months} mos</TableCell>
-                                            <TableCell>{item.weight_kg} kg</TableCell>
-                                            <TableCell>{item.height_cm} cm</TableCell>
+                                            <TableCell>
+                                                {item.barangay}
+                                            </TableCell>
+                                            <TableCell>
+                                                {item.measurement_date}
+                                            </TableCell>
+                                            <TableCell>
+                                                {item.age_months} mos
+                                            </TableCell>
+                                            <TableCell>
+                                                {item.weight_kg} kg
+                                            </TableCell>
+                                            <TableCell>
+                                                {item.height_cm} cm
+                                            </TableCell>
                                             <TableCell>
                                                 <Badge
                                                     variant={
-                                                        item.opt_classification === 'sam'
+                                                        item.opt_classification ===
+                                                        'sam'
                                                             ? 'destructive'
-                                                            : item.opt_classification === 'mam'
+                                                            : item.opt_classification ===
+                                                                'mam'
                                                               ? 'secondary'
                                                               : 'outline'
                                                     }
@@ -346,12 +361,14 @@ export default function DQCPage({
                                                     <Button
                                                         variant="ghost"
                                                         size="sm"
-                                                        className="text-green-600 hover:text-green-700 hover:bg-green-50"
+                                                        className="text-green-600 hover:bg-green-50 hover:text-green-700"
                                                         onClick={() => {
                                                             router.post(
                                                                 `/dqc/measurements/${item.id}/certify`,
                                                                 {},
-                                                                { preserveState: true },
+                                                                {
+                                                                    preserveState: true,
+                                                                },
                                                             );
                                                         }}
                                                         title="Certify as eye-checked"
@@ -361,13 +378,19 @@ export default function DQCPage({
                                                     <Button
                                                         variant="ghost"
                                                         size="sm"
-                                                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                                                        className="text-red-600 hover:bg-red-50 hover:text-red-700"
                                                         onClick={() => {
-                                                            if (confirm('Reject this measurement? This will flag it for review.')) {
+                                                            if (
+                                                                confirm(
+                                                                    'Reject this measurement? This will flag it for review.',
+                                                                )
+                                                            ) {
                                                                 router.post(
                                                                     `/dqc/measurements/${item.id}/reject`,
                                                                     {},
-                                                                    { preserveState: true },
+                                                                    {
+                                                                        preserveState: true,
+                                                                    },
                                                                 );
                                                             }
                                                         }}
@@ -465,9 +488,11 @@ export default function DQCPage({
                                                     <Button
                                                         variant="ghost"
                                                         size="icon"
-                                                        render={<Link
-                                                            href={`/children/${item.child.id}`}
-                                                        />}
+                                                        render={
+                                                            <Link
+                                                                href={`/children/${item.child.id}`}
+                                                            />
+                                                        }
                                                     >
                                                         <ArrowRight className="h-4 w-4" />
                                                     </Button>
@@ -521,73 +546,92 @@ export default function DQCPage({
                                 <TableBody>
                                     {flaggedMeasurements
                                         .slice(0, 10)
-                                        .map((measurement: FlaggedMeasurement) => {
-                                            const childProfileUrl = measurement.child_id
-                                                ? `/children/${measurement.child_id}`
-                                                : '#';
+                                        .map(
+                                            (
+                                                measurement: FlaggedMeasurement,
+                                            ) => {
+                                                const childProfileUrl =
+                                                    measurement.child_id
+                                                        ? `/children/${measurement.child_id}`
+                                                        : '#';
 
-                                            return (
-                                                <TableRow
-                                                    key={measurement.id}
-                                                    className="transition-colors hover:bg-muted/50"
-                                                >
-                                                    <TableCell className="font-medium">
-                                                        {measurement.child_name}
-                                                    </TableCell>
-                                                    <TableCell>
-                                                        {measurement.age_months}{' '}
-                                                        mos
-                                                    </TableCell>
-                                                    <TableCell>
-                                                        {measurement.weight_kg}
-                                                    </TableCell>
-                                                    <TableCell>
-                                                        {measurement.height_cm}
-                                                    </TableCell>
-                                                    <TableCell>
-                                                        <Badge
-                                                            variant="destructive"
-                                                            className="text-xs"
-                                                        >
-                                                            {Math.abs(
-                                                                measurement.wfa_zscore ??
-                                                                    0,
-                                                            ).toFixed(2)}
-                                                        </Badge>
-                                                    </TableCell>
-                                                    <TableCell>
-                                                        <Badge
-                                                            variant={
-                                                                measurement.opt_classification ===
-                                                                'sam'
-                                                                    ? 'destructive'
-                                                                    : 'secondary'
+                                                return (
+                                                    <TableRow
+                                                        key={measurement.id}
+                                                        className="transition-colors hover:bg-muted/50"
+                                                    >
+                                                        <TableCell className="font-medium">
+                                                            {
+                                                                measurement.child_name
                                                             }
-                                                            className="text-xs"
-                                                        >
-                                                            {measurement.opt_classification.toUpperCase()}
-                                                        </Badge>
-                                                    </TableCell>
-                                                    <TableCell>
-                                                        {measurement.measurement_date}
-                                                    </TableCell>
-                                                    <TableCell className="text-right">
-                                                        <Button
-                                                            variant="ghost"
-                                                            size="icon"
-                                                            render={<Link
-                                                                href={childProfileUrl}
-                                                            />}
-                                                            disabled={
-                                                                !measurement.child_id
+                                                        </TableCell>
+                                                        <TableCell>
+                                                            {
+                                                                measurement.age_months
+                                                            }{' '}
+                                                            mos
+                                                        </TableCell>
+                                                        <TableCell>
+                                                            {
+                                                                measurement.weight_kg
                                                             }
-                                                        >
-                                                            <ArrowRight className="h-4 w-4" />
-                                                        </Button>
-                                                    </TableCell>
-                                                </TableRow>
-                                            );
-                                        })}
+                                                        </TableCell>
+                                                        <TableCell>
+                                                            {
+                                                                measurement.height_cm
+                                                            }
+                                                        </TableCell>
+                                                        <TableCell>
+                                                            <Badge
+                                                                variant="destructive"
+                                                                className="text-xs"
+                                                            >
+                                                                {Math.abs(
+                                                                    measurement.wfa_zscore ??
+                                                                        0,
+                                                                ).toFixed(2)}
+                                                            </Badge>
+                                                        </TableCell>
+                                                        <TableCell>
+                                                            <Badge
+                                                                variant={
+                                                                    measurement.opt_classification ===
+                                                                    'sam'
+                                                                        ? 'destructive'
+                                                                        : 'secondary'
+                                                                }
+                                                                className="text-xs"
+                                                            >
+                                                                {measurement.opt_classification.toUpperCase()}
+                                                            </Badge>
+                                                        </TableCell>
+                                                        <TableCell>
+                                                            {
+                                                                measurement.measurement_date
+                                                            }
+                                                        </TableCell>
+                                                        <TableCell className="text-right">
+                                                            <Button
+                                                                variant="ghost"
+                                                                size="icon"
+                                                                render={
+                                                                    <Link
+                                                                        href={
+                                                                            childProfileUrl
+                                                                        }
+                                                                    />
+                                                                }
+                                                                disabled={
+                                                                    !measurement.child_id
+                                                                }
+                                                            >
+                                                                <ArrowRight className="h-4 w-4" />
+                                                            </Button>
+                                                        </TableCell>
+                                                    </TableRow>
+                                                );
+                                            },
+                                        )}
                                 </TableBody>
                             </Table>
                             {flaggedMeasurements.length > 10 && (

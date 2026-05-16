@@ -2,12 +2,11 @@
 
 namespace App\Services;
 
-use App\Mail\MassMailMessage;
+use App\Jobs\SendMassMailChunk;
 use App\Models\Child;
 use App\Models\MassMail;
 use App\Models\User;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\DB;
 
 class MassMailService
 {
@@ -144,7 +143,7 @@ class MassMailService
         $chunks = array_chunk($recipients, 50);
 
         foreach ($chunks as $chunkIndex => $chunk) {
-            \App\Jobs\SendMassMailChunk::dispatch($massMail->id, $chunk, $chunkIndex)
+            SendMassMailChunk::dispatch($massMail->id, $chunk, $chunkIndex)
                 ->onQueue('mass-mail');
         }
     }

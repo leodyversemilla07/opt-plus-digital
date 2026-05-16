@@ -168,13 +168,25 @@ function ChildTable({ children }: { children: ChildRecord[] }) {
                         </TableCell>
                         <TableCell className="text-right">
                             <div className="flex justify-end gap-1">
-                                <Button variant="outline" size="sm" render={<Link href={`/children/${child.id}`} />}>
-                                        View
-                                    </Button>
-                                <Button variant="default" size="sm" render={<Link
-                                        href={`/children/${child.id}/measurements/create`}
-                                    />}>
-                                        Measure
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    render={
+                                        <Link href={`/children/${child.id}`} />
+                                    }
+                                >
+                                    View
+                                </Button>
+                                <Button
+                                    variant="default"
+                                    size="sm"
+                                    render={
+                                        <Link
+                                            href={`/children/${child.id}/measurements/create`}
+                                        />
+                                    }
+                                >
+                                    Measure
                                 </Button>
                             </div>
                         </TableCell>

@@ -1,15 +1,17 @@
 <?php
 
 use App\Models\Barangay;
+use App\Models\Child;
 use App\Models\Measurement;
 use App\Models\OptSession;
 use App\Models\User;
+use Database\Seeders\RolePermissionSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
-    $this->seed(\Database\Seeders\RolePermissionSeeder::class);
+    $this->seed(RolePermissionSeeder::class);
     $this->barangay = Barangay::factory()->create();
     $this->user = User::factory()->create(['barangay_id' => $this->barangay->id]);
     $this->user->givePermissionTo('create children');
@@ -191,7 +193,7 @@ test('session show page loads with stats and measurements', function () {
 });
 
 test('session show stats are calculated correctly', function () {
-    $child = \App\Models\Child::factory()->create(['barangay_id' => $this->barangay->id]);
+    $child = Child::factory()->create(['barangay_id' => $this->barangay->id]);
     Measurement::factory()->count(3)->create([
         'child_id' => $child->id,
         'opt_session_id' => $this->session->id,
@@ -320,7 +322,7 @@ test('session without measurements can be deleted', function () {
 });
 
 test('session with measurements cannot be deleted', function () {
-    $child = \App\Models\Child::factory()->create(['barangay_id' => $this->barangay->id]);
+    $child = Child::factory()->create(['barangay_id' => $this->barangay->id]);
     Measurement::factory()->create([
         'child_id' => $child->id,
         'opt_session_id' => $this->session->id,

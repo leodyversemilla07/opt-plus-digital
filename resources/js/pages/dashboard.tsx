@@ -160,7 +160,6 @@ export default function Dashboard({
     f1kStatistics,
     pendingCertifications,
     recentActivity,
-    recentSessions,
 }: DashboardProps) {
     const { auth } = usePage<SharedData>().props;
 
@@ -248,7 +247,9 @@ export default function Dashboard({
                         title="DQC Pending"
                         value={pendingCertifications}
                         description="Eye-check certifications"
-                        icon={<ClipboardCheck className="h-5 w-5 text-amber-600" />}
+                        icon={
+                            <ClipboardCheck className="h-5 w-5 text-amber-600" />
+                        }
                     />
                 </div>
 
@@ -256,50 +257,66 @@ export default function Dashboard({
                 <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
                     <Link
                         href="/children/create"
-                        className="flex items-center gap-3 rounded-lg border bg-background p-4 transition-colors hover:bg-accent hover:border-primary"
+                        className="flex items-center gap-3 rounded-lg border bg-background p-4 transition-colors hover:border-primary hover:bg-accent"
                     >
                         <div className="rounded-lg bg-blue-100 p-2.5 dark:bg-blue-900/20">
                             <Plus className="h-5 w-5 text-blue-600" />
                         </div>
                         <div>
-                            <p className="text-sm font-medium">Register Child</p>
-                            <p className="text-xs text-muted-foreground">Add new child record</p>
+                            <p className="text-sm font-medium">
+                                Register Child
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                                Add new child record
+                            </p>
                         </div>
                     </Link>
                     <Link
                         href="/opt-sessions/create"
-                        className="flex items-center gap-3 rounded-lg border bg-background p-4 transition-colors hover:bg-accent hover:border-primary"
+                        className="flex items-center gap-3 rounded-lg border bg-background p-4 transition-colors hover:border-primary hover:bg-accent"
                     >
                         <div className="rounded-lg bg-green-100 p-2.5 dark:bg-green-900/20">
                             <FlaskConical className="h-5 w-5 text-green-600" />
                         </div>
                         <div>
-                            <p className="text-sm font-medium">Start OPT Session</p>
-                            <p className="text-xs text-muted-foreground">Begin new measurement round</p>
+                            <p className="text-sm font-medium">
+                                Start OPT Session
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                                Begin new measurement round
+                            </p>
                         </div>
                     </Link>
                     <Link
                         href="/reports"
-                        className="flex items-center gap-3 rounded-lg border bg-background p-4 transition-colors hover:bg-accent hover:border-primary"
+                        className="flex items-center gap-3 rounded-lg border bg-background p-4 transition-colors hover:border-primary hover:bg-accent"
                     >
                         <div className="rounded-lg bg-purple-100 p-2.5 dark:bg-purple-900/20">
                             <FileText className="h-5 w-5 text-purple-600" />
                         </div>
                         <div>
-                            <p className="text-sm font-medium">Generate Report</p>
-                            <p className="text-xs text-muted-foreground">View nutrition reports</p>
+                            <p className="text-sm font-medium">
+                                Generate Report
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                                View nutrition reports
+                            </p>
                         </div>
                     </Link>
                     <Link
                         href="/mass-mail/create"
-                        className="flex items-center gap-3 rounded-lg border bg-background p-4 transition-colors hover:bg-accent hover:border-primary"
+                        className="flex items-center gap-3 rounded-lg border bg-background p-4 transition-colors hover:border-primary hover:bg-accent"
                     >
                         <div className="rounded-lg bg-rose-100 p-2.5 dark:bg-rose-900/20">
                             <Mail className="h-5 w-5 text-rose-600" />
                         </div>
                         <div>
-                            <p className="text-sm font-medium">Send Mass Mail</p>
-                            <p className="text-xs text-muted-foreground">Notify parents & workers</p>
+                            <p className="text-sm font-medium">
+                                Send Mass Mail
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                                Notify parents & workers
+                            </p>
                         </div>
                     </Link>
                 </div>
@@ -517,7 +534,13 @@ export default function Dashboard({
                                         Top malnutrition rates
                                     </CardDescription>
                                 </div>
-                                <Button variant="ghost" size="icon" render={<Link href="/reports/barangay-comparison" />}>
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    render={
+                                        <Link href="/reports/barangay-comparison" />
+                                    }
+                                >
                                     <ArrowRight className="h-4 w-4" />
                                 </Button>
                             </CardHeader>
@@ -598,7 +621,7 @@ export default function Dashboard({
                                                 <Mail className="h-4 w-4 text-rose-600" />
                                             )}
                                         </div>
-                                        <div className="flex-1 min-w-0">
+                                        <div className="min-w-0 flex-1">
                                             <p className="truncate text-sm font-medium">
                                                 {activity.url ? (
                                                     <Link
@@ -612,18 +635,33 @@ export default function Dashboard({
                                                 )}
                                             </p>
                                             <p className="text-xs text-muted-foreground">
-                                                <span className="capitalize">{activity.type.replace('_', ' ')}</span>
+                                                <span className="capitalize">
+                                                    {activity.type.replace(
+                                                        '_',
+                                                        ' ',
+                                                    )}
+                                                </span>
                                                 {activity.barangay && (
-                                                    <> &middot; {activity.barangay}</>
+                                                    <>
+                                                        {' '}
+                                                        &middot;{' '}
+                                                        {activity.barangay}
+                                                    </>
                                                 )}
                                                 {activity.entity && (
-                                                    <> &middot; {activity.entity}</>
+                                                    <>
+                                                        {' '}
+                                                        &middot;{' '}
+                                                        {activity.entity}
+                                                    </>
                                                 )}
                                             </p>
                                         </div>
                                         <span className="shrink-0 text-xs text-muted-foreground">
                                             {activity.date
-                                                ? new Date(activity.date).toLocaleDateString()
+                                                ? new Date(
+                                                      activity.date,
+                                                  ).toLocaleDateString()
                                                 : ''}
                                         </span>
                                     </div>

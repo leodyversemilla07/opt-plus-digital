@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Barangay;
 use App\Models\Child;
+use App\Models\MassMail;
 use App\Models\Measurement;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -271,7 +272,7 @@ class AnalyticsService
         return Cache::remember($cacheKey, self::STATS_CACHE_TTL, function () use ($barangayId) {
             // Get all children 0-23 months (database agnostic - calculate in PHP)
             $cutoffDate = now()->subMonths(23)->startOfDay();
-            
+
             $query = Child::query()
                 ->where('date_of_birth', '>=', $cutoffDate)
                 ->when($barangayId, function ($q) use ($barangayId) {
@@ -299,8 +300,12 @@ class AnalyticsService
 
             foreach ($f1kMeasurements as $measurement) {
                 $sex = $measurement->child->sex;
-                if ($sex === 'male') $maleF1K++;
-                if ($sex === 'female') $femaleF1K++;
+                if ($sex === 'male') {
+                    $maleF1K++;
+                }
+                if ($sex === 'female') {
+                    $femaleF1K++;
+                }
 
                 if (in_array($measurement->opt_classification, ['mam', 'sam'])) {
                     $malnourishedF1K++;
@@ -362,7 +367,9 @@ class AnalyticsService
 
             foreach ($latestMeasurements as $measurement) {
                 $child = $children->get($measurement->child_id);
-                if (!$child) continue;
+                if (! $child) {
+                    continue;
+                }
 
                 $sex = $child->sex;
                 $stats[$sex]++;
@@ -504,7 +511,7 @@ class AnalyticsService
         $activities = array_merge($activities, $recentMeasurements->toArray());
 
         // Recent imports (if the service reports them)
-        $recentImports = \App\Models\MassMail::with('creator')
+        $recentImports = MassMail::with('creator')
             ->latest()
             ->take(3)
             ->get()

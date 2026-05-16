@@ -2,13 +2,15 @@
 
 use App\Models\Barangay;
 use App\Models\Child;
+use App\Models\Measurement;
 use App\Models\User;
+use Database\Seeders\RolePermissionSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
-    $this->seed(\Database\Seeders\RolePermissionSeeder::class);
+    $this->seed(RolePermissionSeeder::class);
     $this->barangay = Barangay::factory()->create();
     $this->user = User::factory()->create([
         'barangay_id' => $this->barangay->id,
@@ -66,7 +68,7 @@ test('child show page includes measurements', function () {
         'created_by_user_id' => $this->user->id,
     ]);
 
-    \App\Models\Measurement::factory()->count(3)->create([
+    Measurement::factory()->count(3)->create([
         'child_id' => $child->id,
         'measured_by_user_id' => $this->user->id,
     ]);
@@ -232,14 +234,14 @@ test('child profile includes latest measurement', function () {
         'created_by_user_id' => $this->user->id,
     ]);
 
-    $oldMeasurement = \App\Models\Measurement::factory()->create([
+    $oldMeasurement = Measurement::factory()->create([
         'child_id' => $child->id,
         'measured_by_user_id' => $this->user->id,
         'measurement_date' => now()->subMonths(2),
         'weight_kg' => 10.0,
     ]);
 
-    $latestMeasurement = \App\Models\Measurement::factory()->create([
+    $latestMeasurement = Measurement::factory()->create([
         'child_id' => $child->id,
         'measured_by_user_id' => $this->user->id,
         'measurement_date' => now(),

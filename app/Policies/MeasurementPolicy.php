@@ -23,7 +23,7 @@ class MeasurementPolicy
      */
     public function view(User $user, Measurement $measurement): bool
     {
-        if (!$user->hasPermissionTo('view measurements')) {
+        if (! $user->hasPermissionTo('view measurements')) {
             return false;
         }
 
@@ -48,7 +48,7 @@ class MeasurementPolicy
      */
     public function update(User $user, Measurement $measurement): bool
     {
-        if (!$user->hasPermissionTo('edit measurements')) {
+        if (! $user->hasPermissionTo('edit measurements')) {
             return false;
         }
 

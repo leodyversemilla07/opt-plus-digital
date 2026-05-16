@@ -11,12 +11,12 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
+import * as auditLogs from '@/routes/audit-logs/index';
 import children from '@/routes/children';
+import * as massMail from '@/routes/mass-mail/index';
+import * as notifications from '@/routes/notifications/index';
 import reports from '@/routes/reports';
 import users from '@/routes/users';
-import * as auditLogs from '@/routes/audit-logs/index';
-import * as notifications from '@/routes/notifications/index';
-import * as massMail from '@/routes/mass-mail/index';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
 import {
@@ -89,7 +89,10 @@ export function AppSidebar() {
             <SidebarHeader>
                 <SidebarMenu>
                     <SidebarMenuItem>
-                        <SidebarMenuButton size="lg" render={<Link href={dashboard()} prefetch />}>
+                        <SidebarMenuButton
+                            size="lg"
+                            render={<Link href={dashboard()} prefetch />}
+                        >
                             <AppLogo />
                         </SidebarMenuButton>
                     </SidebarMenuItem>

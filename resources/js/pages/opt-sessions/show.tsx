@@ -173,9 +173,14 @@ export default function Show({ session, stats, recentMeasurements }: Props) {
                                     <Play className="mr-2 h-4 w-4" />
                                     Start Session
                                 </Button>
-                                <Button variant="outline" render={<Link
-                                        href={`/opt-sessions/${session.id}/edit`}
-                                    />}>
+                                <Button
+                                    variant="outline"
+                                    render={
+                                        <Link
+                                            href={`/opt-sessions/${session.id}/edit`}
+                                        />
+                                    }
+                                >
                                     <Edit className="mr-2 h-4 w-4" />
                                     Edit
                                 </Button>
@@ -183,9 +188,13 @@ export default function Show({ session, stats, recentMeasurements }: Props) {
                         )}
                         {session.status === 'in_progress' && (
                             <>
-                                <Button render={<Link
-                                        href={`/import?session=${session.id}`}
-                                    />}>
+                                <Button
+                                    render={
+                                        <Link
+                                            href={`/import?session=${session.id}`}
+                                        />
+                                    }
+                                >
                                     <Upload className="mr-2 h-4 w-4" />
                                     Import Data
                                 </Button>

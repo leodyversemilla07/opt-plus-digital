@@ -3,6 +3,7 @@
 use App\Models\Barangay;
 use App\Models\Child;
 use App\Models\User;
+use Database\Seeders\RolePermissionSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
@@ -31,7 +32,7 @@ function getValidChildData(Barangay $barangay, array $overrides = []): array
 }
 
 beforeEach(function () {
-    $this->seed(\Database\Seeders\RolePermissionSeeder::class);
+    $this->seed(RolePermissionSeeder::class);
     $this->barangay = Barangay::factory()->create();
     $this->user = User::factory()->create([
         'barangay_id' => $this->barangay->id,

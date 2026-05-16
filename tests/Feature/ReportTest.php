@@ -2,9 +2,10 @@
 
 use App\Models\User;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\PermissionRegistrar;
 
 beforeEach(function () {
-    app(\Spatie\Permission\PermissionRegistrar::class)->forgetCachedPermissions();
+    app(PermissionRegistrar::class)->forgetCachedPermissions();
     Permission::firstOrCreate(['name' => 'view reports', 'guard_name' => 'web']);
     Permission::firstOrCreate(['name' => 'export reports', 'guard_name' => 'web']);
     Permission::firstOrCreate(['name' => 'view municipal analytics', 'guard_name' => 'web']);

@@ -1,9 +1,12 @@
 <?php
 
+use App\Models\Barangay;
+use App\Models\Child;
 use App\Models\MassMail;
 use App\Models\User;
 use App\Services\MassMailService;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 beforeEach(function () {
     Permission::firstOrCreate(['name' => 'send mass mail', 'guard_name' => 'web']);
@@ -111,7 +114,7 @@ test('recipient type is required', function () {
 test('mass mail with by_barangay recipient type stores criteria', function () {
     $user = User::factory()->create();
     $user->givePermissionTo('send mass mail');
-    $barangay = \App\Models\Barangay::factory()->create();
+    $barangay = Barangay::factory()->create();
 
     $this->actingAs($user)->post(route('mass-mail.store'), [
         'subject' => 'Barangay-specific',
@@ -207,13 +210,13 @@ test('resolveRecipients returns empty array when no children exist', function ()
 });
 
 test('getRecipientCount returns correct count for all parents', function () {
-    $barangay = \App\Models\Barangay::factory()->create();
-    \App\Models\Child::factory()->count(3)->create([
+    $barangay = Barangay::factory()->create();
+    Child::factory()->count(3)->create([
         'barangay_id' => $barangay->id,
         'contact_number' => '09171234567',
     ]);
     // Child without contact number should not be counted
-    \App\Models\Child::factory()->create([
+    Child::factory()->create([
         'barangay_id' => $barangay->id,
         'contact_number' => null,
     ]);
@@ -230,8 +233,8 @@ test('getRecipientCount for specific_roles counts users with matching role', fun
     $inactiveUser = User::factory()->create(['is_active' => false]);
 
     // Create roles in test environment
-    \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'bns', 'guard_name' => 'web']);
-    \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'municipal', 'guard_name' => 'web']);
+    Role::firstOrCreate(['name' => 'bns', 'guard_name' => 'web']);
+    Role::firstOrCreate(['name' => 'municipal', 'guard_name' => 'web']);
 
     $user1->assignRole('bns');
     $user2->assignRole('municipal');

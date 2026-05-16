@@ -3,9 +3,10 @@
 use App\Models\AuditLog;
 use App\Models\User;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\PermissionRegistrar;
 
 beforeEach(function () {
-    app(\Spatie\Permission\PermissionRegistrar::class)->forgetCachedPermissions();
+    app(PermissionRegistrar::class)->forgetCachedPermissions();
 
     Permission::firstOrCreate(['name' => 'view audit logs', 'guard_name' => 'web']);
     Permission::firstOrCreate(['name' => 'export audit logs', 'guard_name' => 'web']);

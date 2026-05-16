@@ -79,9 +79,12 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 const statusColors: Record<string, string> = {
-    scheduled: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400',
-    in_progress: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400',
-    completed: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
+    scheduled:
+        'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400',
+    in_progress:
+        'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400',
+    completed:
+        'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
     cancelled: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400',
 };
 
@@ -200,7 +203,10 @@ export default function Index({ sessions, years, filters }: Props) {
                                 <Select
                                     value={filters.status || 'all'}
                                     onValueChange={(value) =>
-                                        handleFilterChange('status', value ?? '')
+                                        handleFilterChange(
+                                            'status',
+                                            value ?? '',
+                                        )
                                     }
                                 >
                                     <SelectTrigger>
@@ -258,7 +264,8 @@ export default function Index({ sessions, years, filters }: Props) {
                 {selectedIds.size > 0 && (
                     <div className="flex items-center gap-3 rounded-lg border bg-muted/50 px-4 py-3">
                         <span className="text-sm font-medium">
-                            {selectedIds.size} session{selectedIds.size === 1 ? '' : 's'} selected
+                            {selectedIds.size} session
+                            {selectedIds.size === 1 ? '' : 's'} selected
                         </span>
                         <div className="ml-auto flex items-center gap-2">
                             <Button
@@ -347,11 +354,12 @@ export default function Index({ sessions, years, filters }: Props) {
                                                 <Calendar className="h-8 w-8 text-muted-foreground/50" />
                                                 <p>No OPT sessions found</p>
                                                 <Button
-                                                    render={<Link href="/opt-sessions/create" />}
+                                                    render={
+                                                        <Link href="/opt-sessions/create" />
+                                                    }
                                                     variant="outline"
                                                 >
-                                                    Create your first
-                                                    session
+                                                    Create your first session
                                                 </Button>
                                             </div>
                                         </TableCell>
@@ -372,9 +380,7 @@ export default function Index({ sessions, years, filters }: Props) {
                                                         session.id,
                                                     )}
                                                     onCheckedChange={() =>
-                                                        toggleSelect(
-                                                            session.id,
-                                                        )
+                                                        toggleSelect(session.id)
                                                     }
                                                     aria-label={`Select ${session.name}`}
                                                 />
@@ -437,9 +443,11 @@ export default function Index({ sessions, years, filters }: Props) {
                                                 <Button
                                                     variant="ghost"
                                                     size="sm"
-                                                    render={<Link
-                                                        href={`/opt-sessions/${session.id}`}
-                                                    />}
+                                                    render={
+                                                        <Link
+                                                            href={`/opt-sessions/${session.id}`}
+                                                        />
+                                                    }
                                                 >
                                                     <Eye className="h-4 w-4" />
                                                 </Button>

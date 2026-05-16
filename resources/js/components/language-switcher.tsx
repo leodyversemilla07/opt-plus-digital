@@ -1,4 +1,3 @@
-import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import {
     DropdownMenu,
@@ -7,13 +6,18 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Languages } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 const languages = [
     { code: 'en', label: 'English' },
     { code: 'fil', label: 'Filipino' },
 ];
 
-export function LanguageSwitcher({ variant = 'icon' }: { variant?: 'icon' | 'minimal' }) {
+export function LanguageSwitcher({
+    variant = 'icon',
+}: {
+    variant?: 'icon' | 'minimal';
+}) {
     const { i18n, t } = useTranslation();
 
     const switchLanguage = (langCode: string) => {
@@ -26,7 +30,9 @@ export function LanguageSwitcher({ variant = 'icon' }: { variant?: 'icon' | 'min
                 {languages.map((lang) => (
                     <Button
                         key={lang.code}
-                        variant={lang.code === i18n.language ? 'secondary' : 'ghost'}
+                        variant={
+                            lang.code === i18n.language ? 'secondary' : 'ghost'
+                        }
                         size="sm"
                         className="h-7 px-2 text-xs"
                         onClick={() => switchLanguage(lang.code)}
@@ -51,7 +57,11 @@ export function LanguageSwitcher({ variant = 'icon' }: { variant?: 'icon' | 'min
                     <DropdownMenuItem
                         key={lang.code}
                         onClick={() => switchLanguage(lang.code)}
-                        className={lang.code === i18n.language ? 'bg-accent font-medium' : ''}
+                        className={
+                            lang.code === i18n.language
+                                ? 'bg-accent font-medium'
+                                : ''
+                        }
                     >
                         {lang.label}
                     </DropdownMenuItem>

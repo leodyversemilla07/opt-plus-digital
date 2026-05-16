@@ -23,7 +23,7 @@ class ChildPolicy
      */
     public function view(User $user, Child $child): bool
     {
-        if (!$user->hasPermissionTo('view children')) {
+        if (! $user->hasPermissionTo('view children')) {
             return false;
         }
 
@@ -48,7 +48,7 @@ class ChildPolicy
      */
     public function update(User $user, Child $child): bool
     {
-        if (!$user->hasPermissionTo('edit children')) {
+        if (! $user->hasPermissionTo('edit children')) {
             return false;
         }
 

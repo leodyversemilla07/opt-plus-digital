@@ -17,9 +17,12 @@ import {
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
-import { index as massMailIndex, previewRecipients, store as massMailStore } from '@/routes/mass-mail/index';
+import {
+    store as massMailStore,
+    previewRecipients,
+} from '@/routes/mass-mail/index';
 import { type BreadcrumbItem } from '@/types';
-import { Head, router, useForm } from '@inertiajs/react';
+import { Head, useForm } from '@inertiajs/react';
 import { ArrowLeft, Loader2, Send, Users } from 'lucide-react';
 import { useState } from 'react';
 
@@ -46,19 +49,25 @@ interface Props {
     recipientTypes: Record<string, string>;
 }
 
-export default function MassMailCreate({ barangays, classifications, recipientTypes }: Props) {
+export default function MassMailCreate({
+    barangays,
+    classifications,
+    recipientTypes,
+}: Props) {
     const [recipientCount, setRecipientCount] = useState<number | null>(null);
     const [countLoading, setCountLoading] = useState(false);
 
-    const { data, setData, post, processing, errors, reset } = useForm<MassMailForm>({
-        subject: '',
-        message_body: '',
-        recipient_type: '',
-        recipient_criteria: {},
-    });
+    const { data, setData, post, processing, errors, reset } =
+        useForm<MassMailForm>({
+            subject: '',
+            message_body: '',
+            recipient_type: '',
+            recipient_criteria: {},
+        });
 
     const [criteriaBarangayId, setCriteriaBarangayId] = useState<string>('');
-    const [criteriaClassification, setCriteriaClassification] = useState<string>('');
+    const [criteriaClassification, setCriteriaClassification] =
+        useState<string>('');
     const [criteriaRoles, setCriteriaRoles] = useState<string[]>([]);
 
     const updateCriteria = () => {
@@ -97,7 +106,10 @@ export default function MassMailCreate({ barangays, classifications, recipientTy
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+                    'X-CSRF-TOKEN':
+                        document
+                            .querySelector('meta[name="csrf-token"]')
+                            ?.getAttribute('content') || '',
                 },
                 body: JSON.stringify({
                     recipient_type: data.recipient_type,
@@ -148,9 +160,12 @@ export default function MassMailCreate({ barangays, classifications, recipientTy
                     >
                         <ArrowLeft className="mr-2 h-4 w-4" /> Back
                     </Button>
-                    <h1 className="text-2xl font-bold tracking-tight">Compose Mass Mail</h1>
+                    <h1 className="text-2xl font-bold tracking-tight">
+                        Compose Mass Mail
+                    </h1>
                     <p className="mt-1 text-sm text-muted-foreground">
-                        Send bulk email notifications to parents, BNS workers, and LGU officials
+                        Send bulk email notifications to parents, BNS workers,
+                        and LGU officials
                     </p>
                 </div>
 
@@ -168,20 +183,30 @@ export default function MassMailCreate({ barangays, classifications, recipientTy
                         </CardHeader>
                         <CardContent className="space-y-4">
                             <div className="w-full max-w-md">
-                                <Label htmlFor="recipient_type">Recipient Group</Label>
+                                <Label htmlFor="recipient_type">
+                                    Recipient Group
+                                </Label>
                                 <Select
                                     value={data.recipient_type}
                                     onValueChange={handleRecipientTypeChange}
                                 >
-                                    <SelectTrigger id="recipient_type" className="mt-1.5">
+                                    <SelectTrigger
+                                        id="recipient_type"
+                                        className="mt-1.5"
+                                    >
                                         <SelectValue placeholder="Select recipient group" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        {Object.entries(recipientTypes).map(([key, label]) => (
-                                            <SelectItem key={key} value={key}>
-                                                {label}
-                                            </SelectItem>
-                                        ))}
+                                        {Object.entries(recipientTypes).map(
+                                            ([key, label]) => (
+                                                <SelectItem
+                                                    key={key}
+                                                    value={key}
+                                                >
+                                                    {label}
+                                                </SelectItem>
+                                            ),
+                                        )}
                                     </SelectContent>
                                 </Select>
                                 {errors.recipient_type && (
@@ -200,12 +225,18 @@ export default function MassMailCreate({ barangays, classifications, recipientTy
                                             setCriteriaBarangayId(value ?? '');
                                         }}
                                     >
-                                        <SelectTrigger id="barangay" className="mt-1.5">
+                                        <SelectTrigger
+                                            id="barangay"
+                                            className="mt-1.5"
+                                        >
                                             <SelectValue placeholder="Select barangay" />
                                         </SelectTrigger>
                                         <SelectContent>
                                             {barangays.map((b) => (
-                                                <SelectItem key={b.id} value={String(b.id)}>
+                                                <SelectItem
+                                                    key={b.id}
+                                                    value={String(b.id)}
+                                                >
                                                     {b.name}
                                                 </SelectItem>
                                             ))}
@@ -222,15 +253,25 @@ export default function MassMailCreate({ barangays, classifications, recipientTy
                                     <Select
                                         value={criteriaClassification}
                                         onValueChange={(value) => {
-                                            setCriteriaClassification(value ?? '');
+                                            setCriteriaClassification(
+                                                value ?? '',
+                                            );
                                         }}
                                     >
-                                        <SelectTrigger id="classification" className="mt-1.5">
+                                        <SelectTrigger
+                                            id="classification"
+                                            className="mt-1.5"
+                                        >
                                             <SelectValue placeholder="Select classification" />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            {Object.entries(classifications).map(([key, label]) => (
-                                                <SelectItem key={key} value={key}>
+                                            {Object.entries(
+                                                classifications,
+                                            ).map(([key, label]) => (
+                                                <SelectItem
+                                                    key={key}
+                                                    value={key}
+                                                >
                                                     {label}
                                                 </SelectItem>
                                             ))}
@@ -255,25 +296,38 @@ export default function MassMailCreate({ barangays, classifications, recipientTy
                                                 size="sm"
                                                 onClick={() => toggleRole(role)}
                                             >
-                                                {role.charAt(0).toUpperCase() + role.slice(1)}
+                                                {role.charAt(0).toUpperCase() +
+                                                    role.slice(1)}
                                             </Button>
                                         ))}
                                     </div>
                                     <div className="w-full max-w-md">
-                                        <Label htmlFor="barangay-role">Filter by Barangay</Label>
+                                        <Label htmlFor="barangay-role">
+                                            Filter by Barangay
+                                        </Label>
                                         <Select
                                             value={criteriaBarangayId}
                                             onValueChange={(value) => {
-                                                setCriteriaBarangayId(value ?? '');
+                                                setCriteriaBarangayId(
+                                                    value ?? '',
+                                                );
                                             }}
                                         >
-                                            <SelectTrigger id="barangay-role" className="mt-1.5">
+                                            <SelectTrigger
+                                                id="barangay-role"
+                                                className="mt-1.5"
+                                            >
                                                 <SelectValue placeholder="All barangays" />
                                             </SelectTrigger>
                                             <SelectContent>
-                                                <SelectItem value="">All barangays</SelectItem>
+                                                <SelectItem value="">
+                                                    All barangays
+                                                </SelectItem>
                                                 {barangays.map((b) => (
-                                                    <SelectItem key={b.id} value={String(b.id)}>
+                                                    <SelectItem
+                                                        key={b.id}
+                                                        value={String(b.id)}
+                                                    >
                                                         {b.name}
                                                     </SelectItem>
                                                 ))}
@@ -331,7 +385,9 @@ export default function MassMailCreate({ barangays, classifications, recipientTy
                                 <Input
                                     id="subject"
                                     value={data.subject}
-                                    onChange={(e) => setData('subject', e.target.value)}
+                                    onChange={(e) =>
+                                        setData('subject', e.target.value)
+                                    }
                                     placeholder="e.g., OPT Plus Measurement Schedule for June 2026"
                                     className="mt-1.5"
                                 />
@@ -343,11 +399,15 @@ export default function MassMailCreate({ barangays, classifications, recipientTy
                             </div>
 
                             <div>
-                                <Label htmlFor="message_body">Message Body</Label>
+                                <Label htmlFor="message_body">
+                                    Message Body
+                                </Label>
                                 <Textarea
                                     id="message_body"
                                     value={data.message_body}
-                                    onChange={(e) => setData('message_body', e.target.value)}
+                                    onChange={(e) =>
+                                        setData('message_body', e.target.value)
+                                    }
                                     placeholder="Type your message here..."
                                     rows={10}
                                     className="mt-1.5"
@@ -372,7 +432,12 @@ export default function MassMailCreate({ barangays, classifications, recipientTy
                         </Button>
                         <Button
                             type="submit"
-                            disabled={processing || !data.recipient_type || !data.subject || !data.message_body}
+                            disabled={
+                                processing ||
+                                !data.recipient_type ||
+                                !data.subject ||
+                                !data.message_body
+                            }
                         >
                             {processing ? (
                                 <>

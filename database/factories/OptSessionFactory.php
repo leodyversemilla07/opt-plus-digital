@@ -8,7 +8,7 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\OptSession>
+ * @extends Factory<OptSession>
  */
 class OptSessionFactory extends Factory
 {
@@ -18,14 +18,14 @@ class OptSessionFactory extends Factory
     {
         return [
             'barangay_id' => Barangay::factory(),
-            'name' => 'OPT Session ' . fake()->monthName() . ' ' . fake()->year(),
+            'name' => 'OPT Session '.fake()->monthName().' '.fake()->year(),
             'session_date' => fake()->dateTimeThisYear(),
             'status' => 'scheduled',
             'target_children' => fake()->numberBetween(50, 500),
             'measured_children' => 0,
             'coverage_percentage' => 0,
             'notes' => fake()->optional()->sentence(),
-            'venue' => fake()->optional()->streetName() . ' Health Center',
+            'venue' => fake()->optional()->streetName().' Health Center',
             'created_by_user_id' => User::factory(),
         ];
     }

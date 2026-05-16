@@ -10,7 +10,6 @@ import {
     CheckCircle,
     Mail,
     User,
-    Users,
     XCircle,
 } from 'lucide-react';
 
@@ -103,38 +102,53 @@ export default function MassMailShow({ mail }: Props) {
                     >
                         <ArrowLeft className="mr-2 h-4 w-4" /> Back
                     </Button>
-                    <h1 className="text-2xl font-bold tracking-tight">{mail.subject}</h1>
+                    <h1 className="text-2xl font-bold tracking-tight">
+                        {mail.subject}
+                    </h1>
                     <p className="mt-1 text-sm text-muted-foreground">
                         {friendlyRecipientType(mail.recipient_type)} —{' '}
-                        {mail.total_recipients} recipient{mail.total_recipients === 1 ? '' : 's'}
+                        {mail.total_recipients} recipient
+                        {mail.total_recipients === 1 ? '' : 's'}
                     </p>
                 </div>
 
                 {/* Status Card */}
                 <Card>
                     <CardHeader>
-                        <CardTitle className="text-lg">Delivery Status</CardTitle>
+                        <CardTitle className="text-lg">
+                            Delivery Status
+                        </CardTitle>
                     </CardHeader>
                     <CardContent>
                         <div className="grid gap-4 sm:grid-cols-4">
                             <div className="flex flex-col items-center rounded-lg border p-4">
-                                <Mail className={`mb-2 h-6 w-6 ${statusColor(mail.status)}`} />
-                                <p className="text-2xl font-bold">{mail.total_recipients}</p>
-                                <p className="text-xs text-muted-foreground">Total</p>
+                                <Mail
+                                    className={`mb-2 h-6 w-6 ${statusColor(mail.status)}`}
+                                />
+                                <p className="text-2xl font-bold">
+                                    {mail.total_recipients}
+                                </p>
+                                <p className="text-xs text-muted-foreground">
+                                    Total
+                                </p>
                             </div>
                             <div className="flex flex-col items-center rounded-lg border p-4">
                                 <CheckCircle className="mb-2 h-6 w-6 text-green-600 dark:text-green-400" />
                                 <p className="text-2xl font-bold text-green-600 dark:text-green-400">
                                     {mail.sent_count}
                                 </p>
-                                <p className="text-xs text-muted-foreground">Sent</p>
+                                <p className="text-xs text-muted-foreground">
+                                    Sent
+                                </p>
                             </div>
                             <div className="flex flex-col items-center rounded-lg border p-4">
                                 <XCircle className="mb-2 h-6 w-6 text-red-600 dark:text-red-400" />
                                 <p className="text-2xl font-bold text-red-600 dark:text-red-400">
                                     {mail.failed_count}
                                 </p>
-                                <p className="text-xs text-muted-foreground">Failed</p>
+                                <p className="text-xs text-muted-foreground">
+                                    Failed
+                                </p>
                             </div>
                             <div className="flex flex-col items-center rounded-lg border p-4">
                                 <Badge
@@ -149,7 +163,9 @@ export default function MassMailShow({ mail }: Props) {
                                 >
                                     {mail.status.replace('_', ' ')}
                                 </Badge>
-                                <p className="text-xs text-muted-foreground">Status</p>
+                                <p className="text-xs text-muted-foreground">
+                                    Status
+                                </p>
                             </div>
                         </div>
                     </CardContent>
@@ -159,16 +175,26 @@ export default function MassMailShow({ mail }: Props) {
                 <div className="grid gap-6 sm:grid-cols-2">
                     <Card>
                         <CardHeader>
-                            <CardTitle className="text-lg">Recipient Details</CardTitle>
+                            <CardTitle className="text-lg">
+                                Recipient Details
+                            </CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-3 text-sm">
                             <div className="flex items-center justify-between">
-                                <span className="text-muted-foreground">Type</span>
-                                <span>{friendlyRecipientType(mail.recipient_type)}</span>
+                                <span className="text-muted-foreground">
+                                    Type
+                                </span>
+                                <span>
+                                    {friendlyRecipientType(mail.recipient_type)}
+                                </span>
                             </div>
                             <div className="flex items-center justify-between">
-                                <span className="text-muted-foreground">Criteria</span>
-                                <span className="text-right">{renderCriteria()}</span>
+                                <span className="text-muted-foreground">
+                                    Criteria
+                                </span>
+                                <span className="text-right">
+                                    {renderCriteria()}
+                                </span>
                             </div>
                         </CardContent>
                     </Card>
@@ -216,7 +242,7 @@ export default function MassMailShow({ mail }: Props) {
                         <CardTitle className="text-lg">Message</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className="prose prose-sm max-w-none whitespace-pre-wrap dark:prose-invert">
+                        <div className="prose prose-sm dark:prose-invert max-w-none whitespace-pre-wrap">
                             {mail.message_body}
                         </div>
                     </CardContent>

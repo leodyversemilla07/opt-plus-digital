@@ -174,7 +174,10 @@ export default function Index({ barangays, optSessions }: Props) {
                             files
                         </p>
                     </div>
-                    <Button variant="outline" render={<a href="/import/template" />}>
+                    <Button
+                        variant="outline"
+                        render={<a href="/import/template" />}
+                    >
                         <Download className="mr-2 h-4 w-4" />
                         Download Template
                     </Button>
@@ -318,7 +321,9 @@ export default function Index({ barangays, optSessions }: Props) {
                                 </Label>
                                 <Select
                                     value={barangayId}
-                                    onValueChange={(value) => setBarangayId(value ?? '')}
+                                    onValueChange={(value) =>
+                                        setBarangayId(value ?? '')
+                                    }
                                 >
                                     <SelectTrigger>
                                         <SelectValue placeholder="Select barangay" />
@@ -343,7 +348,9 @@ export default function Index({ barangays, optSessions }: Props) {
                                 </Label>
                                 <Select
                                     value={optSessionId}
-                                    onValueChange={(value) => setOptSessionId(value ?? '')}
+                                    onValueChange={(value) =>
+                                        setOptSessionId(value ?? '')
+                                    }
                                 >
                                     <SelectTrigger>
                                         <SelectValue placeholder="Select OPT session (optional)" />

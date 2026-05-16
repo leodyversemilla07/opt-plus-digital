@@ -2,15 +2,16 @@
 
 namespace Database\Factories;
 
+use App\Models\MassMail;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\MassMail>
+ * @extends Factory<MassMail>
  */
 class MassMailFactory extends Factory
 {
-    protected $model = \App\Models\MassMail::class;
+    protected $model = MassMail::class;
 
     public function definition(): array
     {

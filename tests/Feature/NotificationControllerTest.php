@@ -4,14 +4,16 @@ use App\Models\Barangay;
 use App\Models\Child;
 use App\Models\User;
 use App\Notifications\SevereMalnutritionAlert;
+use Database\Seeders\RolePermissionSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Str;
 
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
-    $this->seed(\Database\Seeders\RolePermissionSeeder::class);
+    $this->seed(RolePermissionSeeder::class);
 
     $this->barangay = Barangay::factory()->create();
 
@@ -33,7 +35,7 @@ beforeEach(function () {
 function createNotification(User $user, Child $child): DatabaseNotification
 {
     return DatabaseNotification::query()->create([
-        'id' => (string) \Illuminate\Support\Str::uuid(),
+        'id' => (string) Str::uuid(),
         'type' => SevereMalnutritionAlert::class,
         'notifiable_type' => get_class($user),
         'notifiable_id' => $user->id,

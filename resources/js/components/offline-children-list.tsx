@@ -73,7 +73,9 @@ export function OfflineChildrenList() {
                         child.family_serial_number
                             .toLowerCase()
                             .includes(searchLower) ||
-                        child.barangay?.name.toLowerCase().includes(searchLower),
+                        child.barangay?.name
+                            .toLowerCase()
+                            .includes(searchLower),
                 );
                 setFilteredChildren(filtered);
             }

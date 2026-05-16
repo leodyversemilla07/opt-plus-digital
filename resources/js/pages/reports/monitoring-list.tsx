@@ -343,18 +343,22 @@ export default function MonitoringList({ type, children, barangayId }: Props) {
                                                     <Button
                                                         variant="outline"
                                                         size="sm"
-                                                        render={<Link
-                                                            href={`/children/${child.id}`}
-                                                        />}
+                                                        render={
+                                                            <Link
+                                                                href={`/children/${child.id}`}
+                                                            />
+                                                        }
                                                     >
                                                         View
                                                     </Button>
                                                     <Button
                                                         variant="default"
                                                         size="sm"
-                                                        render={<Link
-                                                            href={`/children/${child.id}/measurements/create`}
-                                                        />}
+                                                        render={
+                                                            <Link
+                                                                href={`/children/${child.id}/measurements/create`}
+                                                            />
+                                                        }
                                                     >
                                                         Measure
                                                     </Button>

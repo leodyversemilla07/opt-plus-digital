@@ -30,7 +30,11 @@ export function Breadcrumbs({
                                                 {item.title}
                                             </BreadcrumbPage>
                                         ) : (
-                                            <BreadcrumbLink render={<Link href={item.href} />}>
+                                            <BreadcrumbLink
+                                                render={
+                                                    <Link href={item.href} />
+                                                }
+                                            >
                                                 {item.title}
                                             </BreadcrumbLink>
                                         )}

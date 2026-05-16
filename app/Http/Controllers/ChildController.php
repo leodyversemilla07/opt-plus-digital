@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Barangay;
 use App\Models\Child;
+use Carbon\Carbon;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -206,8 +207,8 @@ class ChildController extends Controller
         $potentialDuplicates = Child::query()
             ->where('first_name', 'like', '%'.$request->first_name.'%')
             ->where('last_name', 'like', '%'.$request->last_name.'%')
-            ->whereDate('date_of_birth', '>=', \Carbon\Carbon::parse($request->date_of_birth)->subDays(30))
-            ->whereDate('date_of_birth', '<=', \Carbon\Carbon::parse($request->date_of_birth)->addDays(30))
+            ->whereDate('date_of_birth', '>=', Carbon::parse($request->date_of_birth)->subDays(30))
+            ->whereDate('date_of_birth', '<=', Carbon::parse($request->date_of_birth)->addDays(30))
             ->with('barangay:id,name')
             ->get();
 

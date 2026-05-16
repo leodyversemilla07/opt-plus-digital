@@ -3,13 +3,14 @@
 use App\Models\Barangay;
 use App\Models\OptSession;
 use App\Models\User;
+use Database\Seeders\RolePermissionSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
-    $this->seed(\Database\Seeders\RolePermissionSeeder::class);
+    $this->seed(RolePermissionSeeder::class);
     $this->barangay = Barangay::factory()->create();
     $this->optSession = OptSession::factory()->create([
         'barangay_id' => $this->barangay->id,

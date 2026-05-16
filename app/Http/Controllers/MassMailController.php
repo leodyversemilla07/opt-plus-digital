@@ -6,6 +6,7 @@ use App\Models\Barangay;
 use App\Models\MassMail;
 use App\Services\MassMailService;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -41,7 +42,7 @@ class MassMailController extends Controller
     /**
      * Preview recipient count before sending
      */
-    public function previewRecipients(Request $request): \Illuminate\Http\JsonResponse
+    public function previewRecipients(Request $request): JsonResponse
     {
         $this->authorize('send mass mail');
 

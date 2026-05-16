@@ -27,6 +27,7 @@ class ReportController extends Controller
     public function index(): Response
     {
         $this->authorize('view reports');
+
         return Inertia::render('reports/index');
     }
 
@@ -117,7 +118,7 @@ class ReportController extends Controller
         $barangayId = $request->query('barangay');
 
         $validTypes = ['sam', 'mam', 'stunted', 'overweight', 'obese'];
-        if (!in_array($type, $validTypes)) {
+        if (! in_array($type, $validTypes)) {
             abort(404, 'Invalid monitoring list type');
         }
 
@@ -184,6 +185,7 @@ class ReportController extends Controller
     public function exportOPTSummaryPDF(Request $request): BinaryFileResponse
     {
         $this->authorize('export reports');
+
         return $this->exportService->exportOPTSummaryPDF(
             $request->query('barangay'),
             $request->query('start_date'),
@@ -197,6 +199,7 @@ class ReportController extends Controller
     public function exportMasterListPDF(Request $request): BinaryFileResponse
     {
         $this->authorize('export reports');
+
         return $this->exportService->exportMasterListPDF(
             $request->query('barangay'),
             $request->query('start_date'),
@@ -210,6 +213,7 @@ class ReportController extends Controller
     public function exportTargetListPDF(Request $request): BinaryFileResponse
     {
         $this->authorize('export reports');
+
         return $this->exportService->exportTargetListPDF(
             $request->query('barangay'),
             $request->query('start_date'),
@@ -223,6 +227,7 @@ class ReportController extends Controller
     public function exportOPTSummaryExcel(Request $request): BinaryFileResponse
     {
         $this->authorize('export reports');
+
         return $this->exportService->exportOPTSummaryExcel(
             $request->query('barangay'),
             $request->query('start_date'),
@@ -236,6 +241,7 @@ class ReportController extends Controller
     public function exportMasterListExcel(Request $request): BinaryFileResponse
     {
         $this->authorize('export reports');
+
         return $this->exportService->exportMasterListExcel(
             $request->query('barangay'),
             $request->query('start_date'),
@@ -249,6 +255,7 @@ class ReportController extends Controller
     public function exportTargetListExcel(Request $request): BinaryFileResponse
     {
         $this->authorize('export reports');
+
         return $this->exportService->exportTargetListExcel(
             $request->query('barangay'),
             $request->query('start_date'),

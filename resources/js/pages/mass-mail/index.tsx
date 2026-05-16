@@ -10,7 +10,10 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
-import { index as massMailIndex, show as massMailShow } from '@/routes/mass-mail/index';
+import {
+    index as massMailIndex,
+    show as massMailShow,
+} from '@/routes/mass-mail/index';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, router } from '@inertiajs/react';
 import { Calendar, Eye, Mail, Plus, Users } from 'lucide-react';
@@ -94,7 +97,7 @@ function friendlyRecipientType(type: string): string {
     return labels[type] ?? type;
 }
 
-export default function MassMailIndex({ mails, recipientTypes }: Props) {
+export default function MassMailIndex({ mails }: Props) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Mass Mail" />
@@ -111,7 +114,9 @@ export default function MassMailIndex({ mails, recipientTypes }: Props) {
                             Compose and send bulk email notifications
                         </p>
                     </div>
-                    <Button render={<Link href={massMailIndex.url() + '/create'} />}>
+                    <Button
+                        render={<Link href={massMailIndex.url() + '/create'} />}
+                    >
                         <Plus className="mr-2 h-4 w-4" />
                         New Mass Mail
                     </Button>
@@ -125,8 +130,12 @@ export default function MassMailIndex({ mails, recipientTypes }: Props) {
                                 <Mail className="h-5 w-5 text-blue-600 dark:text-blue-400" />
                             </div>
                             <div>
-                                <p className="text-2xl font-bold">{mails.total}</p>
-                                <p className="text-xs text-muted-foreground">Total Mailings</p>
+                                <p className="text-2xl font-bold">
+                                    {mails.total}
+                                </p>
+                                <p className="text-xs text-muted-foreground">
+                                    Total Mailings
+                                </p>
                             </div>
                         </CardContent>
                     </Card>
@@ -137,9 +146,15 @@ export default function MassMailIndex({ mails, recipientTypes }: Props) {
                             </div>
                             <div>
                                 <p className="text-2xl font-bold">
-                                    {mails.data.filter((m) => m.status === 'sent').length}
+                                    {
+                                        mails.data.filter(
+                                            (m) => m.status === 'sent',
+                                        ).length
+                                    }
                                 </p>
-                                <p className="text-xs text-muted-foreground">Successfully Sent</p>
+                                <p className="text-xs text-muted-foreground">
+                                    Successfully Sent
+                                </p>
                             </div>
                         </CardContent>
                     </Card>
@@ -150,9 +165,14 @@ export default function MassMailIndex({ mails, recipientTypes }: Props) {
                             </div>
                             <div>
                                 <p className="text-2xl font-bold">
-                                    {mails.data.reduce((sum, m) => sum + m.total_recipients, 0)}
+                                    {mails.data.reduce(
+                                        (sum, m) => sum + m.total_recipients,
+                                        0,
+                                    )}
                                 </p>
-                                <p className="text-xs text-muted-foreground">Total Recipients</p>
+                                <p className="text-xs text-muted-foreground">
+                                    Total Recipients
+                                </p>
                             </div>
                         </CardContent>
                     </Card>
@@ -170,7 +190,9 @@ export default function MassMailIndex({ mails, recipientTypes }: Props) {
                                     <TableHead>Sent / Failed</TableHead>
                                     <TableHead>Sent By</TableHead>
                                     <TableHead>Date</TableHead>
-                                    <TableHead className="w-[80px]">Actions</TableHead>
+                                    <TableHead className="w-[80px]">
+                                        Actions
+                                    </TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -186,7 +208,14 @@ export default function MassMailIndex({ mails, recipientTypes }: Props) {
                                                 variant="link"
                                                 size="sm"
                                                 className="mt-1"
-                                                render={<Link href={massMailIndex.url() + '/create'} />}
+                                                render={
+                                                    <Link
+                                                        href={
+                                                            massMailIndex.url() +
+                                                            '/create'
+                                                        }
+                                                    />
+                                                }
                                             >
                                                 Create your first mailing
                                             </Button>
@@ -200,7 +229,11 @@ export default function MassMailIndex({ mails, recipientTypes }: Props) {
                                                     {mail.subject}
                                                 </span>
                                                 <span className="ml-2 text-xs text-muted-foreground">
-                                                    ({friendlyRecipientType(mail.recipient_type)})
+                                                    (
+                                                    {friendlyRecipientType(
+                                                        mail.recipient_type,
+                                                    )}
+                                                    )
                                                 </span>
                                             </TableCell>
                                             <TableCell>
@@ -209,8 +242,15 @@ export default function MassMailIndex({ mails, recipientTypes }: Props) {
                                                 </span>
                                             </TableCell>
                                             <TableCell>
-                                                <Badge variant={statusBadgeVariant(mail.status)}>
-                                                    {mail.status.replace('_', ' ')}
+                                                <Badge
+                                                    variant={statusBadgeVariant(
+                                                        mail.status,
+                                                    )}
+                                                >
+                                                    {mail.status.replace(
+                                                        '_',
+                                                        ' ',
+                                                    )}
                                                 </Badge>
                                             </TableCell>
                                             <TableCell>
@@ -219,13 +259,15 @@ export default function MassMailIndex({ mails, recipientTypes }: Props) {
                                                 </span>
                                                 {mail.failed_count > 0 && (
                                                     <span className="ml-1 text-sm text-red-600 dark:text-red-400">
-                                                        / {mail.failed_count} failed
+                                                        / {mail.failed_count}{' '}
+                                                        failed
                                                     </span>
                                                 )}
                                             </TableCell>
                                             <TableCell>
                                                 <span className="text-sm">
-                                                    {mail.creator?.name ?? 'Unknown'}
+                                                    {mail.creator?.name ??
+                                                        'Unknown'}
                                                 </span>
                                             </TableCell>
                                             <TableCell>
@@ -240,11 +282,16 @@ export default function MassMailIndex({ mails, recipientTypes }: Props) {
                                                 <Button
                                                     variant="ghost"
                                                     size="sm"
-                                                    render={<Link
-                                                        href={massMailShow.url({
-                                                            mass_mail: mail.id,
-                                                        })}
-                                                    />}
+                                                    render={
+                                                        <Link
+                                                            href={massMailShow.url(
+                                                                {
+                                                                    mass_mail:
+                                                                        mail.id,
+                                                                },
+                                                            )}
+                                                        />
+                                                    }
                                                 >
                                                     <Eye className="h-4 w-4" />
                                                 </Button>
@@ -259,7 +306,8 @@ export default function MassMailIndex({ mails, recipientTypes }: Props) {
                         {mails.last_page > 1 && (
                             <div className="flex items-center justify-between border-t px-4 py-3">
                                 <p className="text-sm text-muted-foreground">
-                                    Page {mails.current_page} of {mails.last_page}
+                                    Page {mails.current_page} of{' '}
+                                    {mails.last_page}
                                 </p>
                                 <div className="flex gap-2">
                                     {mails.prev_page_url && (
@@ -267,9 +315,12 @@ export default function MassMailIndex({ mails, recipientTypes }: Props) {
                                             variant="outline"
                                             size="sm"
                                             onClick={() =>
-                                                router.get(mails.prev_page_url!, {
-                                                    preserveState: true,
-                                                })
+                                                router.get(
+                                                    mails.prev_page_url!,
+                                                    {
+                                                        preserveState: true,
+                                                    },
+                                                )
                                             }
                                         >
                                             Previous
@@ -280,9 +331,12 @@ export default function MassMailIndex({ mails, recipientTypes }: Props) {
                                             variant="outline"
                                             size="sm"
                                             onClick={() =>
-                                                router.get(mails.next_page_url!, {
-                                                    preserveState: true,
-                                                })
+                                                router.get(
+                                                    mails.next_page_url!,
+                                                    {
+                                                        preserveState: true,
+                                                    },
+                                                )
                                             }
                                         >
                                             Next

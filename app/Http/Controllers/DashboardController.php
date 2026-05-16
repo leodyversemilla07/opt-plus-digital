@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Barangay;
+use App\Models\Child;
 use App\Models\OptSession;
 use App\Services\AnalyticsService;
 use App\Services\DataQualityControlService;
@@ -91,13 +93,13 @@ class DashboardController extends Controller
     public function barangay(Request $request, string $barangayId): Response
     {
         $this->authorize('view barangay analytics');
-        $barangay = \App\Models\Barangay::findOrFail($barangayId);
+        $barangay = Barangay::findOrFail($barangayId);
 
         $nutritionalStatus = $this->analyticsService->getLatestMeasurementsStatistics($barangayId);
         $highRiskChildren = $this->analyticsService->getHighRiskChildren($barangayId, 10);
         $monthlyTrends = $this->analyticsService->getMonthlyTrends($barangayId);
 
-        $totalChildren = \App\Models\Child::where('barangay_id', $barangayId)->count();
+        $totalChildren = Child::where('barangay_id', $barangayId)->count();
         $measuredChildren = $nutritionalStatus['total'];
 
         return Inertia::render('analytics/barangay', [

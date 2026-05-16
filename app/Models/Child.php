@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Factories\ChildFactory;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -12,7 +13,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Child extends Model
 {
-    /** @use HasFactory<\Database\Factories\ChildFactory> */
+    /** @use HasFactory<ChildFactory> */
     use HasFactory, HasUuids, SoftDeletes;
 
     protected $fillable = [

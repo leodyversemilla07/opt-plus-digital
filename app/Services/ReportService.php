@@ -236,7 +236,7 @@ class ReportService
         }
 
         // Filter to F1K age range (0-23 months)
-        $query->whereRaw("TIMESTAMPDIFF(MONTH, date_of_birth, CURDATE()) < 24");
+        $query->whereRaw('TIMESTAMPDIFF(MONTH, date_of_birth, CURDATE()) < 24');
 
         return $query->get()->map(function ($child) {
             $latestMeasurement = $child->measurements->first();
@@ -266,7 +266,7 @@ class ReportService
                 'days_since_measurement' => $latestMeasurement?->measurement_date
                     ? now()->diffInDays($latestMeasurement->measurement_date)
                     : null,
-                'needs_measurement' => !$latestMeasurement || now()->diffInDays($latestMeasurement->measurement_date) > 30,
+                'needs_measurement' => ! $latestMeasurement || now()->diffInDays($latestMeasurement->measurement_date) > 30,
             ];
         })->sortBy([
             ['priority', 'asc'],
@@ -280,7 +280,7 @@ class ReportService
     private function calculateF1KPriority($measurement, int $ageMonths): int
     {
         // No measurement = high priority
-        if (!$measurement) {
+        if (! $measurement) {
             return 2;
         }
 
@@ -339,7 +339,7 @@ class ReportService
             }
         });
 
-        return $query->get()->map(function ($child) use ($type) {
+        return $query->get()->map(function ($child) {
             $latestMeasurement = $child->measurements->first();
 
             return [
@@ -425,12 +425,14 @@ class ReportService
         foreach ($categories as $category) {
             $maleCount = $children->where('sex', 'male')->filter(function ($child) use ($statusField, $category) {
                 $measurement = $child->measurements->first();
-                return $measurement && $measurement->$statusField === $category;
+
+                return $measurement && $category === $measurement->$statusField;
             })->count();
 
             $femaleCount = $children->where('sex', 'female')->filter(function ($child) use ($statusField, $category) {
                 $measurement = $child->measurements->first();
-                return $measurement && $measurement->$statusField === $category;
+
+                return $measurement && $category === $measurement->$statusField;
             })->count();
 
             $result[$category] = [
@@ -538,7 +540,7 @@ class ReportService
                     : null,
             ];
         })->sortBy([
-            fn($a, $b) => ($a['muac_cm'] ?? 999) <=> ($b['muac_cm'] ?? 999),
+            fn ($a, $b) => ($a['muac_cm'] ?? 999) <=> ($b['muac_cm'] ?? 999),
         ])->values();
     }
 
@@ -574,7 +576,9 @@ class ReportService
 
         foreach ($children as $child) {
             $measurement = $child->measurements->first();
-            if (!$measurement) continue;
+            if (! $measurement) {
+                continue;
+            }
 
             $record = [
                 'id' => $child->id,

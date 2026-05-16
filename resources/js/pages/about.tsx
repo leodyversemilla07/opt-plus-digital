@@ -177,7 +177,11 @@ export default function About({
                             Join the effort to improve child nutrition
                             monitoring in your community.
                         </p>
-                        <Button size="lg" className="px-8" render={<Link href={login()} />}>
+                        <Button
+                            size="lg"
+                            className="px-8"
+                            render={<Link href={login()} />}
+                        >
                             Get Started
                         </Button>
                     </div>

@@ -198,11 +198,13 @@ export default function UserShow({ user, permissions }: UserShowProps) {
                                 variant={
                                     user.is_active ? 'destructive' : 'default'
                                 }
-                                render={<Link
-                                    href={`/users/${user.id}/toggle-status`}
-                                    method="post"
-                                    as="button"
-                                />}
+                                render={
+                                    <Link
+                                        href={`/users/${user.id}/toggle-status`}
+                                        method="post"
+                                        as="button"
+                                    />
+                                }
                             >
                                 {user.is_active
                                     ? 'Deactivate Account'

@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Barangay;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 test('barangay has fillable attributes', function () {
     $fillable = [
@@ -30,7 +31,7 @@ test('barangay uses uuid for primary key', function () {
 
 test('barangay has many children', function () {
     $barangay = new Barangay;
-    expect($barangay->children())->toBeInstanceOf(Illuminate\Database\Eloquent\Relations\HasMany::class);
+    expect($barangay->children())->toBeInstanceOf(HasMany::class);
 });
 
 test('barangay full name includes municipality and province', function () {

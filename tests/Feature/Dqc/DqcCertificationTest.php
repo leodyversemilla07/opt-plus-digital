@@ -1,13 +1,14 @@
 <?php
 
-use App\Models\Child;
+use App\Models\AuditLog;
 use App\Models\Measurement;
 use App\Models\User;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
+use Spatie\Permission\PermissionRegistrar;
 
 beforeEach(function () {
-    app(\Spatie\Permission\PermissionRegistrar::class)->forgetCachedPermissions();
+    app(PermissionRegistrar::class)->forgetCachedPermissions();
 
     Permission::firstOrCreate(['name' => 'view analytics', 'guard_name' => 'web']);
     Permission::firstOrCreate(['name' => 'view reports', 'guard_name' => 'web']);
@@ -16,7 +17,7 @@ beforeEach(function () {
     Role::findOrCreate('admin')->givePermissionTo(Permission::all());
 
     // Clean up audit log side effects
-    \App\Models\AuditLog::truncate();
+    AuditLog::truncate();
 });
 
 test('guests cannot access DQC page', function () {
@@ -120,7 +121,7 @@ test('certification creates audit log entry', function () {
         ->actingAs($user)
         ->post(route('dqc.measurements.certify', $measurement));
 
-    $log = \App\Models\AuditLog::where('action', 'dqc_certified')
+    $log = AuditLog::where('action', 'dqc_certified')
         ->where('auditable_id', $measurement->id)
         ->first();
 
@@ -138,7 +139,7 @@ test('rejection creates audit log entry', function () {
         ->actingAs($user)
         ->post(route('dqc.measurements.reject', $measurement));
 
-    $log = \App\Models\AuditLog::where('action', 'dqc_rejected')
+    $log = AuditLog::where('action', 'dqc_rejected')
         ->where('auditable_id', $measurement->id)
         ->first();
 

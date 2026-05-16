@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Factories\OptSessionFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -11,7 +12,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class OptSession extends Model
 {
-    /** @use HasFactory<\Database\Factories\OptSessionFactory> */
+    /** @use HasFactory<OptSessionFactory> */
     use HasFactory, HasUuids, SoftDeletes;
 
     protected $fillable = [
@@ -92,11 +93,11 @@ class OptSession extends Model
     public function updateStatistics(): void
     {
         $this->measured_children = $this->measurements()->count();
-        
+
         if ($this->target_children > 0) {
             $this->coverage_percentage = ($this->measured_children / $this->target_children) * 100;
         }
-        
+
         $this->save();
     }
 
@@ -106,9 +107,9 @@ class OptSession extends Model
     public function getFormattedPeriodAttribute(): string
     {
         if ($this->start_date && $this->end_date) {
-            return $this->start_date->format('M d') . ' - ' . $this->end_date->format('M d, Y');
+            return $this->start_date->format('M d').' - '.$this->end_date->format('M d, Y');
         }
-        
+
         return $this->session_date->format('F Y');
     }
 

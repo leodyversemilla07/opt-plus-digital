@@ -1,7 +1,4 @@
-import {
-    Badge,
-    type BadgeProps,
-} from '@/components/ui/badge';
+import { Badge, type BadgeProps } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
     Card,
@@ -79,7 +76,7 @@ function JsonDiffViewer({
 }) {
     if (!oldValues && !newValues) {
         return (
-            <p className="text-sm italic text-muted-foreground">
+            <p className="text-sm text-muted-foreground italic">
                 No data recorded
             </p>
         );
@@ -97,10 +94,10 @@ function JsonDiffViewer({
             <table className="w-full text-sm">
                 <thead>
                     <tr className="border-b text-left">
-                        <th className="pb-2 pr-4 font-medium text-muted-foreground">
+                        <th className="pr-4 pb-2 font-medium text-muted-foreground">
                             Field
                         </th>
-                        <th className="pb-2 pr-4 font-medium text-muted-foreground">
+                        <th className="pr-4 pb-2 font-medium text-muted-foreground">
                             Old Value
                         </th>
                         <th className="pb-2 font-medium text-muted-foreground">
@@ -115,7 +112,8 @@ function JsonDiffViewer({
                             const oldVal = oldValues?.[key];
                             const newVal = newValues?.[key];
                             const changed =
-                                JSON.stringify(oldVal) !== JSON.stringify(newVal);
+                                JSON.stringify(oldVal) !==
+                                JSON.stringify(newVal);
 
                             return (
                                 <tr
@@ -130,12 +128,12 @@ function JsonDiffViewer({
                                         {key}
                                     </td>
                                     <td className="py-2 pr-4">
-                                        <code className="whitespace-pre-wrap break-all rounded bg-muted px-1.5 py-0.5 text-xs">
+                                        <code className="rounded bg-muted px-1.5 py-0.5 text-xs break-all whitespace-pre-wrap">
                                             {formatValue(oldVal)}
                                         </code>
                                     </td>
                                     <td className="py-2">
-                                        <code className="whitespace-pre-wrap break-all rounded bg-muted px-1.5 py-0.5 text-xs">
+                                        <code className="rounded bg-muted px-1.5 py-0.5 text-xs break-all whitespace-pre-wrap">
                                             {formatValue(newVal)}
                                         </code>
                                     </td>
@@ -190,7 +188,10 @@ export default function AuditLogShow({ log, auditable }: Props) {
                                     Logged action details
                                 </CardDescription>
                             </div>
-                            <Badge variant={actionBadgeVariant(log.action)} className="text-sm">
+                            <Badge
+                                variant={actionBadgeVariant(log.action)}
+                                className="text-sm"
+                            >
                                 {log.action}
                             </Badge>
                         </div>
@@ -205,7 +206,7 @@ export default function AuditLogShow({ log, auditable }: Props) {
                                     </p>
                                     <p className="text-sm font-medium">
                                         {log.user?.name ?? (
-                                            <span className="italic text-muted-foreground">
+                                            <span className="text-muted-foreground italic">
                                                 System
                                             </span>
                                         )}
@@ -274,7 +275,7 @@ export default function AuditLogShow({ log, auditable }: Props) {
                                     <p className="text-xs font-medium text-muted-foreground">
                                         User Agent
                                     </p>
-                                    <p className="truncate text-sm font-mono">
+                                    <p className="truncate font-mono text-sm">
                                         {log.user_agent ?? '—'}
                                     </p>
                                 </div>

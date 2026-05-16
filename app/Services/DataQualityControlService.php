@@ -42,15 +42,15 @@ class DataQualityControlService
         return [
             'weight' => [
                 'counts' => $weightDigits,
-                'percentages' => array_map(fn($c) => round(($c / $total) * 100, 1), $weightDigits),
+                'percentages' => array_map(fn ($c) => round(($c / $total) * 100, 1), $weightDigits),
                 'has_preference' => $this->hasDigitPreference($weightDigits, $total),
-                'max_percentage' => max(array_map(fn($c) => round(($c / $total) * 100, 1), $weightDigits)),
+                'max_percentage' => max(array_map(fn ($c) => round(($c / $total) * 100, 1), $weightDigits)),
             ],
             'height' => [
                 'counts' => $heightDigits,
-                'percentages' => array_map(fn($c) => round(($c / $total) * 100, 1), $heightDigits),
+                'percentages' => array_map(fn ($c) => round(($c / $total) * 100, 1), $heightDigits),
                 'has_preference' => $this->hasDigitPreference($heightDigits, $total),
-                'max_percentage' => max(array_map(fn($c) => round(($c / $total) * 100, 1), $heightDigits)),
+                'max_percentage' => max(array_map(fn ($c) => round(($c / $total) * 100, 1), $heightDigits)),
             ],
         ];
     }
@@ -65,6 +65,7 @@ class DataQualityControlService
                 return true;
             }
         }
+
         return false;
     }
 
@@ -97,14 +98,14 @@ class DataQualityControlService
                     $subQ->whereNotNull('weight_for_age_zscore')
                         ->whereRaw('ABS(weight_for_age_zscore) > 6');
                 })
-                ->orWhere(function ($subQ) {
-                    $subQ->whereNotNull('height_for_age_zscore')
-                        ->whereRaw('ABS(height_for_age_zscore) > 6');
-                })
-                ->orWhere(function ($subQ) {
-                    $subQ->whereNotNull('weight_for_height_zscore')
-                        ->whereRaw('ABS(weight_for_height_zscore) > 6');
-                });
+                    ->orWhere(function ($subQ) {
+                        $subQ->whereNotNull('height_for_age_zscore')
+                            ->whereRaw('ABS(height_for_age_zscore) > 6');
+                    })
+                    ->orWhere(function ($subQ) {
+                        $subQ->whereNotNull('weight_for_height_zscore')
+                            ->whereRaw('ABS(weight_for_height_zscore) > 6');
+                    });
             });
 
         if ($barangayId) {
@@ -161,7 +162,7 @@ class DataQualityControlService
         // Combine and deduplicate by child_id
         $children = collect($mamSam)
             ->concat($stunted)
-            ->keyBy(fn($m) => $m->child_id)
+            ->keyBy(fn ($m) => $m->child_id)
             ->values()
             ->take($limit)
             ->map(function ($measurement) {

@@ -242,7 +242,9 @@ export default function Index({ children, filters, barangays }: Props) {
                         <div>
                             <Select
                                 value={barangayId}
-                                onValueChange={(value) => setBarangayId(value ?? '')}
+                                onValueChange={(value) =>
+                                    setBarangayId(value ?? '')
+                                }
                             >
                                 <SelectTrigger>
                                     <SelectValue placeholder="All Barangays" />
@@ -265,7 +267,9 @@ export default function Index({ children, filters, barangays }: Props) {
                         <div>
                             <Select
                                 value={isIndigenous}
-                                onValueChange={(value) => setIsIndigenous(value ?? '')}
+                                onValueChange={(value) =>
+                                    setIsIndigenous(value ?? '')
+                                }
                             >
                                 <SelectTrigger>
                                     <SelectValue placeholder="Indigenous People" />

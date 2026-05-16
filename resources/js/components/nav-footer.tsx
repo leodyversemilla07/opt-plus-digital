@@ -27,7 +27,13 @@ export function NavFooter({
                     {items.map((item) => (
                         <SidebarMenuItem key={item.title}>
                             <SidebarMenuButton
-                                render={<a href={resolveUrl(item.href)} target="_blank" rel="noopener noreferrer" />}
+                                render={
+                                    <a
+                                        href={resolveUrl(item.href)}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    />
+                                }
                                 className="text-neutral-600 hover:text-neutral-800 dark:text-neutral-300 dark:hover:text-neutral-100"
                             >
                                 {item.icon && (

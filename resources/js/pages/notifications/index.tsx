@@ -1,15 +1,12 @@
-import { Bell, CheckCheck, ChevronRight } from 'lucide-react';
-import { Head, Link, router } from '@inertiajs/react';
-import AppLayout from '@/layouts/app-layout';
-import { type BreadcrumbItem } from '@/types';
-import { Button } from '@/components/ui/button';
-import {
-    Card,
-    CardContent,
-} from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import AppLayout from '@/layouts/app-layout';
 import { cn } from '@/lib/utils';
 import * as notifications from '@/routes/notifications/index';
+import { type BreadcrumbItem } from '@/types';
+import { Head, Link, router } from '@inertiajs/react';
+import { Bell, CheckCheck, ChevronRight } from 'lucide-react';
 
 interface NotificationData {
     measurement_id: string;
@@ -86,7 +83,10 @@ function getNotificationDescription(data: NotificationData): string {
     return 'New notification';
 }
 
-export default function NotificationsIndex({ notifications: notificationsData, unreadCount }: Props) {
+export default function NotificationsIndex({
+    notifications: notificationsData,
+    unreadCount,
+}: Props) {
     const markAsRead = (id: string) => {
         router.post(notifications.markAsRead.url({ id }));
     };
@@ -102,7 +102,7 @@ export default function NotificationsIndex({ notifications: notificationsData, u
             <div className="flex flex-col gap-6 p-6 pb-20 md:pb-6">
                 <div className="flex items-center justify-between">
                     <div>
-                        <h1 className="text-2xl font-bold tracking-tight text-foreground flex items-center gap-2">
+                        <h1 className="flex items-center gap-2 text-2xl font-bold tracking-tight text-foreground">
                             <Bell className="h-6 w-6" />
                             Notifications
                         </h1>
@@ -133,7 +133,8 @@ export default function NotificationsIndex({ notifications: notificationsData, u
                                 No notifications yet
                             </p>
                             <p className="text-sm text-muted-foreground">
-                                You'll be notified here when severe malnutrition cases are detected.
+                                You'll be notified here when severe malnutrition
+                                cases are detected.
                             </p>
                         </CardContent>
                     </Card>
@@ -144,7 +145,8 @@ export default function NotificationsIndex({ notifications: notificationsData, u
                                 key={notification.id}
                                 className={cn(
                                     'transition-colors hover:bg-accent/50',
-                                    !notification.read_at && 'border-l-4 border-l-destructive bg-destructive/5',
+                                    !notification.read_at &&
+                                        'border-l-4 border-l-destructive bg-destructive/5',
                                 )}
                             >
                                 <CardContent className="flex items-start gap-4 p-4">
@@ -155,15 +157,23 @@ export default function NotificationsIndex({ notifications: notificationsData, u
                                     <div className="min-w-0 flex-1">
                                         <div className="flex items-start justify-between gap-2">
                                             <div>
-                                                <p className={cn(
-                                                    'text-sm font-medium',
-                                                    !notification.read_at && 'text-foreground',
-                                                    notification.read_at && 'text-muted-foreground',
-                                                )}>
-                                                    {getNotificationTitle(notification.data)}
+                                                <p
+                                                    className={cn(
+                                                        'text-sm font-medium',
+                                                        !notification.read_at &&
+                                                            'text-foreground',
+                                                        notification.read_at &&
+                                                            'text-muted-foreground',
+                                                    )}
+                                                >
+                                                    {getNotificationTitle(
+                                                        notification.data,
+                                                    )}
                                                 </p>
                                                 <p className="mt-1 text-sm text-muted-foreground">
-                                                    {getNotificationDescription(notification.data)}
+                                                    {getNotificationDescription(
+                                                        notification.data,
+                                                    )}
                                                 </p>
                                             </div>
 
@@ -171,7 +181,9 @@ export default function NotificationsIndex({ notifications: notificationsData, u
                                                 variant="outline"
                                                 className="flex-shrink-0 text-xs text-muted-foreground"
                                             >
-                                                {timeAgo(notification.created_at)}
+                                                {timeAgo(
+                                                    notification.created_at,
+                                                )}
                                             </Badge>
                                         </div>
 
@@ -181,15 +193,25 @@ export default function NotificationsIndex({ notifications: notificationsData, u
                                                     variant="link"
                                                     size="sm"
                                                     className="h-auto p-0 text-xs"
-                                                    render={<Link
-                                                        href={notifications.redirect.url({ id: notification.id })}
-                                                        onClick={() => {
-                                                            if (!notification.read_at) {
-                                                                markAsRead(notification.id);
-                                                            }
-                                                        }}
-                                                        className="flex items-center gap-1"
-                                                    />}
+                                                    render={
+                                                        <Link
+                                                            href={notifications.redirect.url(
+                                                                {
+                                                                    id: notification.id,
+                                                                },
+                                                            )}
+                                                            onClick={() => {
+                                                                if (
+                                                                    !notification.read_at
+                                                                ) {
+                                                                    markAsRead(
+                                                                        notification.id,
+                                                                    );
+                                                                }
+                                                            }}
+                                                            className="flex items-center gap-1"
+                                                        />
+                                                    }
                                                 >
                                                     View Child Profile
                                                     <ChevronRight className="h-3 w-3" />
@@ -201,7 +223,11 @@ export default function NotificationsIndex({ notifications: notificationsData, u
                                                     variant="ghost"
                                                     size="sm"
                                                     className="h-auto p-0 text-xs text-muted-foreground hover:text-foreground"
-                                                    onClick={() => markAsRead(notification.id)}
+                                                    onClick={() =>
+                                                        markAsRead(
+                                                            notification.id,
+                                                        )
+                                                    }
                                                 >
                                                     Mark as read
                                                 </Button>
@@ -224,7 +250,8 @@ export default function NotificationsIndex({ notifications: notificationsData, u
                                     </Link>
                                 )}
                                 <span className="text-sm text-muted-foreground">
-                                    Page {notificationsData.current_page} of {notificationsData.last_page}
+                                    Page {notificationsData.current_page} of{' '}
+                                    {notificationsData.last_page}
                                 </span>
                                 {notificationsData.next_page_url && (
                                     <Link

@@ -163,7 +163,11 @@ export default function Features({
                             Log in to start using OPT Plus Digital for your
                             barangay.
                         </p>
-                        <Button size="lg" className="px-8" render={<Link href={login()} />}>
+                        <Button
+                            size="lg"
+                            className="px-8"
+                            render={<Link href={login()} />}
+                        >
                             Get Started
                         </Button>
                     </div>

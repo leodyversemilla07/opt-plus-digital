@@ -33,13 +33,33 @@ export function UserMenuContent({ user }: UserMenuContentProps) {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-                <DropdownMenuItem render={<Link className="block w-full" href={edit()} as="button" prefetch onClick={cleanup} />}>
+                <DropdownMenuItem
+                    render={
+                        <Link
+                            className="block w-full"
+                            href={edit()}
+                            as="button"
+                            prefetch
+                            onClick={cleanup}
+                        />
+                    }
+                >
                     <Settings className="mr-2" />
                     Settings
                 </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem render={<Link className="block w-full" href={logout()} as="button" onClick={handleLogout} data-test="logout-button" />}>
+            <DropdownMenuItem
+                render={
+                    <Link
+                        className="block w-full"
+                        href={logout()}
+                        as="button"
+                        onClick={handleLogout}
+                        data-test="logout-button"
+                    />
+                }
+            >
                 <LogOut className="mr-2" />
                 Log out
             </DropdownMenuItem>

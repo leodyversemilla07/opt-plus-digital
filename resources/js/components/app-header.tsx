@@ -195,10 +195,7 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                             </Button>
                             <div className="hidden lg:flex">
                                 {rightNavItems.map((item) => (
-                                    <TooltipProvider
-                                        key={item.title}
-
-                                    >
+                                    <TooltipProvider key={item.title}>
                                         <Tooltip>
                                             <TooltipTrigger>
                                                 <a

@@ -3,11 +3,12 @@
 namespace Database\Factories;
 
 use App\Models\Barangay;
+use App\Models\Child;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Child>
+ * @extends Factory<Child>
  */
 class ChildFactory extends Factory
 {

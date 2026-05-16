@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Notifications\SevereMalnutritionAlert;
 use App\Services\WHOCalculatorService;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Notification;
 
 class MeasurementObserver
 {
@@ -179,7 +180,7 @@ class MeasurementObserver
         }
 
         if ($recipients->isNotEmpty()) {
-            \Illuminate\Support\Facades\Notification::send($recipients, new SevereMalnutritionAlert($measurement));
+            Notification::send($recipients, new SevereMalnutritionAlert($measurement));
         }
     }
 }

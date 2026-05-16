@@ -2,6 +2,7 @@
 
 use App\Models\AuditLog;
 use App\Models\User;
+use Spatie\Permission\PermissionRegistrar;
 
 /**
  * Test that the Auditable trait automatically logs model events.
@@ -12,7 +13,7 @@ use App\Models\User;
 
 // We'll apply the trait to User — let's verify it works
 beforeEach(function () {
-    app(\Spatie\Permission\PermissionRegistrar::class)->forgetCachedPermissions();
+    app(PermissionRegistrar::class)->forgetCachedPermissions();
 });
 
 test('auditable trait logs created event', function () {

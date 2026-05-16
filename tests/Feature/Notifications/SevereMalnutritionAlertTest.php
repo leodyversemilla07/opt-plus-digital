@@ -5,6 +5,7 @@ use App\Models\Child;
 use App\Models\Measurement;
 use App\Models\User;
 use App\Notifications\SevereMalnutritionAlert;
+use Database\Seeders\RolePermissionSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Notification;
 
@@ -12,7 +13,7 @@ uses(RefreshDatabase::class);
 
 // Test data setup - shared across all tests
 beforeEach(function () {
-    $this->seed(\Database\Seeders\RolePermissionSeeder::class);
+    $this->seed(RolePermissionSeeder::class);
 
     // Create a barangay and users
     $this->barangay = Barangay::factory()->create();

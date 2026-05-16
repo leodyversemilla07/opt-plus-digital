@@ -17,10 +17,13 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 class ExcelImportService
 {
     private const HEADER_ROW = 6;
+
     private const DATA_START_ROW = 7;
 
     private WHOCalculatorService $calculator;
+
     private array $importErrors = [];
+
     private array $importWarnings = [];
 
     public function __construct(WHOCalculatorService $calculator)
@@ -42,11 +45,11 @@ class ExcelImportService
 
         try {
             $spreadsheet = IOFactory::load($filePath);
-            
+
             // Try to find the data sheet (could be "OPT Plus Form 1A" or "Nut_StatusTool")
             $worksheet = $this->findDataSheet($spreadsheet);
-            
-            if (!$worksheet) {
+
+            if (! $worksheet) {
                 throw new \Exception('Could not find data sheet. Expected "OPT Plus Form 1A" or "Nut_StatusTool"');
             }
 
@@ -57,7 +60,7 @@ class ExcelImportService
             $records = $this->parseRecords($worksheet, $metadata);
 
             // Import records in a transaction
-            $result = DB::transaction(function () use ($records, $barangay, $importedBy, $optSessionId, $metadata) {
+            $result = DB::transaction(function () use ($records, $barangay, $importedBy, $optSessionId) {
                 return $this->importRecords($records, $barangay, $importedBy, $optSessionId);
             });
 
@@ -121,11 +124,12 @@ class ExcelImportService
 
         while ($consecutiveEmptyRows < 5) {
             $sequenceNo = $worksheet->getCell("B{$row}")->getValue();
-            
+
             // Check for empty row
             if (empty($sequenceNo) && empty($worksheet->getCell("E{$row}")->getValue())) {
                 $consecutiveEmptyRows++;
                 $row++;
+
                 continue;
             }
 
@@ -133,12 +137,12 @@ class ExcelImportService
 
             try {
                 $record = $this->parseRow($worksheet, $row, $metadata);
-                
+
                 if ($record) {
                     // Validate record
                     $validationErrors = $this->validateRecord($record, $row);
-                    
-                    if (!empty($validationErrors)) {
+
+                    if (! empty($validationErrors)) {
                         foreach ($validationErrors as $error) {
                             $this->importErrors[] = [
                                 'row' => $row,
@@ -170,10 +174,10 @@ class ExcelImportService
      */
     private function parseRow(Worksheet $worksheet, int $row, array $metadata): ?array
     {
-        $getValue = fn($col) => $worksheet->getCell("{$col}{$row}")->getValue();
+        $getValue = fn ($col) => $worksheet->getCell("{$col}{$row}")->getValue();
 
         $fullName = trim($getValue('E') ?? '');
-        
+
         if (empty($fullName)) {
             return null;
         }
@@ -183,7 +187,7 @@ class ExcelImportService
         $dateOfBirth = $this->parseDate($getValue('H'));
         $measurementDate = $this->parseDate($getValue('I')) ?? $this->parseDate($metadata['measurement_month']);
 
-        if (!$dateOfBirth || !$measurementDate) {
+        if (! $dateOfBirth || ! $measurementDate) {
             return null;
         }
 
@@ -217,6 +221,7 @@ class ExcelImportService
             $parts = explode(',', $fullName, 2);
             $lastName = trim($parts[0] ?? '');
             $firstName = trim($parts[1] ?? '');
+
             return [$lastName, $firstName];
         }
 
@@ -225,6 +230,7 @@ class ExcelImportService
         if (count($parts) >= 2) {
             $lastName = array_pop($parts);
             $firstName = implode(' ', $parts);
+
             return [$lastName, $firstName];
         }
 
@@ -249,7 +255,7 @@ class ExcelImportService
             }
         }
 
-        if (is_string($value) && !empty($value)) {
+        if (is_string($value) && ! empty($value)) {
             try {
                 return Carbon::parse($value);
             } catch (\Exception $e) {
@@ -266,7 +272,7 @@ class ExcelImportService
     private function parseSex(?string $value): string
     {
         $value = strtoupper(trim($value ?? ''));
-        
+
         return match ($value) {
             'M', 'MALE' => 'male',
             'F', 'FEMALE' => 'female',
@@ -292,7 +298,8 @@ class ExcelImportService
     private function parseEdema(?string $value): bool
     {
         $value = strtoupper(trim($value ?? ''));
-        return !in_array($value, ['', 'NONE', 'NO', 'N']);
+
+        return ! in_array($value, ['', 'NONE', 'NO', 'N']);
     }
 
     /**
@@ -301,13 +308,13 @@ class ExcelImportService
     private function parseEdemaGrade(?string $value): ?string
     {
         $value = strtoupper(trim($value ?? ''));
-        
+
         if (in_array($value, ['+1', '+2', '+3'])) {
             return $value;
         }
 
         if (in_array($value, ['1', '2', '3'])) {
-            return '+' . $value;
+            return '+'.$value;
         }
 
         return null;
@@ -324,17 +331,17 @@ class ExcelImportService
             $errors[] = ['field' => 'name', 'message' => 'Child name is required'];
         }
 
-        if (!$record['date_of_birth']) {
+        if (! $record['date_of_birth']) {
             $errors[] = ['field' => 'date_of_birth', 'message' => 'Date of birth is required'];
         }
 
         if ($record['date_of_birth'] && $record['measurement_date']) {
             $ageInDays = $record['date_of_birth']->diffInDays($record['measurement_date']);
-            
+
             if ($ageInDays < 0) {
                 $errors[] = ['field' => 'measurement_date', 'message' => 'Measurement date cannot be before birth date'];
             }
-            
+
             if ($ageInDays > 1826) { // > 60 months
                 $this->importWarnings[] = [
                     'row' => $row,
@@ -368,7 +375,7 @@ class ExcelImportService
         User $importedBy,
         ?string $optSessionId
     ): ImportResult {
-        $result = new ImportResult();
+        $result = new ImportResult;
 
         foreach ($records as $record) {
             try {
@@ -386,6 +393,7 @@ class ExcelImportService
                         'reason' => 'Measurement already exists for this date',
                         'child' => $child->full_name,
                     ];
+
                     continue;
                 }
 
@@ -426,9 +434,10 @@ class ExcelImportService
 
         if ($child) {
             // Update address if changed
-            if (!empty($record['address']) && $child->address !== $record['address']) {
+            if (! empty($record['address']) && $child->address !== $record['address']) {
                 $child->update(['address' => $record['address']]);
             }
+
             return $child;
         }
 
@@ -535,10 +544,15 @@ class ExcelImportService
 class ImportResult
 {
     public array $imported = [];
+
     public array $updated = [];
+
     public array $skipped = [];
+
     public array $errors = [];
+
     public array $warnings = [];
+
     public array $metadata = [];
 
     public function getSummary(): array
