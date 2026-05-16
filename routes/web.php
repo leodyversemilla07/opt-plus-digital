@@ -8,6 +8,7 @@ use App\Http\Controllers\ImportController;
 use App\Http\Controllers\MassMailController;
 use App\Http\Controllers\MeasurementController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\OfflineSyncController;
 use App\Http\Controllers\OptSessionController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\UserController;
@@ -168,6 +169,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::post('/', [MassMailController::class, 'store'])->name('store');
             Route::get('{mass_mail}', [MassMailController::class, 'show'])->name('show');
         });
+
+    // Offline Sync
+    Route::post('api/measurements/sync', [OfflineSyncController::class, 'syncMeasurements'])
+        ->name('api.measurements.sync');
 });
 
 require __DIR__.'/settings.php';
