@@ -93,6 +93,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('/template', [ImportController::class, 'downloadTemplate'])->name('template');
         });
 
+    // Batch Operations (MUST come before resource route to avoid {opt_session} collision)
+    Route::post('opt-sessions/batch/start', [OptSessionController::class, 'batchStart'])
+        ->middleware('permission:create children')
+        ->name('opt-sessions.batch.start');
+    Route::post('opt-sessions/batch/complete', [OptSessionController::class, 'batchComplete'])
+        ->middleware('permission:create children')
+        ->name('opt-sessions.batch.complete');
+    Route::post('opt-sessions/batch/cancel', [OptSessionController::class, 'batchCancel'])
+        ->middleware('permission:create children')
+        ->name('opt-sessions.batch.cancel');
+
     // OPT Sessions
     Route::resource('opt-sessions', OptSessionController::class)
         ->middleware('permission:create children');

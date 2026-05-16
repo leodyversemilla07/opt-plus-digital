@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Barangay;
 use App\Models\Child;
 use App\Models\OptSession;
+use App\Services\AuditLogService;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
@@ -247,6 +248,130 @@ class OptSessionController extends Controller
         $optSession->update(['status' => 'cancelled']);
 
         return back()->with('success', 'OPT session cancelled.');
+    }
+
+    /**
+     * Batch start multiple scheduled sessions.
+     */
+    public function batchStart(Request $request)
+    {
+        $validated = $request->validate([
+            'ids' => ['required', 'array', 'min:1'],
+            'ids.*' => ['required', 'string', 'exists:opt_sessions,id'],
+        ]);
+
+        $user = $request->user();
+
+        $sessions = OptSession::whereIn('id', $validated['ids'])
+            ->where('status', 'scheduled')
+            ->get();
+
+        if ($sessions->isEmpty()) {
+            return back()->with('error', 'No scheduled sessions found to start.');
+        }
+
+        $count = 0;
+        foreach ($sessions as $session) {
+            if ($this->canAccessBarangay($user, $session->barangay_id)) {
+                $session->update([
+                    'status' => 'in_progress',
+                    'start_date' => now(),
+                ]);
+                AuditLogService::logAction('batch_started', $session, user: $user);
+                $count++;
+            }
+        }
+
+        $skipped = count($validated['ids']) - $count;
+
+        $message = "{$count} session(s) started successfully.";
+        if ($skipped > 0) {
+            $message .= " {$skipped} session(s) skipped (not accessible or not in scheduled status).";
+        }
+
+        return back()->with('success', $message);
+    }
+
+    /**
+     * Batch complete multiple in-progress sessions.
+     */
+    public function batchComplete(Request $request)
+    {
+        $validated = $request->validate([
+            'ids' => ['required', 'array', 'min:1'],
+            'ids.*' => ['required', 'string', 'exists:opt_sessions,id'],
+        ]);
+
+        $user = $request->user();
+
+        $sessions = OptSession::whereIn('id', $validated['ids'])
+            ->where('status', 'in_progress')
+            ->get();
+
+        if ($sessions->isEmpty()) {
+            return back()->with('error', 'No in-progress sessions found to complete.');
+        }
+
+        $count = 0;
+        foreach ($sessions as $session) {
+            if ($this->canAccessBarangay($user, $session->barangay_id)) {
+                $session->update([
+                    'status' => 'completed',
+                    'end_date' => now(),
+                ]);
+                $session->updateStatistics();
+                AuditLogService::logAction('batch_completed', $session, user: $user);
+                $count++;
+            }
+        }
+
+        $skipped = count($validated['ids']) - $count;
+
+        $message = "{$count} session(s) completed successfully.";
+        if ($skipped > 0) {
+            $message .= " {$skipped} session(s) skipped.";
+        }
+
+        return back()->with('success', $message);
+    }
+
+    /**
+     * Batch cancel multiple sessions.
+     */
+    public function batchCancel(Request $request)
+    {
+        $validated = $request->validate([
+            'ids' => ['required', 'array', 'min:1'],
+            'ids.*' => ['required', 'string', 'exists:opt_sessions,id'],
+        ]);
+
+        $user = $request->user();
+
+        $sessions = OptSession::whereIn('id', $validated['ids'])
+            ->where('status', '!=', 'completed')
+            ->get();
+
+        if ($sessions->isEmpty()) {
+            return back()->with('error', 'No eligible sessions found to cancel (completed sessions cannot be cancelled).');
+        }
+
+        $count = 0;
+        foreach ($sessions as $session) {
+            if ($this->canAccessBarangay($user, $session->barangay_id)) {
+                $session->update(['status' => 'cancelled']);
+                AuditLogService::logAction('batch_cancelled', $session, user: $user);
+                $count++;
+            }
+        }
+
+        $skipped = count($validated['ids']) - $count;
+
+        $message = "{$count} session(s) cancelled successfully.";
+        if ($skipped > 0) {
+            $message .= " {$skipped} session(s) skipped (already completed or not accessible).";
+        }
+
+        return back()->with('success', $message);
     }
 
     /**
