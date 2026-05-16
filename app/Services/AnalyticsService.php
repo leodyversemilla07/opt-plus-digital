@@ -11,19 +11,9 @@ use Illuminate\Support\Facades\DB;
 
 class AnalyticsService
 {
-    /**
-     * Cache TTL in seconds (10 minutes)
-     */
     private const STATS_CACHE_TTL = 600;
-
-    /**
-     * Cache TTL for barangay analytics (30 minutes)
-     */
     private const BARANGAY_CACHE_TTL = 1800;
 
-    /**
-     * Get overall system statistics (cached)
-     */
     public function getOverallStatistics(): array
     {
         return Cache::remember('analytics:overall_stats', self::STATS_CACHE_TTL, function () {
@@ -38,9 +28,6 @@ class AnalyticsService
         });
     }
 
-    /**
-     * Get nutritional status breakdown (cached)
-     */
     public function getNutritionalStatusBreakdown(?string $barangayId = null): array
     {
         $cacheKey = $barangayId
@@ -73,196 +60,177 @@ class AnalyticsService
         });
     }
 
-    /**
-     * Get latest measurements with classification
-     */
     public function getLatestMeasurementsStatistics(?string $barangayId = null): array
     {
-        $latestMeasurements = Measurement::query()
-            ->select('child_id', DB::raw('MAX(measurement_date) as latest_date'))
-            ->when($barangayId, function ($query, $barangayId) {
-                $query->whereHas('child', function ($q) use ($barangayId) {
-                    $q->where('barangay_id', $barangayId);
-                });
-            })
-            ->groupBy('child_id')
-            ->get();
-
-        $childIds = $latestMeasurements->pluck('child_id');
-
-        $stats = [];
-        foreach ($latestMeasurements as $latest) {
-            $measurement = Measurement::where('child_id', $latest->child_id)
-                ->where('measurement_date', $latest->latest_date)
-                ->first();
-
-            if ($measurement && $measurement->opt_classification) {
-                $classification = $measurement->opt_classification;
-                $stats[$classification] = ($stats[$classification] ?? 0) + 1;
-            }
-        }
-
-        return [
-            'normal' => $stats['normal'] ?? 0,
-            'mam' => $stats['mam'] ?? 0,
-            'sam' => $stats['sam'] ?? 0,
-            'overweight' => $stats['overweight'] ?? 0,
-            'total' => array_sum($stats),
-        ];
-    }
-
-    /**
-     * Get high-risk children (SAM/MAM) - cached
-     */
-    public function getHighRiskChildren(?string $barangayId = null, int $limit = 10): array
-    {
         $cacheKey = $barangayId
-            ? "analytics:high_risk:barangay:{$barangayId}:limit:{$limit}"
-            : "analytics:high_risk:all:limit:{$limit}";
+            ? "analytics:latest_measurements:barangay:{$barangayId}"
+            : 'analytics:latest_measurements:all';
 
         $cacheTtl = $barangayId ? self::BARANGAY_CACHE_TTL : self::STATS_CACHE_TTL;
 
-        return Cache::remember($cacheKey, $cacheTtl, function () use ($barangayId, $limit) {
-            $latestMeasurements = Measurement::query()
-                ->select('child_id', DB::raw('MAX(measurement_date) as latest_date'))
-                ->when($barangayId, function ($query, $barangayId) {
-                    $query->whereHas('child', function ($q) use ($barangayId) {
-                        $q->where('barangay_id', $barangayId);
-                    });
+        return Cache::remember($cacheKey, $cacheTtl, function () use ($barangayId) {
+            $latestSub = Measurement::query()
+                ->select('child_id', DB::raw('MAX(measurement_date) as max_date'))
+                ->when($barangayId, fn ($q) => $q->whereHas('child', fn ($q2) => $q2->where('barangay_id', $barangayId)))
+                ->groupBy('child_id');
+
+            $latest = Measurement::query()
+                ->select('measurements.*')
+                ->joinSub($latestSub, 'latest', function ($join) {
+                    $join->on('measurements.child_id', '=', 'latest.child_id')
+                        ->on('measurements.measurement_date', '=', 'latest.max_date');
                 })
-                ->groupBy('child_id')
+                ->whereNotNull('opt_classification')
                 ->get();
 
-            $highRiskChildren = [];
+            $total = $latest->count();
+            $classifications = $latest->groupBy('opt_classification');
 
-            foreach ($latestMeasurements as $latest) {
-                $measurement = Measurement::with(['child.barangay'])
-                    ->where('child_id', $latest->child_id)
-                    ->where('measurement_date', $latest->latest_date)
-                    ->whereIn('opt_classification', ['sam', 'mam'])
-                    ->first();
+            $result = [
+                'normal' => 0,
+                'mam' => 0,
+                'sam' => 0,
+                'overweight' => 0,
+                'total' => $total,
+            ];
 
-                if ($measurement) {
-                    $highRiskChildren[] = [
-                        'child' => $measurement->child,
-                        'measurement' => $measurement,
-                        'days_since_measurement' => now()->diffInDays($measurement->measurement_date),
-                    ];
-                }
+            foreach ($classifications as $classification => $items) {
+                $result[$classification] = $items->count();
             }
 
-            // Sort by severity (SAM first) and days since measurement
-            usort($highRiskChildren, function ($a, $b) {
-                if ($a['measurement']->opt_classification === 'sam' && $b['measurement']->opt_classification !== 'sam') {
-                    return -1;
-                }
-                if ($a['measurement']->opt_classification !== 'sam' && $b['measurement']->opt_classification === 'sam') {
-                    return 1;
-                }
-
-                return $b['days_since_measurement'] - $a['days_since_measurement'];
-            });
-
-            return array_slice($highRiskChildren, 0, $limit);
+            return $result;
         });
     }
 
-    /**
-     * Get barangay comparison data
-     */
+    public function getHighRiskChildren(?string $barangayId = null, int $limit = 10): array
+    {
+        $cacheKey = $barangayId
+            ? "analytics:high_risk:barangay:{$barangayId}:{$limit}"
+            : "analytics:high_risk:all:{$limit}";
+
+        return Cache::remember($cacheKey, self::STATS_CACHE_TTL, function () use ($barangayId, $limit) {
+            $latestSub = Measurement::query()
+                ->select('child_id', DB::raw('MAX(measurement_date) as max_date'))
+                ->when($barangayId, fn ($q) => $q->whereHas('child', fn ($q2) => $q2->where('barangay_id', $barangayId)))
+                ->groupBy('child_id');
+
+            $highRisk = Measurement::query()
+                ->select('measurements.*')
+                ->joinSub($latestSub, 'latest', function ($join) {
+                    $join->on('measurements.child_id', '=', 'latest.child_id')
+                        ->on('measurements.measurement_date', '=', 'latest.max_date');
+                })
+                ->whereIn('opt_classification', ['sam', 'mam'])
+                ->orderBy('measurements.measurement_date', 'desc')
+                ->take($limit)
+                ->get();
+
+            $results = [];
+            foreach ($highRisk as $measurement) {
+                $child = $measurement->child;
+                $child->load('barangay');
+
+                $results[] = [
+                    'child' => [
+                        'id' => (string) $child->id,
+                        'full_name' => $child->full_name,
+                        'sex' => $child->sex,
+                        'age_in_months' => $child->age_in_months,
+                        'barangay' => [
+                            'name' => $child->barangay?->name ?? 'N/A',
+                            'municipality_city' => $child->barangay?->municipality ?? 'N/A',
+                        ],
+                    ],
+                    'measurement' => [
+                        'opt_classification' => $measurement->opt_classification,
+                        'wfa_zscore' => $measurement->weight_for_age_zscore,
+                        'hfa_zscore' => $measurement->height_for_age_zscore,
+                        'wfh_zscore' => $measurement->weight_for_height_zscore,
+                        'measurement_date' => $measurement->measurement_date->toDateString(),
+                    ],
+                    'days_since_measurement' => now()->diffInDays($measurement->measurement_date),
+                ];
+            }
+
+            return $results;
+        });
+    }
+
     public function getBarangayComparison(): array
     {
-        $barangays = Barangay::with(['children.measurements'])->get();
+        return Cache::remember('analytics:barangay_comparison', self::BARANGAY_CACHE_TTL, function () {
+            $barangays = Barangay::with(['children.measurements'])->get();
 
-        $comparison = [];
+            return $barangays->map(function ($barangay) {
+                $children = $barangay->children;
+                $measurements = $children->flatMap->measurements;
 
-        foreach ($barangays as $barangay) {
-            $childIds = $barangay->children->pluck('id');
+                $latestByChild = $measurements->groupBy('child_id')->map->sortByDesc('measurement_date')->first();
+                $totalChildren = $children->count();
+                $measuredChildren = $latestByChild ? $latestByChild->count() : 0;
 
-            if ($childIds->isEmpty()) {
-                continue;
-            }
+                $sam = $latestByChild ? $latestByChild->where('opt_classification', 'sam')->count() : 0;
+                $mam = $latestByChild ? $latestByChild->where('opt_classification', 'mam')->count() : 0;
+                $malnourished = $sam + $mam;
 
-            $latestStats = $this->getLatestMeasurementsStatistics($barangay->id);
-            $totalChildren = $barangay->children->count();
-            $measuredChildren = $latestStats['total'];
-            $coverageRate = $totalChildren > 0 ? ($measuredChildren / $totalChildren) * 100 : 0;
-
-            $comparison[] = [
-                'barangay_id' => $barangay->id,
-                'barangay_name' => $barangay->name,
-                'municipality' => $barangay->municipality,
-                'total_children' => $totalChildren,
-                'measured_children' => $measuredChildren,
-                'coverage_rate' => round($coverageRate, 1),
-                'normal' => $latestStats['normal'],
-                'mam' => $latestStats['mam'],
-                'sam' => $latestStats['sam'],
-                'overweight' => $latestStats['overweight'],
-                'malnutrition_rate' => $latestStats['total'] > 0
-                    ? round((($latestStats['mam'] + $latestStats['sam']) / $latestStats['total']) * 100, 1)
-                    : 0,
-            ];
-        }
-
-        // Sort by malnutrition rate (highest first)
-        usort($comparison, function ($a, $b) {
-            return $b['malnutrition_rate'] <=> $a['malnutrition_rate'];
+                return [
+                    'barangay_id' => (string) $barangay->id,
+                    'barangay_name' => $barangay->name,
+                    'municipality_city' => $barangay->municipality,
+                    'total_children' => $totalChildren,
+                    'measured_children' => $measuredChildren,
+                    'coverage_rate' => $totalChildren > 0 ? round(($measuredChildren / $totalChildren) * 100, 1) : 0,
+                    'malnutrition_rate' => $totalChildren > 0 ? round(($malnourished / $totalChildren) * 100, 1) : 0,
+                    'sam' => $sam,
+                    'mam' => $mam,
+                    'normal' => $measuredChildren - $malnourished,
+                    'overweight' => 0,
+                ];
+            })->sortByDesc('malnutrition_rate')->values()->toArray();
         });
-
-        return $comparison;
     }
 
-    /**
-     * Get age group breakdown (0-5, 6-11, 12-23, 24-35, 36-47, 48-59 months)
-     */
     public function getAgeGroupBreakdown(?string $barangayId = null): array
     {
         // Get latest measurement for each child using a subquery
+        $latestSub = Measurement::query()
+            ->select('child_id', DB::raw('MAX(measurement_date) as max_date'))
+            ->when($barangayId, fn ($q) => $q->whereHas('child', fn ($q2) => $q2->where('barangay_id', $barangayId)))
+            ->groupBy('child_id');
+
         $latestMeasurements = Measurement::query()
-            ->select('child_id', DB::raw('MAX(age_in_months) as latest_age'))
-            ->whereNotNull('age_in_months')
-            ->when($barangayId, function ($query, $barangayId) {
-                $query->whereHas('child', function ($q) use ($barangayId) {
-                    $q->where('barangay_id', $barangayId);
-                });
+            ->select('measurements.child_id', 'age_in_months')
+            ->joinSub($latestSub, 'latest', function ($join) {
+                $join->on('measurements.child_id', '=', 'latest.child_id')
+                    ->on('measurements.measurement_date', '=', 'latest.max_date');
             })
-            ->groupBy('child_id')
+            ->whereNotNull('age_in_months')
             ->get();
 
-        $ageGroups = [
-            '0-5 months' => 0,
-            '6-11 months' => 0,
-            '12-23 months' => 0,
-            '24-35 months' => 0,
-            '36-47 months' => 0,
-            '48-59 months' => 0,
+        $groups = [
+            '0-5 mos' => 0,
+            '6-11 mos' => 0,
+            '12-23 mos' => 0,
+            '24-35 mos' => 0,
+            '36-47 mos' => 0,
+            '48-59 mos' => 0,
+            '60+ mos' => 0,
         ];
 
-        foreach ($latestMeasurements as $latest) {
-            $age = $latest->latest_age;
-
-            if ($age < 6) {
-                $ageGroups['0-5 months']++;
-            } elseif ($age < 12) {
-                $ageGroups['6-11 months']++;
-            } elseif ($age < 24) {
-                $ageGroups['12-23 months']++;
-            } elseif ($age < 36) {
-                $ageGroups['24-35 months']++;
-            } elseif ($age < 48) {
-                $ageGroups['36-47 months']++;
-            } else {
-                $ageGroups['48-59 months']++;
-            }
+        foreach ($latestMeasurements as $m) {
+            $age = $m->age_in_months;
+            if ($age <= 5) $groups['0-5 mos']++;
+            elseif ($age <= 11) $groups['6-11 mos']++;
+            elseif ($age <= 23) $groups['12-23 mos']++;
+            elseif ($age <= 35) $groups['24-35 mos']++;
+            elseif ($age <= 47) $groups['36-47 mos']++;
+            elseif ($age <= 59) $groups['48-59 mos']++;
+            else $groups['60+ mos']++;
         }
 
-        return $ageGroups;
+        return $groups;
     }
 
-    /**
-     * Get F1K (First 1000 Days) statistics for children 0-23 months
-     */
     public function getF1KStatistics(?string $barangayId = null): array
     {
         $cacheKey = $barangayId
@@ -270,56 +238,46 @@ class AnalyticsService
             : 'analytics:f1k_stats:all';
 
         return Cache::remember($cacheKey, self::STATS_CACHE_TTL, function () use ($barangayId) {
-            // Get all children 0-23 months (database agnostic - calculate in PHP)
-            $cutoffDate = now()->subMonths(23)->startOfDay();
-
-            $query = Child::query()
-                ->where('date_of_birth', '>=', $cutoffDate)
-                ->when($barangayId, function ($q) use ($barangayId) {
-                    $q->where('barangay_id', $barangayId);
-                });
-
-            $totalF1K = $query->count();
-            $childIds = $query->pluck('id')->toArray();
-
-            // Get measurements for F1K children
-            $f1kMeasurements = Measurement::query()
-                ->whereIn('child_id', $childIds)
-                ->whereNotNull('opt_classification')
-                ->with('child')
-                ->get();
-
-            $measuredF1K = $f1kMeasurements->count();
-            $f1kCoverage = $totalF1K > 0 ? ($measuredF1K / $totalF1K) * 100 : 0;
-
-            // Get sex breakdown
-            $maleF1K = 0;
-            $femaleF1K = 0;
-            $malnourishedF1K = 0;
-            $stuntedF1K = 0;
-
-            foreach ($f1kMeasurements as $measurement) {
-                $sex = $measurement->child->sex;
-                if ($sex === 'male') {
-                    $maleF1K++;
-                }
-                if ($sex === 'female') {
-                    $femaleF1K++;
-                }
-
-                if (in_array($measurement->opt_classification, ['mam', 'sam'])) {
-                    $malnourishedF1K++;
-                }
-
-                if (in_array($measurement->height_for_age_status, ['stunted', 'severely_stunted'])) {
-                    $stuntedF1K++;
-                }
+            $childrenQuery = Child::query();
+            if ($barangayId) {
+                $childrenQuery->where('barangay_id', $barangayId);
             }
+            $allChildren = $childrenQuery->get();
+            $totalChildren0to23 = $allChildren->filter(fn ($c) => $c->age_in_months <= 23)->count();
+
+            $latestSub = Measurement::query()
+                ->select('child_id', DB::raw('MAX(measurement_date) as max_date'))
+                ->groupBy('child_id');
+            $latest = Measurement::query()
+                ->select('measurements.*')
+                ->joinSub($latestSub, 'latest', function ($join) {
+                    $join->on('measurements.child_id', '=', 'latest.child_id')
+                        ->on('measurements.measurement_date', '=', 'latest.max_date');
+                })
+                ->get()
+                ->keyBy('child_id');
+
+            $f1k = $allChildren->filter(fn ($c) => $c->age_in_months <= 23);
+            $measuredF1K = $f1k->filter(fn ($c) => $latest->has($c->id));
+            $measuredF1KCount = $measuredF1K->count();
+
+            $maleF1K = $f1k->where('sex', 'male')->count();
+            $femaleF1K = $f1k->where('sex', 'female')->count();
+
+            $malnourishedF1K = $measuredF1K->filter(fn ($c) => in_array(
+                $latest->get($c->id)?->opt_classification,
+                ['sam', 'mam']
+            ))->count();
+
+            $stuntedF1K = $measuredF1K->filter(fn ($c) => in_array(
+                $latest->get($c->id)?->height_for_age_status,
+                ['stunted', 'severely_stunted']
+            ))->count();
 
             return [
-                'total_children_0to23' => $totalF1K,
-                'measured_children_0to23' => $measuredF1K,
-                'f1k_coverage' => round($f1kCoverage, 1),
+                'total_children_0to23' => $totalChildren0to23,
+                'measured_children_0to23' => $measuredF1KCount,
+                'f1k_coverage' => $totalChildren0to23 > 0 ? round(($measuredF1KCount / $totalChildren0to23) * 100, 1) : 0,
                 'male_f1k' => $maleF1K,
                 'female_f1k' => $femaleF1K,
                 'malnourished_f1k' => $malnourishedF1K,
@@ -328,9 +286,6 @@ class AnalyticsService
         });
     }
 
-    /**
-     * Get sex-disaggregated statistics
-     */
     public function getSexDisaggregatedStats(?string $barangayId = null): array
     {
         $cacheKey = $barangayId
@@ -338,12 +293,16 @@ class AnalyticsService
             : 'analytics:sex_stats:all';
 
         return Cache::remember($cacheKey, self::STATS_CACHE_TTL, function () use ($barangayId) {
+            $latestSub = Measurement::query()
+                ->select('child_id', DB::raw('MAX(measurement_date) as max_date'))
+                ->when($barangayId, fn ($q) => $q->whereHas('child', fn ($q2) => $q2->where('barangay_id', $barangayId)))
+                ->groupBy('child_id');
+
             $latestMeasurements = Measurement::query()
-                ->select('child_id', 'weight_for_age_zscore', 'height_for_age_zscore', 'weight_for_height_zscore')
-                ->when($barangayId, function ($query, $barangayId) {
-                    $query->whereHas('child', function ($q) use ($barangayId) {
-                        $q->where('barangay_id', $barangayId);
-                    });
+                ->select('measurements.child_id', 'opt_classification', 'height_for_age_status')
+                ->joinSub($latestSub, 'latest', function ($join) {
+                    $join->on('measurements.child_id', '=', 'latest.child_id')
+                        ->on('measurements.measurement_date', '=', 'latest.max_date');
                 })
                 ->get();
 
@@ -357,11 +316,15 @@ class AnalyticsService
                 'total' => $children->count(),
                 'male' => 0,
                 'female' => 0,
+                'male_normal' => 0,
                 'male_mam' => 0,
                 'male_sam' => 0,
+                'male_overweight' => 0,
                 'male_stunted' => 0,
+                'female_normal' => 0,
                 'female_mam' => 0,
                 'female_sam' => 0,
+                'female_overweight' => 0,
                 'female_stunted' => 0,
             ];
 
@@ -376,7 +339,10 @@ class AnalyticsService
 
                 $classification = $measurement->opt_classification;
                 if ($classification) {
-                    $stats["{$sex}_{$classification}"]++;
+                    $key = "{$sex}_{$classification}";
+                    if (array_key_exists($key, $stats)) {
+                        $stats[$key]++;
+                    }
                 }
 
                 if (in_array($measurement->height_for_age_status, ['stunted', 'severely_stunted'])) {
@@ -388,9 +354,6 @@ class AnalyticsService
         });
     }
 
-    /**
-     * Get monthly trend data (last 6 months) - cached
-     */
     public function getMonthlyTrends(?string $barangayId = null): array
     {
         $cacheKey = $barangayId
@@ -410,15 +373,12 @@ class AnalyticsService
                     'normal' => 0,
                     'mam' => 0,
                     'sam' => 0,
+                    'overweight' => 0,
                 ];
             }
 
             $measurements = Measurement::query()
-                ->when($barangayId, function ($query, $barangayId) {
-                    $query->whereHas('child', function ($q) use ($barangayId) {
-                        $q->where('barangay_id', $barangayId);
-                    });
-                })
+                ->when($barangayId, fn ($q) => $q->whereHas('child', fn ($q2) => $q2->where('barangay_id', $barangayId)))
                 ->where('measurement_date', '>=', now()->subMonths(6))
                 ->get();
 
@@ -429,8 +389,8 @@ class AnalyticsService
                     if ($month['month'] === $monthKey) {
                         $month['measurements']++;
 
-                        if ($measurement->opt_classification) {
-                            $month[$measurement->opt_classification] = ($month[$measurement->opt_classification] ?? 0) + 1;
+                        if ($measurement->opt_classification && isset($month[$measurement->opt_classification])) {
+                            $month[$measurement->opt_classification]++;
                         }
                         break;
                     }
@@ -441,95 +401,111 @@ class AnalyticsService
         });
     }
 
-    /**
-     * Get children measured this month
-     */
-    private function getChildrenMeasuredThisMonth(): int
+    public function getRecentActivity(int $limit = 8): array
     {
-        return Measurement::query()
-            ->whereBetween('measurement_date', [
-                now()->startOfMonth(),
-                now()->endOfMonth(),
-            ])
-            ->distinct('child_id')
-            ->count('child_id');
-    }
-
-    /**
-     * Get total measurements this month
-     */
-    private function getMeasurementsThisMonth(): int
-    {
-        return Measurement::query()
-            ->whereBetween('measurement_date', [
-                now()->startOfMonth(),
-                now()->endOfMonth(),
-            ])
-            ->count();
-    }
-
-    /**
-     * Calculate coverage rate (% of children with at least one measurement)
-     */
-    private function getCoverageRate(): float
-    {
-        $totalChildren = Child::count();
-
-        if ($totalChildren === 0) {
-            return 0;
-        }
-
-        $childrenWithMeasurements = Child::query()
-            ->whereHas('measurements')
-            ->count();
-
-        return round(($childrenWithMeasurements / $totalChildren) * 100, 1);
-    }
-
-    /**
-     * Get recent system activity for the dashboard feed
-     */
-    public function getRecentActivity(int $limit = 10): array
-    {
-        $activities = [];
-
-        // Recent measurements
-        $recentMeasurements = Measurement::with(['child.barangay'])
+        $measurements = Measurement::query()
+            ->with(['child.barangay', 'measuredBy'])
             ->latest('measurement_date')
             ->take($limit)
             ->get()
             ->map(fn ($m) => [
                 'type' => 'measurement',
-                'description' => 'Measurement recorded for '.($m->child?->full_name ?? 'Unknown'),
-                'entity' => $m->opt_classification,
+                'description' => $m->child?->full_name
+                    ? "{$m->child->full_name} — {$m->opt_classification}"
+                    : 'Measurement recorded',
+                'entity' => $m->child?->full_name ?? 'Unknown',
                 'barangay' => $m->child?->barangay?->name,
-                'date' => $m->measurement_date?->toISOString(),
-                'created_at' => $m->created_at?->toISOString(),
+                'date' => $m->measurement_date?->toDateTimeString(),
                 'url' => $m->child_id ? "/children/{$m->child_id}" : null,
             ]);
 
-        $activities = array_merge($activities, $recentMeasurements->toArray());
-
-        // Recent imports (if the service reports them)
-        $recentImports = MassMail::with('creator')
-            ->latest()
-            ->take(3)
+        $massMails = MassMail::query()
+            ->latest('created_at')
+            ->take($limit)
             ->get()
             ->map(fn ($m) => [
                 'type' => 'mass_mail',
                 'description' => "Mass mail sent: {$m->subject}",
-                'entity' => "{$m->total_recipients} recipients",
+                'entity' => $m->recipients_count ? "{$m->recipients_count} recipients" : '',
                 'barangay' => null,
-                'date' => $m->created_at?->toISOString(),
-                'created_at' => $m->created_at?->toISOString(),
+                'date' => $m->created_at->toDateTimeString(),
                 'url' => "/mass-mail/{$m->id}",
             ]);
 
-        $activities = array_merge($activities, $recentImports->toArray());
+        return $measurements->concat($massMails)
+            ->sortByDesc('date')
+            ->take($limit)
+            ->values()
+            ->toArray();
+    }
 
-        // Sort by date descending and limit
-        usort($activities, fn ($a, $b) => strcmp($b['created_at'] ?? '', $a['created_at'] ?? ''));
+    public function getChildrenMeasuredThisMonth(): int
+    {
+        $startOfMonth = now()->startOfMonth();
 
-        return array_slice($activities, 0, $limit);
+        return Measurement::query()
+            ->where('measurement_date', '>=', $startOfMonth)
+            ->distinct('child_id')
+            ->count('child_id');
+    }
+
+    public function getMeasurementsThisMonth(): int
+    {
+        return Measurement::query()
+            ->where('measurement_date', '>=', now()->startOfMonth())
+            ->count();
+    }
+
+    private function getCoverageRate(): float
+    {
+        $totalChildren = Child::count();
+        if ($totalChildren === 0) {
+            return 0;
+        }
+
+        $childrenWithMeasurements = Measurement::distinct('child_id')->count('child_id');
+
+        return round(($childrenWithMeasurements / $totalChildren) * 100, 1);
+    }
+
+    /**
+     * Get coverage rate history for the last 6 months.
+     */
+    public function getCoverageHistory(?string $barangayId = null): array
+    {
+        $cacheKey = $barangayId
+            ? "analytics:coverage_history:barangay:{$barangayId}"
+            : 'analytics:coverage_history:all';
+
+        return Cache::remember($cacheKey, self::BARANGAY_CACHE_TTL, function () use ($barangayId) {
+            $history = [];
+            for ($i = 5; $i >= 0; $i--) {
+                $date = now()->subMonths($i);
+                $monthStart = $date->copy()->startOfMonth();
+                $monthEnd = $date->copy()->endOfMonth();
+
+                $measurementsInMonth = Measurement::query()
+                    ->whereBetween('measurement_date', [$monthStart, $monthEnd])
+                    ->when($barangayId, fn ($q) => $q->whereHas('child', fn ($q2) => $q2->where('barangay_id', $barangayId)))
+                    ->distinct('child_id')
+                    ->count('child_id');
+
+                $totalQuery = Child::query();
+                if ($barangayId) {
+                    $totalQuery->where('barangay_id', $barangayId);
+                }
+                $total = $totalQuery->count();
+
+                $history[] = [
+                    'month' => $date->format('Y-m'),
+                    'label' => $date->format('M Y'),
+                    'coverage_rate' => $total > 0 ? round(($measurementsInMonth / $total) * 100, 1) : 0,
+                    'measured' => $measurementsInMonth,
+                    'total' => $total,
+                ];
+            }
+
+            return $history;
+        });
     }
 }

@@ -1,9 +1,9 @@
 import {
     HighRiskChildrenList,
-    NutritionalStatusCard,
     StatCard,
 } from '@/components/dashboard-cards';
 import F1KProgressCard from '@/components/dashboard-cards/f1k-progress-card';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
     Card,
@@ -31,15 +31,25 @@ import {
     FlaskConical,
     Mail,
     Plus,
-    TrendingDown,
     TrendingUp,
     Users,
 } from 'lucide-react';
-import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from 'recharts';
+import {
+    Area,
+    AreaChart,
+    CartesianGrid,
+    Cell,
+    Pie,
+    PieChart,
+    ResponsiveContainer,
+    XAxis,
+    YAxis,
+    Tooltip,
+} from 'recharts';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: t('nav.dashboard'),
+        title: 'Dashboard',
         href: '/dashboard',
     },
 ];
@@ -68,6 +78,7 @@ interface MonthlyTrend {
     normal: number;
     mam: number;
     sam: number;
+    overweight: number;
 }
 
 interface BarangayData {
@@ -148,6 +159,13 @@ interface DashboardProps {
         barangay: { name: string } | null;
         measurement_date: string;
     }[];
+    coverageHistory: {
+        month: string;
+        label: string;
+        coverage_rate: number;
+        measured: number;
+        total: number;
+    }[];
 }
 
 export default function Dashboard({
@@ -161,21 +179,53 @@ export default function Dashboard({
     f1kStatistics,
     pendingCertifications,
     recentActivity,
+    recentSessions,
+    coverageHistory,
 }: DashboardProps) {
     const { t } = useTranslation();
     const { auth } = usePage<SharedData>().props;
 
-    // Chart data for monthly trends
-    const trendChartData = monthlyTrends.map((t) => ({
-        month: t.label,
-        measurements: t.measurements,
-    }));
-
+    // Trend chart data with SAM/MAM/Normal lines
+    const trendChartData = monthlyTrends;
     const chartConfig = {
-        measurements: {
-            label: 'Measurements',
-            color: 'hsl(var(--chart-1))',
-        },
+        measurements: { label: 'Total', color: 'hsl(var(--chart-1))' },
+        normal: { label: 'Normal', color: '#22c55e' },
+        mam: { label: 'MAM', color: '#f59e0b' },
+        sam: { label: 'SAM', color: '#ef4444' },
+        overweight: { label: 'Overweight', color: '#8b5cf6' },
+    };
+
+    // Coverage donut data
+    const coverageData = [
+        { name: 'Measured', value: overallStats.children_measured_this_month, color: 'hsl(var(--chart-1))' },
+        { name: 'Unmeasured', value: Math.max(0, overallStats.total_children - overallStats.children_measured_this_month), color: '#e5e7eb' },
+    ];
+
+    // Nutritional composition for horizontal bar
+    const compositionData = [
+        { name: 'Normal', value: nutritionalStatus.normal, color: '#22c55e' },
+        { name: 'MAM', value: nutritionalStatus.mam, color: '#f59e0b' },
+        { name: 'SAM', value: nutritionalStatus.sam, color: '#ef4444' },
+        { name: 'Overweight', value: nutritionalStatus.overweight, color: '#8b5cf6' },
+    ];
+    const compositionTotal = nutritionalStatus.total || 1;
+
+    // Color by status
+    const statusColor = (status: string) => {
+        switch (status) {
+            case 'active': return 'bg-green-500';
+            case 'completed': return 'bg-blue-500';
+            case 'cancelled': return 'bg-gray-400';
+            default: return 'bg-yellow-500';
+        }
+    };
+
+    // Rank emoji
+    const rankIcon = (i: number) => {
+        if (i === 0) return <span className="text-lg">🥇</span>;
+        if (i === 1) return <span className="text-lg">🥈</span>;
+        if (i === 2) return <span className="text-lg">🥉</span>;
+        return <span className="text-sm font-bold text-muted-foreground">{i + 1}</span>;
     };
 
     return (
@@ -230,9 +280,7 @@ export default function Dashboard({
                         title={t('dashboard.coverage_rate')}
                         value={`${overallStats.coverage_rate}%`}
                         description={t('dashboard.registered_measured')}
-                        icon={
-                            <BarChart3 className="h-5 w-5 text-secondary-foreground" />
-                        }
+                        icon={<BarChart3 className="h-5 w-5 text-secondary-foreground" />}
                     />
                     <StatCard
                         title={t('dashboard.measured_this_month')}
@@ -250,11 +298,44 @@ export default function Dashboard({
                         title="DQC Pending"
                         value={pendingCertifications}
                         description="Eye-check certifications"
-                        icon={
-                            <ClipboardCheck className="h-5 w-5 text-amber-600" />
-                        }
+                        icon={<ClipboardCheck className="h-5 w-5 text-amber-600" />}
                     />
                 </div>
+
+                {/* Nutritional Composition Stacked Bar — NEW */}
+                {compositionTotal > 0 && (
+                    <Card>
+                        <CardHeader className="pb-2">
+                            <CardTitle className="flex items-center gap-2 text-base text-foreground">
+                                <BarChart3 className="h-4 w-4 text-primary" />
+                                Nutritional Status Composition
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="flex h-8 w-full overflow-hidden rounded-lg">
+                                {compositionData.filter(d => d.value > 0).map((d) => (
+                                    <div
+                                        key={d.name}
+                                        style={{ width: `${(d.value / compositionTotal) * 100}%` }}
+                                        className="flex items-center justify-center text-xs font-bold text-white first:rounded-l-lg last:rounded-r-lg transition-all hover:opacity-80"
+                                    >
+                                        <div style={{ background: d.color }} className="flex h-full w-full items-center justify-center">
+                                            {d.value} {d.name}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                            <div className="mt-2 flex flex-wrap gap-4 text-xs text-muted-foreground">
+                                {compositionData.map((d) => (
+                                    <div key={d.name} className="flex items-center gap-1.5">
+                                        <span className="h-2.5 w-2.5 rounded-full" style={{ background: d.color }} />
+                                        {d.name}: {((d.value / compositionTotal) * 100).toFixed(1)}%
+                                    </div>
+                                ))}
+                            </div>
+                        </CardContent>
+                    </Card>
+                )}
 
                 {/* Quick Actions */}
                 <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
@@ -266,12 +347,8 @@ export default function Dashboard({
                             <Plus className="h-5 w-5 text-blue-600" />
                         </div>
                         <div>
-                            <p className="text-sm font-medium">
-                                Register Child
-                            </p>
-                            <p className="text-xs text-muted-foreground">
-                                Add new child record
-                            </p>
+                            <p className="text-sm font-medium">Register Child</p>
+                            <p className="text-xs text-muted-foreground">Add new child record</p>
                         </div>
                     </Link>
                     <Link
@@ -282,12 +359,8 @@ export default function Dashboard({
                             <FlaskConical className="h-5 w-5 text-green-600" />
                         </div>
                         <div>
-                            <p className="text-sm font-medium">
-                                Start OPT Session
-                            </p>
-                            <p className="text-xs text-muted-foreground">
-                                Begin new measurement round
-                            </p>
+                            <p className="text-sm font-medium">Start OPT Session</p>
+                            <p className="text-xs text-muted-foreground">Begin new measurement round</p>
                         </div>
                     </Link>
                     <Link
@@ -298,12 +371,8 @@ export default function Dashboard({
                             <FileText className="h-5 w-5 text-purple-600" />
                         </div>
                         <div>
-                            <p className="text-sm font-medium">
-                                Generate Report
-                            </p>
-                            <p className="text-xs text-muted-foreground">
-                                View nutrition reports
-                            </p>
+                            <p className="text-sm font-medium">Generate Report</p>
+                            <p className="text-xs text-muted-foreground">View nutrition reports</p>
                         </div>
                     </Link>
                     <Link
@@ -314,12 +383,8 @@ export default function Dashboard({
                             <Mail className="h-5 w-5 text-rose-600" />
                         </div>
                         <div>
-                            <p className="text-sm font-medium">
-                                Send Mass Mail
-                            </p>
-                            <p className="text-xs text-muted-foreground">
-                                Notify parents & workers
-                            </p>
+                            <p className="text-sm font-medium">Send Mass Mail</p>
+                            <p className="text-xs text-muted-foreground">Notify parents & workers</p>
                         </div>
                     </Link>
                 </div>
@@ -329,12 +394,8 @@ export default function Dashboard({
                     {/* F1K Progress Card */}
                     <div className="lg:col-span-2">
                         <F1KProgressCard
-                            totalChildren0to23={
-                                f1kStatistics.total_children_0to23
-                            }
-                            measuredChildren0to23={
-                                f1kStatistics.measured_children_0to23
-                            }
+                            totalChildren0to23={f1kStatistics.total_children_0to23}
+                            measuredChildren0to23={f1kStatistics.measured_children_0to23}
                             f1kCoverage={f1kStatistics.f1k_coverage}
                             maleF1K={f1kStatistics.male_f1k}
                             femaleF1K={f1kStatistics.female_f1k}
@@ -343,18 +404,70 @@ export default function Dashboard({
                         />
                     </div>
 
-                    {/* Nutritional Status */}
+                    {/* Coverage Donut — NEW */}
                     <div className="lg:col-span-1">
-                        <NutritionalStatusCard
-                            normal={nutritionalStatus.normal}
-                            mam={nutritionalStatus.mam}
-                            sam={nutritionalStatus.sam}
-                            overweight={nutritionalStatus.overweight}
-                            total={nutritionalStatus.total}
-                        />
+                        <Card className="h-full">
+                            <CardHeader className="pb-2">
+                                <CardTitle className="flex items-center gap-2 text-base text-foreground">
+                                    <BarChart3 className="h-4 w-4 text-primary" />
+                                    Coverage
+                                </CardTitle>
+                                <CardDescription>
+                                    {overallStats.children_measured_this_month.toLocaleString()} of {overallStats.total_children.toLocaleString()} children
+                                </CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="flex items-center justify-center">
+                                    <ResponsiveContainer width="100%" height={180}>
+                                        <PieChart>
+                                            <Pie
+                                                data={coverageData}
+                                                cx="50%"
+                                                cy="50%"
+                                                innerRadius={55}
+                                                outerRadius={75}
+                                                paddingAngle={2}
+                                                dataKey="value"
+                                                startAngle={90}
+                                                endAngle={-270}
+                                            >
+                                                {coverageData.map((entry, index) => (
+                                                    <Cell key={index} fill={entry.color} />
+                                                ))}
+                                            </Pie>
+                                            <Tooltip />
+                                        </PieChart>
+                                    </ResponsiveContainer>
+                                </div>
+                                <div className="text-center">
+                                    <p className="text-2xl font-bold text-foreground">{overallStats.coverage_rate}%</p>
+                                    <p className="text-xs text-muted-foreground">This month</p>
+                                </div>
+
+                                {/* Coverage mini trend */}
+                                {coverageHistory && coverageHistory.length > 0 && (
+                                    <div className="mt-3">
+                                        <p className="mb-1 text-xs text-muted-foreground">Trend</p>
+                                        <ResponsiveContainer width="100%" height={40}>
+                                            <AreaChart data={coverageHistory}>
+                                                <Area
+                                                    type="monotone"
+                                                    dataKey="coverage_rate"
+                                                    stroke="hsl(var(--chart-1))"
+                                                    fill="hsl(var(--chart-1))"
+                                                    fillOpacity={0.15}
+                                                    strokeWidth={2}
+                                                    dot={false}
+                                                />
+                                            </AreaChart>
+                                        </ResponsiveContainer>
+                                    </div>
+                                )}
+                            </CardContent>
+                        </Card>
                     </div>
 
-                    {/* Monthly Trends Chart */}
+                    {/* Monthly Trends Chart — UPGRADED: multi-line */}
                     <Card className="lg:col-span-2">
                         <CardHeader className="flex flex-row items-center justify-between">
                             <div>
@@ -368,42 +481,97 @@ export default function Dashboard({
                             </div>
                         </CardHeader>
                         <CardContent>
-                            <ChartContainer
-                                config={chartConfig}
-                                className="h-60 w-full text-foreground"
-                            >
+                            <ChartContainer config={chartConfig} className="h-64 w-full text-foreground">
                                 <AreaChart data={trendChartData}>
-                                    <CartesianGrid
-                                        strokeDasharray="3 3"
-                                        vertical={false}
-                                    />
-                                    <XAxis
-                                        dataKey="month"
-                                        tickLine={false}
-                                        axisLine={false}
-                                        tickMargin={8}
-                                    />
-                                    <YAxis
-                                        tickLine={false}
-                                        axisLine={false}
-                                        tickMargin={8}
-                                    />
-                                    <ChartTooltip
-                                        content={<ChartTooltipContent />}
+                                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                                    <XAxis dataKey="label" tickLine={false} axisLine={false} tickMargin={8} fontSize={12} />
+                                    <YAxis tickLine={false} axisLine={false} tickMargin={8} fontSize={12} />
+                                    <ChartTooltip content={<ChartTooltipContent />} />
+                                    <Area
+                                        type="monotone"
+                                        dataKey="sam"
+                                        stackId="1"
+                                        stroke="#ef4444"
+                                        fill="#ef4444"
+                                        fillOpacity={0.6}
+                                        strokeWidth={2}
+                                        name="SAM"
                                     />
                                     <Area
                                         type="monotone"
-                                        dataKey="measurements"
-                                        stroke="var(--primary)"
-                                        fill="var(--primary)"
-                                        fillOpacity={0.1}
-                                        strokeWidth={3}
+                                        dataKey="mam"
+                                        stackId="1"
+                                        stroke="#f59e0b"
+                                        fill="#f59e0b"
+                                        fillOpacity={0.6}
+                                        strokeWidth={2}
+                                        name="MAM"
+                                    />
+                                    <Area
+                                        type="monotone"
+                                        dataKey="normal"
+                                        stackId="1"
+                                        stroke="#22c55e"
+                                        fill="#22c55e"
+                                        fillOpacity={0.6}
+                                        strokeWidth={2}
+                                        name="Normal"
+                                    />
+                                    <Area
+                                        type="monotone"
+                                        dataKey="overweight"
+                                        stackId="1"
+                                        stroke="#8b5cf6"
+                                        fill="#8b5cf6"
+                                        fillOpacity={0.6}
+                                        strokeWidth={2}
+                                        name="Overweight"
                                     />
                                 </AreaChart>
                             </ChartContainer>
                         </CardContent>
                     </Card>
                 </div>
+
+                {/* Recent OPT Sessions — NEW */}
+                {recentSessions && recentSessions.length > 0 && (
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2 text-foreground">
+                                <FlaskConical className="h-5 w-5 text-primary" />
+                                Recent OPT Sessions
+                            </CardTitle>
+                            <CardDescription>Latest measurement rounds</CardDescription>
+                        </CardHeader>
+                        <CardContent className="p-0">
+                            <div className="divide-y">
+                                {recentSessions.map((session) => (
+                                    <div key={session.id} className="flex items-center gap-4 px-4 py-3 transition-colors hover:bg-muted/50">
+                                        <div className={`h-2.5 w-2.5 rounded-full ${statusColor(session.status)}`} />
+                                        <div className="min-w-0 flex-1">
+                                            <p className="text-sm font-medium text-foreground">
+                                                {session.name}
+                                            </p>
+                                            <p className="text-xs text-muted-foreground">
+                                                {session.barangay?.name ?? 'All Barangays'}
+                                                {' · '}
+                                                {new Date(session.measurement_date).toLocaleDateString()}
+                                            </p>
+                                        </div>
+                                        <Badge variant="outline" className="capitalize">
+                                            {session.status}
+                                        </Badge>
+                                        <Button variant="ghost" size="sm" render={
+                                            <Link href={`/opt-sessions/${session.id}`} />
+                                        }>
+                                            View
+                                        </Button>
+                                    </div>
+                                ))}
+                            </div>
+                        </CardContent>
+                    </Card>
+                )}
 
                 {/* Age Group Breakdown */}
                 <Card>
@@ -450,68 +618,42 @@ export default function Dashboard({
                     </CardHeader>
                     <CardContent>
                         <div className="space-y-4">
-                            {/* Male Stats */}
                             <div className="rounded-lg border bg-background p-3">
                                 <p className="mb-3 text-sm font-medium text-foreground">
                                     {t('dashboard.male_children', { count: sexDisaggregated.male })}
                                 </p>
                                 <div className="grid grid-cols-3 gap-4">
                                     <div>
-                                        <p className="text-xs text-muted-foreground">
-                                            MAM
-                                        </p>
-                                        <p className="text-lg font-bold text-foreground">
-                                            {sexDisaggregated.male_mam}
-                                        </p>
+                                        <p className="text-xs text-muted-foreground">MAM</p>
+                                        <p className="text-lg font-bold text-foreground">{sexDisaggregated.male_mam}</p>
                                     </div>
                                     <div>
-                                        <p className="text-xs text-muted-foreground">
-                                            SAM
-                                        </p>
-                                        <p className="text-lg font-bold text-foreground">
-                                            {sexDisaggregated.male_sam}
-                                        </p>
+                                        <p className="text-xs text-muted-foreground">SAM</p>
+                                        <p className="text-lg font-bold text-foreground">{sexDisaggregated.male_sam}</p>
                                     </div>
                                     <div>
-                                        <p className="text-xs text-muted-foreground">
-                                            Stunted
-                                        </p>
-                                        <p className="text-lg font-bold text-foreground">
-                                            {sexDisaggregated.male_stunted}
-                                        </p>
+                                        <p className="text-xs text-muted-foreground">Stunted</p>
+                                        <p className="text-lg font-bold text-foreground">{sexDisaggregated.male_stunted}</p>
                                     </div>
                                 </div>
                             </div>
 
-                            {/* Female Stats */}
                             <div className="rounded-lg border bg-background p-3">
                                 <p className="mb-3 text-sm font-medium text-foreground">
                                     {t('dashboard.female_children', { count: sexDisaggregated.female })}
                                 </p>
                                 <div className="grid grid-cols-3 gap-4">
                                     <div>
-                                        <p className="text-xs text-muted-foreground">
-                                            MAM
-                                        </p>
-                                        <p className="text-lg font-bold text-foreground">
-                                            {sexDisaggregated.female_mam}
-                                        </p>
+                                        <p className="text-xs text-muted-foreground">MAM</p>
+                                        <p className="text-lg font-bold text-foreground">{sexDisaggregated.female_mam}</p>
                                     </div>
                                     <div>
-                                        <p className="text-xs text-muted-foreground">
-                                            SAM
-                                        </p>
-                                        <p className="text-lg font-bold text-foreground">
-                                            {sexDisaggregated.female_sam}
-                                        </p>
+                                        <p className="text-xs text-muted-foreground">SAM</p>
+                                        <p className="text-lg font-bold text-foreground">{sexDisaggregated.female_sam}</p>
                                     </div>
                                     <div>
-                                        <p className="text-xs text-muted-foreground">
-                                            Stunted
-                                        </p>
-                                        <p className="text-lg font-bold text-foreground">
-                                            {sexDisaggregated.female_stunted}
-                                        </p>
+                                        <p className="text-xs text-muted-foreground">Stunted</p>
+                                        <p className="text-lg font-bold text-foreground">{sexDisaggregated.female_stunted}</p>
                                     </div>
                                 </div>
                             </div>
@@ -519,13 +661,12 @@ export default function Dashboard({
                     </CardContent>
                 </Card>
 
-                {/* High-Risk Children */}
+                {/* High-Risk + Barangay Rankings */}
                 <div className="grid gap-6 lg:grid-cols-3">
                     <div className="lg:col-span-2">
                         <HighRiskChildrenList children={highRiskChildren} />
                     </div>
 
-                    {/* Barangay Rankings (Only for Admin/Municipal) */}
                     {barangayComparison && barangayComparison.length > 0 && (
                         <Card className="lg:col-span-1">
                             <CardHeader className="flex flex-row items-center justify-between">
@@ -540,54 +681,40 @@ export default function Dashboard({
                                 <Button
                                     variant="ghost"
                                     size="icon"
-                                    render={
-                                        <Link href="/reports/barangay-comparison" />
-                                    }
+                                    render={<Link href="/reports/barangay-comparison" />}
                                 >
                                     <ArrowRight className="h-4 w-4" />
                                 </Button>
                             </CardHeader>
                             <CardContent className="p-0 text-foreground">
-                                <div className="overflow-x-auto text-xs">
-                                    <table className="w-full">
-                                        <tbody className="divide-y">
-                                            {barangayComparison
-                                                .slice(0, 5)
-                                                .map((b) => (
-                                                    <tr
-                                                        key={b.barangay_id}
-                                                        className="transition-colors hover:bg-muted/50"
-                                                    >
-                                                        <td className="px-4 py-3 font-bold">
-                                                            {b.barangay_name}
-                                                        </td>
-                                                        <td className="px-4 py-3 text-right">
-                                                            <span
-                                                                className={
-                                                                    b.malnutrition_rate >
-                                                                    10
-                                                                        ? 'font-bold text-destructive'
-                                                                        : 'font-medium text-primary'
-                                                                }
-                                                            >
-                                                                {
-                                                                    b.malnutrition_rate
-                                                                }
-                                                                %
-                                                            </span>
-                                                        </td>
-                                                        <td className="px-4 py-3 text-right">
-                                                            {b.malnutrition_rate >
-                                                            10 ? (
-                                                                <TrendingUp className="h-3 w-3 text-destructive" />
-                                                            ) : (
-                                                                <TrendingDown className="h-3 w-3 text-primary" />
-                                                            )}
-                                                        </td>
-                                                    </tr>
-                                                ))}
-                                        </tbody>
-                                    </table>
+                                <div className="space-y-1 px-4 pb-4">
+                                    {barangayComparison
+                                        .slice(0, 5)
+                                        .map((b, i) => (
+                                            <div key={b.barangay_id} className="flex items-center gap-2 py-1.5">
+                                                <div className="w-6 text-center">{rankIcon(i)}</div>
+                                                <div className="min-w-0 flex-1">
+                                                    <p className="truncate text-sm font-medium text-foreground">
+                                                        {b.barangay_name}
+                                                    </p>
+                                                    <div className="mt-0.5 h-1.5 w-full rounded-full bg-muted">
+                                                        <div
+                                                            className="h-1.5 rounded-full bg-destructive transition-all"
+                                                            style={{ width: `${Math.min(b.malnutrition_rate, 100)}%` }}
+                                                        />
+                                                    </div>
+                                                </div>
+                                                <span
+                                                    className={`shrink-0 text-sm font-bold ${
+                                                        b.malnutrition_rate > 10
+                                                            ? 'text-destructive'
+                                                            : 'text-primary'
+                                                    }`}
+                                                >
+                                                    {b.malnutrition_rate}%
+                                                </span>
+                                            </div>
+                                        ))}
                                 </div>
                             </CardContent>
                         </Card>
@@ -627,10 +754,7 @@ export default function Dashboard({
                                         <div className="min-w-0 flex-1">
                                             <p className="truncate text-sm font-medium">
                                                 {activity.url ? (
-                                                    <Link
-                                                        href={activity.url}
-                                                        className="hover:underline"
-                                                    >
+                                                    <Link href={activity.url} className="hover:underline">
                                                         {activity.description}
                                                     </Link>
                                                 ) : (
@@ -639,32 +763,19 @@ export default function Dashboard({
                                             </p>
                                             <p className="text-xs text-muted-foreground">
                                                 <span className="capitalize">
-                                                    {activity.type.replace(
-                                                        '_',
-                                                        ' ',
-                                                    )}
+                                                    {activity.type.replace('_', ' ')}
                                                 </span>
                                                 {activity.barangay && (
-                                                    <>
-                                                        {' '}
-                                                        &middot;{' '}
-                                                        {activity.barangay}
-                                                    </>
+                                                    <> · {activity.barangay}</>
                                                 )}
                                                 {activity.entity && (
-                                                    <>
-                                                        {' '}
-                                                        &middot;{' '}
-                                                        {activity.entity}
-                                                    </>
+                                                    <> · {activity.entity}</>
                                                 )}
                                             </p>
                                         </div>
                                         <span className="shrink-0 text-xs text-muted-foreground">
                                             {activity.date
-                                                ? new Date(
-                                                      activity.date,
-                                                  ).toLocaleDateString()
+                                                ? new Date(activity.date).toLocaleDateString()
                                                 : ''}
                                         </span>
                                     </div>

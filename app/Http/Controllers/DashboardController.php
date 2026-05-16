@@ -71,6 +71,9 @@ class DashboardController extends Controller
             ->get()
             ->toArray();
 
+        // Coverage trend history
+        $coverageHistory = $this->analyticsService->getCoverageHistory($barangayId);
+
         return Inertia::render('dashboard', [
             'user' => $user,
             'overallStats' => $overallStats,
@@ -84,6 +87,7 @@ class DashboardController extends Controller
             'pendingCertifications' => $pendingCertifications,
             'recentActivity' => $recentActivity,
             'recentSessions' => $recentSessions,
+            'coverageHistory' => $coverageHistory,
         ]);
     }
 
