@@ -19,6 +19,7 @@ import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, useForm } from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
 import { FormEventHandler } from 'react';
 
 interface Barangay {
@@ -33,6 +34,7 @@ interface Props {
 }
 
 export default function Create({ barangays }: Props) {
+    const { t } = useTranslation();
     const { data, setData, post, processing, errors } = useForm({
         family_serial_number: '',
         first_name: '',
@@ -61,14 +63,14 @@ export default function Create({ barangays }: Props) {
     };
 
     const breadcrumbs: BreadcrumbItem[] = [
-        { title: 'Dashboard', href: '/dashboard' },
-        { title: 'Children Registry', href: '/children' },
-        { title: 'Register New Child', href: '/children/create' },
+        { title: t('nav.dashboard'), href: '/dashboard' },
+        { title: t('nav.children'), href: '/children' },
+        { title: t('children.register_new_child'), href: '/children/create' },
     ];
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Register Child" />
+            <Head title={t('children.add_child')} />
 
             <div className="flex flex-col gap-6 p-6">
                 <div className="mx-auto w-full max-w-4xl">
@@ -77,13 +79,13 @@ export default function Create({ barangays }: Props) {
                         {/* Child Information */}
                         <Card>
                             <CardHeader>
-                                <CardTitle>Child Information</CardTitle>
+                                <CardTitle>{t('children.child_information')}</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 <FieldGroup>
                                     <Field>
                                         <FieldLabel htmlFor="family_serial_number">
-                                            Family Serial Number{' '}
+                                            {t('children.fsn')}{' '}
                                             <span className="text-red-500">
                                                 *
                                             </span>
@@ -108,7 +110,7 @@ export default function Create({ barangays }: Props) {
 
                                     <Field>
                                         <FieldLabel htmlFor="first_name">
-                                            First Name{' '}
+                                            {t('children.first_name')}{' '}
                                             <span className="text-red-500">
                                                 *
                                             </span>
@@ -133,7 +135,7 @@ export default function Create({ barangays }: Props) {
 
                                     <Field>
                                         <FieldLabel htmlFor="middle_name">
-                                            Middle Name
+                                            {t('children.middle_name')}
                                         </FieldLabel>
                                         <Input
                                             id="middle_name"
@@ -149,7 +151,7 @@ export default function Create({ barangays }: Props) {
 
                                     <Field>
                                         <FieldLabel htmlFor="last_name">
-                                            Last Name{' '}
+                                            {t('children.last_name')}{' '}
                                             <span className="text-red-500">
                                                 *
                                             </span>
@@ -174,7 +176,7 @@ export default function Create({ barangays }: Props) {
 
                                     <Field>
                                         <FieldLabel htmlFor="suffix">
-                                            Suffix
+                                            {t('children.suffix')}
                                         </FieldLabel>
                                         <Input
                                             id="suffix"
@@ -191,7 +193,7 @@ export default function Create({ barangays }: Props) {
 
                                     <Field>
                                         <FieldLabel htmlFor="sex">
-                                            Sex{' '}
+                                            {t('children.sex')}{' '}
                                             <span className="text-red-500">
                                                 *
                                             </span>
@@ -203,14 +205,14 @@ export default function Create({ barangays }: Props) {
                                             }
                                         >
                                             <SelectTrigger id="sex">
-                                                <SelectValue placeholder="Select sex" />
+                                                <SelectValue placeholder={t('children.sex')} />
                                             </SelectTrigger>
                                             <SelectContent>
                                                 <SelectItem value="male">
-                                                    Male
+                                                    {t('children.male')}
                                                 </SelectItem>
                                                 <SelectItem value="female">
-                                                    Female
+                                                    {t('children.female')}
                                                 </SelectItem>
                                             </SelectContent>
                                         </Select>
@@ -223,7 +225,7 @@ export default function Create({ barangays }: Props) {
 
                                     <Field>
                                         <FieldLabel htmlFor="date_of_birth">
-                                            Date of Birth{' '}
+                                                {t('children.date_of_birth')}{' '}
                                             <span className="text-red-500">
                                                 *
                                             </span>
@@ -254,7 +256,7 @@ export default function Create({ barangays }: Props) {
 
                                     <Field>
                                         <FieldLabel htmlFor="birth_weight_kg">
-                                            Birth Weight (kg)
+                                            {t('children.birth_weight_kg')}
                                         </FieldLabel>
                                         <Input
                                             id="birth_weight_kg"
@@ -276,7 +278,7 @@ export default function Create({ barangays }: Props) {
 
                                     <Field>
                                         <FieldLabel htmlFor="birth_length_cm">
-                                            Birth Length (cm)
+                                            {t('children.birth_length_cm')}
                                         </FieldLabel>
                                         <Input
                                             id="birth_length_cm"
@@ -302,13 +304,13 @@ export default function Create({ barangays }: Props) {
                         {/* Address */}
                         <Card>
                             <CardHeader>
-                                <CardTitle>Address</CardTitle>
+                                <CardTitle>{t('children.address')}</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 <FieldGroup>
                                     <Field>
                                         <FieldLabel htmlFor="barangay_id">
-                                            Barangay{' '}
+                                            {t('children.barangay')}{' '}
                                             <span className="text-red-500">
                                                 *
                                             </span>
@@ -323,7 +325,7 @@ export default function Create({ barangays }: Props) {
                                             }
                                         >
                                             <SelectTrigger id="barangay_id">
-                                                <SelectValue placeholder="Select barangay" />
+                                                <SelectValue placeholder={t('children.barangay')} />
                                             </SelectTrigger>
                                             <SelectContent>
                                                 {barangays.map((barangay) => (
@@ -348,7 +350,7 @@ export default function Create({ barangays }: Props) {
 
                                     <Field>
                                         <FieldLabel htmlFor="purok_sitio">
-                                            Purok/Sitio
+                                            {t('children.purok_sitio')}
                                         </FieldLabel>
                                         <Input
                                             id="purok_sitio"
@@ -362,8 +364,7 @@ export default function Create({ barangays }: Props) {
                                             placeholder="Purok 1"
                                         />
                                         <FieldDescription>
-                                            Specify the purok or sitio within
-                                            the barangay
+                                            {t('children.purok_sitio_desc')}
                                         </FieldDescription>
                                     </Field>
                                 </FieldGroup>
@@ -373,15 +374,13 @@ export default function Create({ barangays }: Props) {
                         {/* Parents/Guardian */}
                         <Card>
                             <CardHeader>
-                                <CardTitle>
-                                    Parents/Guardian Information
-                                </CardTitle>
+                                <CardTitle>{t('children.parents_guardian')}</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 <FieldGroup>
                                     <Field>
                                         <FieldLabel htmlFor="mother_name">
-                                            Mother's Name
+                                            {t('children.mother_name')}
                                         </FieldLabel>
                                         <Input
                                             id="mother_name"
@@ -397,7 +396,7 @@ export default function Create({ barangays }: Props) {
 
                                     <Field>
                                         <FieldLabel htmlFor="father_name">
-                                            Father's Name
+                                            {t('children.father_name')}
                                         </FieldLabel>
                                         <Input
                                             id="father_name"
@@ -413,7 +412,7 @@ export default function Create({ barangays }: Props) {
 
                                     <Field>
                                         <FieldLabel htmlFor="guardian_name">
-                                            Guardian's Name (if applicable)
+                                            {t('children.guardian_name')}
                                         </FieldLabel>
                                         <Input
                                             id="guardian_name"
@@ -429,7 +428,7 @@ export default function Create({ barangays }: Props) {
 
                                     <Field>
                                         <FieldLabel htmlFor="guardian_relationship">
-                                            Guardian Relationship
+                                            {t('children.guardian_relationship')}
                                         </FieldLabel>
                                         <Input
                                             id="guardian_relationship"
@@ -446,7 +445,7 @@ export default function Create({ barangays }: Props) {
 
                                     <Field>
                                         <FieldLabel htmlFor="contact_number">
-                                            Contact Number
+                                            {t('children.contact_number')}
                                         </FieldLabel>
                                         <Input
                                             id="contact_number"
@@ -467,7 +466,7 @@ export default function Create({ barangays }: Props) {
                         {/* Indigenous People */}
                         <Card>
                             <CardHeader>
-                                <CardTitle>Additional Information</CardTitle>
+                                <CardTitle>{t('children.additional_information')}</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 <FieldGroup>
@@ -486,14 +485,14 @@ export default function Create({ barangays }: Props) {
                                             htmlFor="is_indigenous_people"
                                             className="font-normal"
                                         >
-                                            Indigenous People
+                                            {t('children.indigenous_people')}
                                         </FieldLabel>
                                     </Field>
 
                                     {data.is_indigenous_people && (
                                         <Field>
                                             <FieldLabel htmlFor="indigenous_group">
-                                                Indigenous Group/Tribe
+                                                {t('children.indigenous_group')}
                                             </FieldLabel>
                                             <Input
                                                 id="indigenous_group"
@@ -511,7 +510,7 @@ export default function Create({ barangays }: Props) {
 
                                     <Field>
                                         <FieldLabel htmlFor="notes">
-                                            Notes
+                                            {t('children.notes')}
                                         </FieldLabel>
                                         <Textarea
                                             id="notes"
@@ -523,8 +522,7 @@ export default function Create({ barangays }: Props) {
                                             placeholder="Additional notes or remarks..."
                                         />
                                         <FieldDescription>
-                                            Any additional information about the
-                                            child
+                                            {t('children.notes_desc')}
                                         </FieldDescription>
                                     </Field>
                                 </FieldGroup>
@@ -535,13 +533,13 @@ export default function Create({ barangays }: Props) {
                         <div className="flex justify-end gap-2">
                             <Link href="/children">
                                 <Button variant="outline" type="button">
-                                    Cancel
+                                    {t('common.cancel')}
                                 </Button>
                             </Link>
                             <Button type="submit" disabled={processing}>
                                 {processing
-                                    ? 'Registering...'
-                                    : 'Register Child'}
+                                    ? t('children.registering')
+                                    : t('children.register_child')}
                             </Button>
                         </div>
                     </form>

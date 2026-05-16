@@ -19,6 +19,7 @@ import {
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, router, usePage } from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
 import {
     AlertCircle,
     ArrowLeft,
@@ -88,13 +89,6 @@ const statusColors: Record<string, string> = {
     cancelled: 'bg-red-100 text-red-800',
 };
 
-const statusLabels: Record<string, string> = {
-    scheduled: 'Scheduled',
-    in_progress: 'In Progress',
-    completed: 'Completed',
-    cancelled: 'Cancelled',
-};
-
 const classificationColors: Record<string, string> = {
     sam: 'bg-red-100 text-red-800',
     mam: 'bg-orange-100 text-orange-800',
@@ -104,15 +98,26 @@ const classificationColors: Record<string, string> = {
 };
 
 export default function Show({ session, stats, recentMeasurements }: Props) {
+    const { t } = useTranslation();
     const { flash } = usePage().props as {
         flash?: { success?: string; error?: string };
     };
 
     const breadcrumbs: BreadcrumbItem[] = [
-        { title: 'Dashboard', href: '/dashboard' },
-        { title: 'OPT Sessions', href: '/opt-sessions' },
+        { title: t('nav.dashboard'), href: '/dashboard' },
+        { title: t('opt_session.title'), href: '/opt-sessions' },
         { title: session.name, href: `/opt-sessions/${session.id}` },
     ];
+
+    const getStatusLabel = (status: string) => {
+        const labels: Record<string, string> = {
+            scheduled: t('opt_session.scheduled'),
+            in_progress: t('opt_session.in_progress'),
+            completed: t('opt_session.completed'),
+            cancelled: t('opt_session.cancelled'),
+        };
+        return labels[status] || status;
+    };
 
     const handleStart = () => {
         router.post(`/opt-sessions/${session.id}/start`);
@@ -152,7 +157,7 @@ export default function Show({ session, stats, recentMeasurements }: Props) {
                                     variant="outline"
                                     className={statusColors[session.status]}
                                 >
-                                    {statusLabels[session.status]}
+                                    {getStatusLabel(session.status)}
                                 </Badge>
                             </div>
                             <p className="text-muted-foreground">
@@ -171,7 +176,7 @@ export default function Show({ session, stats, recentMeasurements }: Props) {
                             <>
                                 <Button variant="outline" onClick={handleStart}>
                                     <Play className="mr-2 h-4 w-4" />
-                                    Start Session
+                                    {t('opt_session.start_session')}
                                 </Button>
                                 <Button
                                     variant="outline"
@@ -182,7 +187,7 @@ export default function Show({ session, stats, recentMeasurements }: Props) {
                                     }
                                 >
                                     <Edit className="mr-2 h-4 w-4" />
-                                    Edit
+                                    {t('common.edit')}
                                 </Button>
                             </>
                         )}
@@ -196,14 +201,14 @@ export default function Show({ session, stats, recentMeasurements }: Props) {
                                     }
                                 >
                                     <Upload className="mr-2 h-4 w-4" />
-                                    Import Data
+                                    {t('opt_session.import_data')}
                                 </Button>
                                 <Button
                                     variant="outline"
                                     onClick={handleComplete}
                                 >
                                     <CheckCircle className="mr-2 h-4 w-4" />
-                                    Complete
+                                    {t('opt_session.complete')}
                                 </Button>
                             </>
                         )}
@@ -214,7 +219,7 @@ export default function Show({ session, stats, recentMeasurements }: Props) {
                                     onClick={handleCancel}
                                 >
                                     <X className="mr-2 h-4 w-4" />
-                                    Cancel
+                                    {t('opt_session.cancel')}
                                 </Button>
                             )}
                     </div>
@@ -239,7 +244,7 @@ export default function Show({ session, stats, recentMeasurements }: Props) {
                     <Card>
                         <CardHeader className="pb-2">
                             <CardTitle className="text-sm font-medium">
-                                Coverage
+                                {t('opt_session.coverage_title')}
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
@@ -248,14 +253,14 @@ export default function Show({ session, stats, recentMeasurements }: Props) {
                             </div>
                             <p className="text-xs text-muted-foreground">
                                 {stats.measured_children} /{' '}
-                                {stats.target_children} children
+                                {stats.target_children} {t('opt_session.children')}
                             </p>
                         </CardContent>
                     </Card>
                     <Card>
                         <CardHeader className="pb-2">
                             <CardTitle className="text-sm font-medium text-green-600">
-                                Normal
+                                {t('opt_session.normal')}
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
@@ -263,14 +268,14 @@ export default function Show({ session, stats, recentMeasurements }: Props) {
                                 {stats.normal_count}
                             </div>
                             <p className="text-xs text-muted-foreground">
-                                children
+                                {t('opt_session.children')}
                             </p>
                         </CardContent>
                     </Card>
                     <Card>
                         <CardHeader className="pb-2">
                             <CardTitle className="text-sm font-medium text-orange-600">
-                                MAM (Moderate)
+                                {t('opt_session.mam')}
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
@@ -278,14 +283,14 @@ export default function Show({ session, stats, recentMeasurements }: Props) {
                                 {stats.mam_count}
                             </div>
                             <p className="text-xs text-muted-foreground">
-                                children
+                                {t('opt_session.children')}
                             </p>
                         </CardContent>
                     </Card>
                     <Card>
                         <CardHeader className="pb-2">
                             <CardTitle className="text-sm font-medium text-red-600">
-                                SAM (Severe)
+                                {t('opt_session.sam')}
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
@@ -293,7 +298,7 @@ export default function Show({ session, stats, recentMeasurements }: Props) {
                                 {stats.sam_count}
                             </div>
                             <p className="text-xs text-muted-foreground">
-                                children
+                                {t('opt_session.children')}
                             </p>
                         </CardContent>
                     </Card>
@@ -302,13 +307,13 @@ export default function Show({ session, stats, recentMeasurements }: Props) {
                 {/* Session Details */}
                 <Card>
                     <CardHeader>
-                        <CardTitle>Session Details</CardTitle>
+                        <CardTitle>{t('opt_session.session_details')}</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <dl className="grid grid-cols-2 gap-4 md:grid-cols-4">
                             <div>
                                 <dt className="text-sm font-medium text-muted-foreground">
-                                    Barangay
+                                    {t('opt_session.barangay')}
                                 </dt>
                                 <dd className="mt-1">
                                     {session.barangay.name}
@@ -316,7 +321,7 @@ export default function Show({ session, stats, recentMeasurements }: Props) {
                             </div>
                             <div>
                                 <dt className="text-sm font-medium text-muted-foreground">
-                                    Session Date
+                                    {t('opt_session.date')}
                                 </dt>
                                 <dd className="mt-1">
                                     {new Date(
@@ -327,14 +332,14 @@ export default function Show({ session, stats, recentMeasurements }: Props) {
                             {session.venue && (
                                 <div>
                                     <dt className="text-sm font-medium text-muted-foreground">
-                                        Venue
+                                        {t('opt_session.venue_label')}
                                     </dt>
                                     <dd className="mt-1">{session.venue}</dd>
                                 </div>
                             )}
                             <div>
                                 <dt className="text-sm font-medium text-muted-foreground">
-                                    Created By
+                                    {t('opt_session.created_by')}
                                 </dt>
                                 <dd className="mt-1">
                                     {session.created_by.name}
@@ -344,7 +349,7 @@ export default function Show({ session, stats, recentMeasurements }: Props) {
                         {session.notes && (
                             <div className="mt-4">
                                 <dt className="text-sm font-medium text-muted-foreground">
-                                    Notes
+                                    {t('opt_session.notes_label')}
                                 </dt>
                                 <dd className="mt-1">{session.notes}</dd>
                             </div>
@@ -355,7 +360,7 @@ export default function Show({ session, stats, recentMeasurements }: Props) {
                 {/* Recent Measurements */}
                 <Card>
                     <CardHeader>
-                        <CardTitle>Recent Measurements</CardTitle>
+                        <CardTitle>{t('opt_session.recent_measurements')}</CardTitle>
                         <CardDescription>
                             Latest measurements recorded for this session
                         </CardDescription>
@@ -369,12 +374,12 @@ export default function Show({ session, stats, recentMeasurements }: Props) {
                             <Table>
                                 <TableHeader>
                                     <TableRow>
-                                        <TableHead>Child</TableHead>
-                                        <TableHead>Sex</TableHead>
-                                        <TableHead>Date</TableHead>
-                                        <TableHead>Weight</TableHead>
-                                        <TableHead>Height</TableHead>
-                                        <TableHead>Status</TableHead>
+                                        <TableHead>{t('opt_session.child')}</TableHead>
+                                        <TableHead>{t('opt_session.sex')}</TableHead>
+                                        <TableHead>{t('opt_session.date')}</TableHead>
+                                        <TableHead>{t('opt_session.weight')}</TableHead>
+                                        <TableHead>{t('opt_session.height')}</TableHead>
+                                        <TableHead>{t('opt_session.status_label')}</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>

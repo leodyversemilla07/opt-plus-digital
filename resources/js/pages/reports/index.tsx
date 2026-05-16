@@ -9,6 +9,7 @@ import {
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link } from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
 import {
     AlertTriangle,
     Baby,
@@ -27,18 +28,18 @@ import {
     Users,
 } from 'lucide-react';
 
-const breadcrumbs: BreadcrumbItem[] = [
-    {
-        title: 'Reports',
-        href: '/reports',
-    },
-];
-
 export default function ReportsIndex() {
+    const { t } = useTranslation();
+    const breadcrumbs: BreadcrumbItem[] = [
+        {
+            title: t('reports.title'),
+            href: '/reports',
+        },
+    ];
     const reports = [
         {
-            title: 'OPT Plus Summary',
-            description: 'Complete overview of nutritional status and coverage',
+            title: t('reports.opt_summary'),
+            description: t('reports.opt_summary_desc'),
             icon: FileText,
             href: '/reports/opt-summary',
             exportPDF: '/reports/export/opt-summary/pdf',
@@ -47,9 +48,8 @@ export default function ReportsIndex() {
             bgColor: 'bg-blue-100 dark:bg-blue-900/20',
         },
         {
-            title: 'Master List',
-            description:
-                'Complete list of all registered children with measurements',
+            title: t('reports.master_list'),
+            description: t('reports.master_list_desc'),
             icon: Users,
             href: '/reports/master-list',
             exportPDF: '/reports/export/master-list/pdf',
@@ -58,8 +58,8 @@ export default function ReportsIndex() {
             bgColor: 'bg-green-100 dark:bg-green-900/20',
         },
         {
-            title: 'Target List',
-            description: 'High-risk children requiring immediate intervention',
+            title: t('reports.target_list'),
+            description: t('reports.target_list_desc'),
             icon: AlertTriangle,
             href: '/reports/target-list',
             exportPDF: '/reports/export/target-list/pdf',
@@ -68,43 +68,40 @@ export default function ReportsIndex() {
             bgColor: 'bg-red-100 dark:bg-red-900/20',
         },
         {
-            title: 'First 1000 Days (F1K)',
-            description:
-                'Priority list for children 0-23 months requiring early intervention',
+            title: t('reports.f1k_list'),
+            description: t('reports.f1k_list_desc'),
             icon: Baby,
             href: '/reports/f1k-list',
             color: 'text-pink-600 dark:text-pink-400',
             bgColor: 'bg-pink-100 dark:bg-pink-900/20',
         },
         {
-            title: 'Barangay Comparison',
-            description: 'Compare nutritional status across all barangays',
+            title: t('reports.barangay_comparison'),
+            description: t('reports.barangay_comparison_desc'),
             icon: MapPin,
             href: '/reports/barangay-comparison',
             color: 'text-purple-600 dark:text-purple-400',
             bgColor: 'bg-purple-100 dark:bg-purple-900/20',
         },
         {
-            title: 'Form 1C - At-Risk Children',
-            description:
-                'Comprehensive list of affected and at-risk children by category',
+            title: t('reports.form_1c'),
+            description: t('reports.form_1c_desc'),
             icon: ClipboardList,
             href: '/reports/form-1c',
             color: 'text-red-600 dark:text-red-400',
             bgColor: 'bg-red-100 dark:bg-red-900/20',
         },
         {
-            title: 'NutStatusBrgy',
-            description: 'Sex-disaggregated nutritional status summary',
+            title: t('reports.nut_status_brgy'),
+            description: t('reports.nut_status_brgy_desc'),
             icon: Users,
             href: '/reports/nut-status-brgy',
             color: 'text-indigo-600 dark:text-indigo-400',
             bgColor: 'bg-indigo-100 dark:bg-indigo-900/20',
         },
         {
-            title: 'MUAC Monitoring',
-            description:
-                'Mid-Upper Arm Circumference list for children 6-59 months',
+            title: t('reports.muac_list'),
+            description: t('reports.muac_list_desc'),
             icon: Ruler,
             href: '/reports/muac-list',
             color: 'text-teal-600 dark:text-teal-400',
@@ -114,35 +111,32 @@ export default function ReportsIndex() {
 
     const monitoringLists = [
         {
-            title: 'SAM (Severe Acute Malnutrition)',
-            description:
-                'Children with severe wasting requiring therapeutic feeding',
+            title: t('reports.monitor_sam'),
+            description: t('reports.monitor_sam'),
             icon: AlertTriangle,
             href: '/reports/monitoring/sam',
             color: 'text-red-600 dark:text-red-400',
             bgColor: 'bg-red-100 dark:bg-red-900/20',
         },
         {
-            title: 'MAM (Moderate Acute Malnutrition)',
-            description:
-                'Children with moderate wasting requiring supplementary feeding',
+            title: t('reports.monitor_mam'),
+            description: t('reports.monitor_mam'),
             icon: TrendingDown,
             href: '/reports/monitoring/mam',
             color: 'text-orange-600 dark:text-orange-400',
             bgColor: 'bg-orange-100 dark:bg-orange-900/20',
         },
         {
-            title: 'Stunted Children',
-            description:
-                'Children with chronic malnutrition (low height-for-age)',
+            title: t('reports.monitor_stunted'),
+            description: t('reports.monitor_stunted'),
             icon: Scale,
             href: '/reports/monitoring/stunted',
             color: 'text-yellow-600 dark:text-yellow-400',
             bgColor: 'bg-yellow-100 dark:bg-yellow-900/20',
         },
         {
-            title: 'Overweight/Obese Children',
-            description: 'Children with elevated weight-for-height',
+            title: t('reports.monitor_overweight'),
+            description: t('reports.monitor_overweight'),
             icon: TrendingUp,
             href: '/reports/monitoring/overweight',
             color: 'text-purple-600 dark:text-purple-400',
@@ -156,16 +150,15 @@ export default function ReportsIndex() {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Reports" />
+            <Head title={t('reports.title')} />
             <div className="flex flex-col gap-6 p-6">
                 {/* Header */}
                 <div>
                     <h1 className="text-3xl font-bold tracking-tight">
-                        Reports
+                        {t('reports.title')}
                     </h1>
                     <p className="mt-1 text-muted-foreground">
-                        Generate and view various reports for nutrition
-                        monitoring
+                        {t('reports.reports_description')}
                     </p>
                 </div>
 
@@ -203,7 +196,7 @@ export default function ReportsIndex() {
                                             variant="outline"
                                             className="w-full"
                                         >
-                                            View Report
+                                            {t('reports.view_report')}
                                         </Button>
                                     </Link>
                                     {report.exportPDF && report.exportExcel && (
@@ -218,7 +211,7 @@ export default function ReportsIndex() {
                                                 }
                                             >
                                                 <FileDown className="mr-2 h-4 w-4" />
-                                                PDF
+                                                {t('reports.pdf')}
                                             </Button>
                                             <Button
                                                 variant="secondary"
@@ -230,7 +223,7 @@ export default function ReportsIndex() {
                                                 }
                                             >
                                                 <FileSpreadsheet className="mr-2 h-4 w-4" />
-                                                Excel
+                                                {t('reports.excel')}
                                             </Button>
                                         </div>
                                     )}
@@ -244,7 +237,7 @@ export default function ReportsIndex() {
                 <div>
                     <h2 className="mb-4 flex items-center gap-2 text-xl font-semibold">
                         <Heart className="h-5 w-5 text-red-500" />
-                        Monitoring Lists
+                        {t('reports.monitoring_lists')}
                     </h2>
                     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                         {monitoringLists.map((list) => {
@@ -278,7 +271,7 @@ export default function ReportsIndex() {
                                                 size="sm"
                                                 className="w-full"
                                             >
-                                                View List
+                                                {t('reports.view_list')}
                                             </Button>
                                         </Link>
                                     </CardContent>
@@ -291,23 +284,23 @@ export default function ReportsIndex() {
                 {/* Quick Actions */}
                 <Card>
                     <CardHeader>
-                        <CardTitle>Quick Actions</CardTitle>
+                        <CardTitle>{t('reports.quick_actions')}</CardTitle>
                         <CardDescription>
-                            Common reporting tasks
+                            {t('reports.quick_actions_desc')}
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="flex flex-wrap gap-3">
                         <Button variant="outline">
                             <Calendar className="mr-2 h-4 w-4" />
-                            Monthly Report (Current Month)
+                            {t('reports.monthly_report')}
                         </Button>
                         <Button variant="outline">
                             <Download className="mr-2 h-4 w-4" />
-                            Export All Data
+                            {t('reports.export_all')}
                         </Button>
                         <Button variant="outline">
                             <FileText className="mr-2 h-4 w-4" />
-                            Custom Report
+                            {t('reports.custom_report')}
                         </Button>
                     </CardContent>
                 </Card>
@@ -316,25 +309,14 @@ export default function ReportsIndex() {
                 <Card className="border-blue-200 bg-blue-50 dark:border-blue-800 dark:bg-blue-950/20">
                     <CardHeader>
                         <CardTitle className="text-blue-900 dark:text-blue-100">
-                            Report Generation Tips
+                            {t('reports.tips_title')}
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-2 text-sm text-blue-800 dark:text-blue-200">
-                        <p>
-                            • Reports are generated in real-time based on
-                            current data
-                        </p>
-                        <p>
-                            • Use filters to generate barangay-specific reports
-                        </p>
-                        <p>
-                            • Export to PDF for printing or Excel for further
-                            analysis
-                        </p>
-                        <p>
-                            • Target list shows children requiring immediate
-                            intervention
-                        </p>
+                        <p>{t('reports.tips_realtime')}</p>
+                        <p>{t('reports.tips_filters')}</p>
+                        <p>{t('reports.tips_export')}</p>
+                        <p>{t('reports.tips_target')}</p>
                     </CardContent>
                 </Card>
             </div>

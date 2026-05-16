@@ -23,6 +23,7 @@ import AppLayout from '@/layouts/app-layout';
 import { offlineDB } from '@/lib/offline-db';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, useForm } from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
 import { Cloud, Info, WifiOff } from 'lucide-react';
 import { FormEventHandler, useState } from 'react';
 
@@ -41,6 +42,7 @@ interface CreateMeasurementProps {
 }
 
 export default function CreateMeasurement({ child }: CreateMeasurementProps) {
+    const { t } = useTranslation();
     const isOnline = useOnlineStatus();
     const [isSavingOffline, setIsSavingOffline] = useState(false);
     const [offlineSaveSuccess, setOfflineSaveSuccess] = useState(false);
@@ -105,28 +107,28 @@ export default function CreateMeasurement({ child }: CreateMeasurementProps) {
     };
 
     const breadcrumbs: BreadcrumbItem[] = [
-        { title: 'Children', href: '/children' },
+        { title: t('nav.children'), href: '/children' },
         { title: child.full_name, href: `/children/${child.id}` },
         {
-            title: 'Add Measurement',
+            title: t('measurement.add_measurement'),
             href: `/children/${child.id}/measurements/create`,
         },
     ];
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title={`Add Measurement - ${child.full_name}`} />
+            <Head title={`${t('measurement.add_measurement')} - ${child.full_name}`} />
 
             <div className="flex flex-col gap-6 p-6">
                 <div className="mx-auto w-full max-w-3xl">
                     {/* Header */}
                     <div>
                         <h1 className="text-3xl font-bold tracking-tight">
-                            Add Measurement
+                            {t('measurement.add_measurement')}
                         </h1>
                         <p className="mt-1 text-muted-foreground">
                             {child.full_name} •{' '}
-                            {child.sex === 'male' ? 'Male' : 'Female'} •{' '}
+                            {child.sex === 'male' ? t('children.male') : t('children.female')} •{' '}
                             {getAgeDisplay(child.age_in_months)}
                         </p>
                     </div>
@@ -137,9 +139,7 @@ export default function CreateMeasurement({ child }: CreateMeasurementProps) {
                     <Alert className="mb-6">
                         <Info className="h-4 w-4" />
                         <AlertDescription>
-                            WHO z-scores and nutritional status will be
-                            calculated automatically based on the child's age,
-                            sex, and measurements.
+                            {t('measurement.auto_calc_info')}
                         </AlertDescription>
                     </Alert>
 
@@ -148,9 +148,7 @@ export default function CreateMeasurement({ child }: CreateMeasurementProps) {
                         <Alert className="mb-6 border-amber-500 bg-amber-50">
                             <WifiOff className="h-4 w-4 text-amber-600" />
                             <AlertDescription className="text-amber-800">
-                                You are currently offline. This measurement will
-                                be saved locally and automatically synced when
-                                you reconnect to the internet.
+                                {t('measurement.offline_save_info')}
                             </AlertDescription>
                         </Alert>
                     )}
@@ -160,9 +158,7 @@ export default function CreateMeasurement({ child }: CreateMeasurementProps) {
                         <Alert className="mb-6 border-green-500 bg-green-50">
                             <Cloud className="h-4 w-4 text-green-600" />
                             <AlertDescription className="text-green-800">
-                                ✓ Measurement saved offline successfully! It
-                                will be synced automatically when you're back
-                                online. Redirecting...
+                                {t('measurement.offline_save_success')}
                             </AlertDescription>
                         </Alert>
                     )}
@@ -173,13 +169,13 @@ export default function CreateMeasurement({ child }: CreateMeasurementProps) {
                             {/* Measurement Data */}
                             <Card>
                                 <CardHeader>
-                                    <CardTitle>Measurement Data</CardTitle>
+                                    <CardTitle>{t('measurement.measurement_data')}</CardTitle>
                                 </CardHeader>
                                 <CardContent className="space-y-4">
                                     <FieldGroup>
                                         <Field>
                                             <FieldLabel htmlFor="measurement_date">
-                                                Measurement Date{' '}
+                                                {t('measurement.date')}{' '}
                                                 <span className="text-red-500">
                                                     *
                                                 </span>
@@ -210,7 +206,7 @@ export default function CreateMeasurement({ child }: CreateMeasurementProps) {
 
                                         <Field>
                                             <FieldLabel htmlFor="weight_kg">
-                                                Weight (kg){' '}
+                                                {t('measurement.weight')}{' '}
                                                 <span className="text-red-500">
                                                     *
                                                 </span>
@@ -243,7 +239,7 @@ export default function CreateMeasurement({ child }: CreateMeasurementProps) {
 
                                         <Field>
                                             <FieldLabel htmlFor="height_length_cm">
-                                                Height/Length (cm){' '}
+                                                {t('measurement.height')}{' '}
                                                 <span className="text-red-500">
                                                     *
                                                 </span>
@@ -276,7 +272,7 @@ export default function CreateMeasurement({ child }: CreateMeasurementProps) {
 
                                         <Field>
                                             <FieldLabel htmlFor="muac_cm">
-                                                MUAC (cm)
+                                                {t('measurement.muac')}
                                             </FieldLabel>
                                             <Input
                                                 id="muac_cm"
@@ -339,7 +335,7 @@ export default function CreateMeasurement({ child }: CreateMeasurementProps) {
                             {/* Clinical Observations */}
                             <Card>
                                 <CardHeader>
-                                    <CardTitle>Clinical Observations</CardTitle>
+                                    <CardTitle>{t('measurement.clinical_observations')}</CardTitle>
                                 </CardHeader>
                                 <CardContent className="space-y-4">
                                     <FieldGroup>
@@ -490,7 +486,7 @@ export default function CreateMeasurement({ child }: CreateMeasurementProps) {
                             {/* Measurement Tips */}
                             <Card>
                                 <CardHeader>
-                                    <CardTitle>Measurement Tips</CardTitle>
+                                    <CardTitle>{t('measurement.measurement_tips')}</CardTitle>
                                 </CardHeader>
                                 <CardContent>
                                     <ul className="space-y-2 text-sm text-muted-foreground">
@@ -533,7 +529,7 @@ export default function CreateMeasurement({ child }: CreateMeasurementProps) {
                             <div className="flex justify-end gap-2">
                                 <Link href={`/children/${child.id}`}>
                                     <Button variant="outline" type="button">
-                                        Cancel
+                                        {t('common.cancel')}
                                     </Button>
                                 </Link>
                                 <Button
@@ -544,15 +540,15 @@ export default function CreateMeasurement({ child }: CreateMeasurementProps) {
                                         offlineSaveSuccess
                                     }
                                 >
-                                    {isSavingOffline && 'Saving Offline...'}
-                                    {offlineSaveSuccess && 'Saved ✓'}
+                                    {isSavingOffline && t('measurement.saving_offline')}
+                                    {offlineSaveSuccess && t('measurement.saved')}
                                     {!isSavingOffline &&
                                         !offlineSaveSuccess &&
                                         (processing
-                                            ? 'Saving...'
+                                            ? t('measurement.saving')
                                             : !isOnline
-                                              ? 'Save Offline'
-                                              : 'Save Measurement')}
+                                              ? t('measurement.save_offline')
+                                              : t('measurement.save_measurement'))}
                                 </Button>
                             </div>
                         </div>

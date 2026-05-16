@@ -30,60 +30,63 @@ import {
     Settings,
     UserCog,
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import AppLogo from './app-logo';
 
-const mainNavItems: NavItem[] = [
-    {
-        title: 'Dashboard',
-        href: dashboard(),
-        icon: LayoutDashboard,
-    },
-    {
-        title: 'Children Registry',
-        href: children.index(),
-        icon: Baby,
-    },
-    {
-        title: 'Notifications',
-        href: notifications.index(),
-        icon: Bell,
-    },
-    {
-        title: 'Reports',
-        href: reports.index(),
-        icon: FileBarChart,
-    },
-    {
-        title: 'Data Quality Control',
-        href: '/dqc',
-        icon: FileCheck,
-    },
-    {
-        title: 'Mass Mail',
-        href: massMail.index(),
-        icon: Mail,
-    },
-    {
-        title: 'Audit Logs',
-        href: auditLogs.index(),
-        icon: History,
-    },
-    {
-        title: 'User Management',
-        href: users.index(),
-        icon: UserCog,
-    },
-];
-
-const footerNavItems: NavItem[] = [
-    {
-        title: 'Settings',
-        href: '/settings',
-        icon: Settings,
-    },
-];
-
 export function AppSidebar() {
+    const { t } = useTranslation();
+
+    const mainNavItems: NavItem[] = [
+        {
+            title: t('nav.dashboard'),
+            href: dashboard(),
+            icon: LayoutDashboard,
+        },
+        {
+            title: t('nav.children'),
+            href: children.index(),
+            icon: Baby,
+        },
+        {
+            title: t('nav.notifications'),
+            href: notifications.index(),
+            icon: Bell,
+        },
+        {
+            title: t('nav.reports'),
+            href: reports.index(),
+            icon: FileBarChart,
+        },
+        {
+            title: t('nav.dqc'),
+            href: '/dqc',
+            icon: FileCheck,
+        },
+        {
+            title: t('nav.mass_mail'),
+            href: massMail.index(),
+            icon: Mail,
+        },
+        {
+            title: t('nav.audit_logs'),
+            href: auditLogs.index(),
+            icon: History,
+        },
+        {
+            title: t('nav.users'),
+            href: users.index(),
+            icon: UserCog,
+        },
+    ];
+
+    const footerNavItems: NavItem[] = [
+        {
+            title: t('nav.settings'),
+            href: '/settings',
+            icon: Settings,
+        },
+    ];
+
     return (
         <Sidebar collapsible="icon" variant="inset">
             <SidebarHeader>

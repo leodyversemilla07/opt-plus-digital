@@ -11,12 +11,14 @@ import { edit } from '@/routes/profile';
 import { type User } from '@/types';
 import { Link, router } from '@inertiajs/react';
 import { LogOut, Settings } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface UserMenuContentProps {
     user: User;
 }
 
 export function UserMenuContent({ user }: UserMenuContentProps) {
+    const { t } = useTranslation();
     const cleanup = useMobileNavigation();
 
     const handleLogout = () => {
@@ -45,7 +47,7 @@ export function UserMenuContent({ user }: UserMenuContentProps) {
                     }
                 >
                     <Settings className="mr-2" />
-                    Settings
+                    {t('nav.settings')}
                 </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
@@ -61,7 +63,7 @@ export function UserMenuContent({ user }: UserMenuContentProps) {
                 }
             >
                 <LogOut className="mr-2" />
-                Log out
+                {t('auth.logout')}
             </DropdownMenuItem>
         </>
     );

@@ -20,6 +20,7 @@ import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, useForm } from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
 import { ArrowLeft, Loader2, Save } from 'lucide-react';
 
 interface MeasurementEditProps {
@@ -48,11 +49,12 @@ export default function MeasurementEdit({
     child,
     measurement,
 }: MeasurementEditProps) {
+    const { t } = useTranslation();
     const breadcrumbs: BreadcrumbItem[] = [
-        { title: 'Children', href: '/children' },
+        { title: t('children.title'), href: '/children' },
         { title: child.full_name, href: `/children/${child.id}` },
         {
-            title: 'Edit Measurement',
+            title: t('measurement.edit'),
             href: `/children/${child.id}/measurements/${measurement.id}/edit`,
         },
     ];

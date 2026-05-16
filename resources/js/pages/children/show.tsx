@@ -9,6 +9,7 @@ import { edit as childrenEdit } from '@/routes/children';
 import { create as measurementsCreate } from '@/routes/children/measurements';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link } from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
 import { Cloud, Download, Edit, Plus, QrCode } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
@@ -69,13 +70,14 @@ interface Props {
 }
 
 export default function Show({ child, latestMeasurement }: Props) {
+    const { t } = useTranslation();
     const isOnline = useOnlineStatus();
     const [isCached, setIsCached] = useState(false);
     const [cacheTimestamp, setCacheTimestamp] = useState<Date | null>(null);
 
     const breadcrumbs: BreadcrumbItem[] = [
-        { title: 'Dashboard', href: '/dashboard' },
-        { title: 'Children Registry', href: '/children' },
+        { title: t('nav.dashboard'), href: '/dashboard' },
+        { title: t('nav.children'), href: '/children' },
         { title: child.full_name, href: `/children/${child.id}` },
     ];
 
@@ -172,13 +174,12 @@ export default function Show({ child, latestMeasurement }: Props) {
                     <div className="flex flex-wrap gap-2">
                         <Link href={childrenEdit.url(child.id)}>
                             <Button variant="outline" size="sm">
-                                <Edit className="mr-2 h-4 w-4" /> Edit
+                                <Edit className="mr-2 h-4 w-4" /> {t('common.edit')}
                             </Button>
                         </Link>
                         <Link href={measurementsCreate.url(child.id)}>
                             <Button size="sm">
-                                <Plus className="mr-2 h-4 w-4" /> Add
-                                Measurement
+                                <Plus className="mr-2 h-4 w-4" /> {t('children.add_measurement')}
                             </Button>
                         </Link>
                     </div>
@@ -190,14 +191,14 @@ export default function Show({ child, latestMeasurement }: Props) {
                             <Card className="border-primary/20 shadow-lg shadow-primary/5">
                                 <CardHeader>
                                     <CardTitle className="text-lg">
-                                        Latest Nutritional Status
+                                        {t('children.latest_nutritional_status')}
                                     </CardTitle>
                                 </CardHeader>
                                 <CardContent className="pt-6">
                                     <div className="flex flex-col justify-between gap-6 sm:flex-row sm:items-center">
                                         <div className="space-y-2">
                                             <p className="text-xs font-bold text-muted-foreground uppercase">
-                                                Classification
+                                                {t('measurement.classification')}
                                             </p>
                                             <NutritionalStatusBadge
                                                 status={
@@ -209,7 +210,7 @@ export default function Show({ child, latestMeasurement }: Props) {
                                         <div className="grid grid-cols-2 gap-8">
                                             <div>
                                                 <p className="text-xs font-bold text-muted-foreground uppercase">
-                                                    Weight
+                                                    {t('measurement.weight')}
                                                 </p>
                                                 <p className="text-2xl font-bold">
                                                     {
@@ -226,7 +227,7 @@ export default function Show({ child, latestMeasurement }: Props) {
                                             </div>
                                             <div>
                                                 <p className="text-xs font-bold text-muted-foreground uppercase">
-                                                    Height
+                                                    {t('measurement.height')}
                                                 </p>
                                                 <p className="text-2xl font-bold">
                                                     {
@@ -262,13 +263,13 @@ export default function Show({ child, latestMeasurement }: Props) {
                         <Card>
                             <CardHeader>
                                 <CardTitle className="text-lg">
-                                    Personal Information
+                                    {t('children.personal_information')}
                                 </CardTitle>
                             </CardHeader>
                             <CardContent className="grid gap-6 text-sm sm:grid-cols-2">
                                 <div className="space-y-1">
                                     <p className="text-[10px] font-medium text-muted-foreground uppercase">
-                                        Date of Birth
+                                        {t('children.date_of_birth')}
                                     </p>
                                     <p className="font-bold">
                                         {new Date(
@@ -280,7 +281,7 @@ export default function Show({ child, latestMeasurement }: Props) {
                                 </div>
                                 <div className="space-y-1">
                                     <p className="text-[10px] font-medium text-muted-foreground uppercase">
-                                        Sex
+                                        {t('children.sex')}
                                     </p>
                                     <p className="font-bold tracking-wide uppercase">
                                         {child.sex}
@@ -288,7 +289,7 @@ export default function Show({ child, latestMeasurement }: Props) {
                                 </div>
                                 <div className="space-y-1">
                                     <p className="text-[10px] font-medium text-muted-foreground uppercase">
-                                        Family Serial Number
+                                        {t('children.fsn')}
                                     </p>
                                     <p className="font-mono font-bold text-primary">
                                         {child.family_serial_number}
@@ -296,7 +297,7 @@ export default function Show({ child, latestMeasurement }: Props) {
                                 </div>
                                 <div className="space-y-1">
                                     <p className="text-[10px] font-medium text-muted-foreground uppercase">
-                                        Address (Purok/Sitio)
+                                        {t('children.address')}
                                     </p>
                                     <p className="font-bold">
                                         {child.purok_sitio || 'Not specified'}
@@ -308,13 +309,13 @@ export default function Show({ child, latestMeasurement }: Props) {
                         <Card>
                             <CardHeader>
                                 <CardTitle className="text-lg">
-                                    Parents / Guardian
+                                    {t('children.parents_guardian')}
                                 </CardTitle>
                             </CardHeader>
                             <CardContent className="grid gap-6 text-sm sm:grid-cols-2">
                                 <div className="space-y-1">
                                     <p className="text-[10px] font-medium text-muted-foreground uppercase">
-                                        Mother
+                                        {t('children.mother')}
                                     </p>
                                     <p className="font-bold">
                                         {child.mother_name || 'N/A'}
@@ -322,7 +323,7 @@ export default function Show({ child, latestMeasurement }: Props) {
                                 </div>
                                 <div className="space-y-1">
                                     <p className="text-[10px] font-medium text-muted-foreground uppercase">
-                                        Father
+                                        {t('children.father')}
                                     </p>
                                     <p className="font-bold">
                                         {child.father_name || 'N/A'}
@@ -330,7 +331,7 @@ export default function Show({ child, latestMeasurement }: Props) {
                                 </div>
                                 <div className="space-y-1">
                                     <p className="text-[10px] font-medium text-muted-foreground uppercase">
-                                        Contact Number
+                                        {t('children.contact_number')}
                                     </p>
                                     <p className="font-bold">
                                         {child.contact_number || 'N/A'}
@@ -344,7 +345,7 @@ export default function Show({ child, latestMeasurement }: Props) {
                         <Card className="text-center">
                             <CardHeader>
                                 <CardTitle className="text-sm font-bold tracking-widest text-muted-foreground uppercase">
-                                    Child QR Identity
+                                    {t('children.qr_identity')}
                                 </CardTitle>
                             </CardHeader>
                             <CardContent className="flex flex-col items-center gap-4">
@@ -370,7 +371,7 @@ export default function Show({ child, latestMeasurement }: Props) {
                                 <CardHeader>
                                     <CardTitle className="flex items-center gap-2 text-sm font-bold tracking-widest text-accent-foreground uppercase">
                                         <div className="h-2 w-2 animate-pulse rounded-full bg-accent-foreground" />
-                                        Indigenous People
+                                        {t('children.indigenous_people')}
                                     </CardTitle>
                                 </CardHeader>
                                 <CardContent>
@@ -385,7 +386,7 @@ export default function Show({ child, latestMeasurement }: Props) {
                         <Card>
                             <CardHeader>
                                 <CardTitle className="text-xs font-bold text-muted-foreground uppercase">
-                                    Audit Log
+                                    {t('children.audit_log')}
                                 </CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-1 text-[10px] font-medium">

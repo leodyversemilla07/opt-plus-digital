@@ -19,6 +19,7 @@ import {
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
 import { FileDown, FileSpreadsheet, Filter, Search } from 'lucide-react';
 
 interface MasterListProps {
@@ -49,6 +50,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function MasterList({ children, barangayId }: MasterListProps) {
+    const { t } = useTranslation();
     const handleExport = (type: 'pdf' | 'excel') => {
         let url = `/reports/export/master-list/${type}`;
         if (barangayId) url += `?barangay=${barangayId}`;
@@ -61,16 +63,15 @@ export default function MasterList({ children, barangayId }: MasterListProps) {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Master List" />
+            <Head title={t('reports.master_list')} />
             <div className="flex flex-col gap-6 p-6">
                 <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
                     <div>
                         <h1 className="text-3xl font-bold tracking-tight">
-                            Master List
+                            {t('reports.master_list')}
                         </h1>
                         <p className="mt-1 text-muted-foreground">
-                            Complete list of children and their latest
-                            nutritional status
+                            {t('reports.master_list_subtitle')}
                         </p>
                     </div>
                     <div className="flex gap-2">
@@ -79,14 +80,14 @@ export default function MasterList({ children, barangayId }: MasterListProps) {
                             size="sm"
                             onClick={() => handleExport('pdf')}
                         >
-                            <FileDown className="mr-2 h-4 w-4" /> PDF
+                            <FileDown className="mr-2 h-4 w-4" /> {t('reports.pdf')}
                         </Button>
                         <Button
                             variant="outline"
                             size="sm"
                             onClick={() => handleExport('excel')}
                         >
-                            <FileSpreadsheet className="mr-2 h-4 w-4" /> Excel
+                            <FileSpreadsheet className="mr-2 h-4 w-4" /> {t('reports.excel')}
                         </Button>
                     </div>
                 </div>
@@ -95,16 +96,16 @@ export default function MasterList({ children, barangayId }: MasterListProps) {
                     <CardHeader className="pb-3">
                         <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
                             <div>
-                                <CardTitle>Children Records</CardTitle>
+                                <CardTitle>{t('reports.children_records')}</CardTitle>
                                 <CardDescription>
-                                    Showing {children.length} records
+                                    {t('reports.showing_records', { count: children.length })}
                                 </CardDescription>
                             </div>
                             <div className="flex items-center gap-2">
                                 <div className="relative w-full md:w-64">
                                     <Search className="absolute top-2.5 left-2 h-4 w-4 text-muted-foreground" />
                                     <Input
-                                        placeholder="Search records..."
+                                        placeholder={t('reports.search_records')}
                                         className="pl-8"
                                     />
                                 </div>

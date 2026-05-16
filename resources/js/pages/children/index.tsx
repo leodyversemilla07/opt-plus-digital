@@ -34,6 +34,7 @@ import {
 } from '@/routes/children';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, router } from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
 import { Download, Plus, Search } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
@@ -84,6 +85,7 @@ interface Props {
 }
 
 export default function Index({ children, filters, barangays }: Props) {
+    const { t } = useTranslation();
     const isOnline = useOnlineStatus();
     const [search, setSearch] = useState(filters.search || '');
     const [barangayId, setBarangayId] = useState(filters.barangay_id || 'all');
@@ -182,26 +184,26 @@ export default function Index({ children, filters, barangays }: Props) {
     };
 
     const breadcrumbs: BreadcrumbItem[] = [
-        { title: 'Dashboard', href: '/dashboard' },
-        { title: 'Children Registry', href: '/children' },
+        { title: t('nav.dashboard'), href: '/dashboard' },
+        { title: t('nav.children'), href: '/children' },
     ];
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Children Registry" />
+            <Head title={t('children.registry')} />
 
             <div className="flex flex-col gap-6 p-6">
                 {/* Header */}
                 <div className="flex items-center justify-between">
                     <div>
                         <h1 className="text-3xl font-bold tracking-tight">
-                            Children Registry
+                            {t('children.registry')}
                         </h1>
                         <p className="mt-1 text-muted-foreground">
-                            Total: {children.total} children registered
+                            {t('children.total_registered', { count: children.total })}
                             {cachedCount > 0 && (
                                 <span className="ml-2 text-blue-600 dark:text-blue-400">
-                                    • {cachedCount} cached offline
+                                    • {t('children.cached_offline', { count: cachedCount })}
                                 </span>
                             )}
                         </p>
@@ -214,13 +216,13 @@ export default function Index({ children, filters, barangays }: Props) {
                                 disabled={isCaching}
                             >
                                 <Download className="mr-2 h-4 w-4" />
-                                {isCaching ? 'Caching...' : 'Cache for Offline'}
+                                {isCaching ? t('children.caching') : t('children.cache_for_offline')}
                             </Button>
                         )}
                         <Link href={childrenCreate.url()}>
                             <Button>
                                 <Plus className="mr-2 h-4 w-4" />
-                                Register New Child
+                                {t('children.register_new_child')}
                             </Button>
                         </Link>
                     </div>
@@ -231,7 +233,7 @@ export default function Index({ children, filters, barangays }: Props) {
                     <div className="grid gap-4 md:grid-cols-4">
                         <div className="md:col-span-2">
                             <Input
-                                placeholder="Search by name, FSN, or QR code..."
+                                placeholder={t('children.search_placeholder')}
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
                                 onKeyDown={(e) =>
@@ -247,11 +249,11 @@ export default function Index({ children, filters, barangays }: Props) {
                                 }
                             >
                                 <SelectTrigger>
-                                    <SelectValue placeholder="All Barangays" />
+                                    <SelectValue placeholder={t('children.all_barangays')} />
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectItem value="all">
-                                        All Barangays
+                                        {t('children.all_barangays')}
                                     </SelectItem>
                                     {barangays.map((barangay) => (
                                         <SelectItem
@@ -272,15 +274,15 @@ export default function Index({ children, filters, barangays }: Props) {
                                 }
                             >
                                 <SelectTrigger>
-                                    <SelectValue placeholder="Indigenous People" />
+                                    <SelectValue placeholder={t('children.indigenous_people')} />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="all">All</SelectItem>
+                                    <SelectItem value="all">{t('children.all')}</SelectItem>
                                     <SelectItem value="1">
-                                        Indigenous
+                                        {t('children.indigenous')}
                                     </SelectItem>
                                     <SelectItem value="0">
-                                        Non-Indigenous
+                                        {t('children.non_indigenous')}
                                     </SelectItem>
                                 </SelectContent>
                             </Select>
@@ -289,10 +291,10 @@ export default function Index({ children, filters, barangays }: Props) {
                     <div className="mt-4 flex gap-2">
                         <Button onClick={handleSearch}>
                             <Search className="mr-2 h-4 w-4" />
-                            Search
+                            {t('common.search')}
                         </Button>
                         <Button variant="outline" onClick={handleReset}>
-                            Reset
+                            {t('common.reset')}
                         </Button>
                     </div>
                 </div>
@@ -302,13 +304,13 @@ export default function Index({ children, filters, barangays }: Props) {
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead>Name</TableHead>
-                                <TableHead>Sex</TableHead>
-                                <TableHead>Age</TableHead>
-                                <TableHead>FSN</TableHead>
-                                <TableHead>Barangay</TableHead>
-                                <TableHead>Status</TableHead>
-                                <TableHead>Actions</TableHead>
+                                <TableHead>{t('children.name')}</TableHead>
+                                <TableHead>{t('children.sex')}</TableHead>
+                                <TableHead>{t('children.age')}</TableHead>
+                                <TableHead>{t('children.fsn')}</TableHead>
+                                <TableHead>{t('children.barangay')}</TableHead>
+                                <TableHead>{t('common.status')}</TableHead>
+                                <TableHead>{t('common.actions')}</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -318,8 +320,7 @@ export default function Index({ children, filters, barangays }: Props) {
                                         colSpan={7}
                                         className="text-center text-muted-foreground"
                                     >
-                                        No children found. Register a child to
-                                        get started.
+                                        {t('children.no_children')}
                                     </TableCell>
                                 </TableRow>
                             ) : (
@@ -367,7 +368,7 @@ export default function Index({ children, filters, barangays }: Props) {
                                                     variant="ghost"
                                                     size="sm"
                                                 >
-                                                    View
+                                                    {t('children.view')}
                                                 </Button>
                                             </Link>
                                         </TableCell>
@@ -381,8 +382,7 @@ export default function Index({ children, filters, barangays }: Props) {
                     {children.last_page > 1 && (
                         <div className="flex items-center justify-between border-t px-6 py-3">
                             <div className="text-sm text-muted-foreground">
-                                Showing {children.data.length} of{' '}
-                                {children.total} results
+                                {t('children.showing_results', { count: children.data.length, total: children.total })}
                             </div>
                             <Pagination>
                                 <PaginationContent>

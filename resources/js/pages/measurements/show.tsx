@@ -10,6 +10,7 @@ import {
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link } from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
 import { ArrowLeft, Edit, Info, Ruler, Trash2, Weight } from 'lucide-react';
 
 interface MeasurementShowProps {
@@ -43,11 +44,13 @@ export default function MeasurementShow({
     child,
     measurement,
 }: MeasurementShowProps) {
+    const { t } = useTranslation();
+
     const breadcrumbs: BreadcrumbItem[] = [
-        { title: 'Children', href: '/children' },
+        { title: t('nav.children'), href: '/children' },
         { title: child.full_name, href: `/children/${child.id}` },
         {
-            title: 'Measurement',
+            title: t('measurement.measurement_details'),
             href: `/children/${child.id}/measurements/${measurement.id}`,
         },
     ];
@@ -70,7 +73,7 @@ export default function MeasurementShow({
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title={`Measurement: ${child.full_name}`} />
+            <Head title={`${t('measurement.measurement_details')}: ${child.full_name}`} />
             <div className="flex flex-col gap-6 p-6">
                 <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
                     <div>
@@ -84,11 +87,10 @@ export default function MeasurementShow({
                                 />
                             }
                         >
-                            <ArrowLeft className="mr-2 h-4 w-4" /> Back to
-                            History
+                            <ArrowLeft className="mr-2 h-4 w-4" /> {t('measurement.back_to_history')}
                         </Button>
                         <h1 className="text-3xl font-bold tracking-tight">
-                            Measurement Details
+                            {t('measurement.measurement_details')}
                         </h1>
                         <p className="mt-1 text-muted-foreground">
                             Recorded on {measurement.measurement_date} for{' '}
@@ -105,7 +107,7 @@ export default function MeasurementShow({
                                 />
                             }
                         >
-                            <Edit className="mr-2 h-4 w-4" /> Edit
+                            <Edit className="mr-2 h-4 w-4" /> {t('measurement.edit')}
                         </Button>
                         <Button
                             variant="outline"
@@ -119,7 +121,7 @@ export default function MeasurementShow({
                                 />
                             }
                         >
-                            <Trash2 className="mr-2 h-4 w-4" /> Delete
+                            <Trash2 className="mr-2 h-4 w-4" /> {t('common.delete')}
                         </Button>
                     </div>
                 </div>
@@ -127,7 +129,7 @@ export default function MeasurementShow({
                 <div className="grid gap-6 md:grid-cols-3">
                     <Card className="md:col-span-1">
                         <CardHeader>
-                            <CardTitle>Core Metrics</CardTitle>
+                            <CardTitle>{t('measurement.core_metrics')}</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-6">
                             <div className="flex items-center justify-between">
@@ -135,7 +137,7 @@ export default function MeasurementShow({
                                     <div className="rounded-lg bg-blue-100 p-2 dark:bg-blue-900/30">
                                         <Weight className="h-5 w-5 text-blue-600" />
                                     </div>
-                                    <span className="font-medium">Weight</span>
+                                    <span className="font-medium">{t('measurement.weight')}</span>
                                 </div>
                                 <span className="text-xl font-bold">
                                     {measurement.weight_kg} kg
@@ -146,9 +148,7 @@ export default function MeasurementShow({
                                     <div className="rounded-lg bg-green-100 p-2 dark:bg-green-900/30">
                                         <Ruler className="h-5 w-5 text-green-600" />
                                     </div>
-                                    <span className="font-medium">
-                                        Height/Length
-                                    </span>
+                                    <span className="font-medium">{t('measurement.height')}</span>
                                 </div>
                                 <span className="text-xl font-bold">
                                     {measurement.height_length_cm} cm
@@ -190,7 +190,7 @@ export default function MeasurementShow({
                     <Card className="md:col-span-2">
                         <CardHeader>
                             <CardTitle>
-                                WHO Z-Scores & Classifications
+                                {t('measurement.who_z_scores')}
                             </CardTitle>
                             <CardDescription>
                                 Automatically calculated based on WHO Child
@@ -201,7 +201,7 @@ export default function MeasurementShow({
                             <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                                 <div className="rounded-lg border bg-muted/20 p-4">
                                     <div className="mb-1 text-xs font-semibold text-muted-foreground uppercase">
-                                        Weight-for-Age (WFA)
+                                        {t('measurement.zscore_wfa')}
                                     </div>
                                     <div className="text-2xl font-bold">
                                         {measurement.wfa_zscore?.toFixed(2) ||
@@ -216,7 +216,7 @@ export default function MeasurementShow({
                                 </div>
                                 <div className="rounded-lg border bg-muted/20 p-4">
                                     <div className="mb-1 text-xs font-semibold text-muted-foreground uppercase">
-                                        Height-for-Age (HFA)
+                                        {t('measurement.zscore_hfa')}
                                     </div>
                                     <div className="text-2xl font-bold">
                                         {measurement.hfa_zscore?.toFixed(2) ||
@@ -231,7 +231,7 @@ export default function MeasurementShow({
                                 </div>
                                 <div className="rounded-lg border bg-muted/20 p-4">
                                     <div className="mb-1 text-xs font-semibold text-muted-foreground uppercase">
-                                        Weight-for-Height (WFH)
+                                        {t('measurement.zscore_wfh')}
                                     </div>
                                     <div className="text-2xl font-bold">
                                         {measurement.wfh_zscore?.toFixed(2) ||
@@ -272,7 +272,7 @@ export default function MeasurementShow({
                 {measurement.notes && (
                     <Card>
                         <CardHeader>
-                            <CardTitle>Notes</CardTitle>
+                            <CardTitle>{t('measurement.measurement_notes')}</CardTitle>
                         </CardHeader>
                         <CardContent>
                             <p className="text-sm">{measurement.notes}</p>

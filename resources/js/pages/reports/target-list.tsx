@@ -19,6 +19,7 @@ import {
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
 import { AlertTriangle, FileDown, FileSpreadsheet, Phone } from 'lucide-react';
 
 interface TargetListProps {
@@ -44,12 +45,12 @@ interface TargetListProps {
     barangayId?: string;
 }
 
-const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'Reports', href: '/reports' },
-    { title: 'Target List', href: '/reports/target-list' },
-];
-
 export default function TargetList({ children, barangayId }: TargetListProps) {
+    const { t } = useTranslation();
+    const breadcrumbs: BreadcrumbItem[] = [
+        { title: t('nav.reports'), href: '/reports' },
+        { title: t('reports.target_list'), href: '/reports/target-list' },
+    ];
     const handleExport = (type: 'pdf' | 'excel') => {
         let url = `/reports/export/target-list/${type}`;
         if (barangayId) url += `?barangay=${barangayId}`;
@@ -58,17 +59,16 @@ export default function TargetList({ children, barangayId }: TargetListProps) {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Target List" />
+            <Head title={t('reports.target_list')} />
             <div className="flex flex-col gap-6 p-6">
                 <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
                     <div>
                         <h1 className="flex items-center gap-2 text-3xl font-bold tracking-tight">
                             <AlertTriangle className="h-8 w-8 text-red-600" />
-                            Target List
+                            {t('reports.target_list')}
                         </h1>
                         <p className="mt-1 text-muted-foreground">
-                            High-risk children requiring immediate intervention
-                            and follow-up
+                            {t('reports.target_list_desc')}
                         </p>
                     </div>
                     <div className="flex gap-2">
@@ -91,10 +91,9 @@ export default function TargetList({ children, barangayId }: TargetListProps) {
 
                 <Card className="border-red-200 dark:border-red-900/50">
                     <CardHeader>
-                        <CardTitle>Children Requiring Attention</CardTitle>
+                        <CardTitle>{t('reports.children_requiring_attention')}</CardTitle>
                         <CardDescription>
-                            Showing {children.length} high-risk children
-                            identified from latest measurements
+                            {t('reports.target_list_desc_card', { count: children.length })}
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="overflow-x-auto p-0">
@@ -102,16 +101,16 @@ export default function TargetList({ children, barangayId }: TargetListProps) {
                             <TableHeader>
                                 <TableRow>
                                     <TableHead className="w-24 text-center">
-                                        Priority
+                                        {t('reports.priority')}
                                     </TableHead>
-                                    <TableHead>Child Name</TableHead>
-                                    <TableHead>Age (Mos)</TableHead>
-                                    <TableHead>Barangay</TableHead>
-                                    <TableHead>Classification</TableHead>
-                                    <TableHead>Parent/Guardian</TableHead>
-                                    <TableHead>Last Measured</TableHead>
+                                    <TableHead>{t('children.name')}</TableHead>
+                                    <TableHead>{t('reports.age_months')}</TableHead>
+                                    <TableHead>{t('children.barangay')}</TableHead>
+                                    <TableHead>{t('measurement.classification')}</TableHead>
+                                    <TableHead>{t('reports.parent_guardian')}</TableHead>
+                                    <TableHead>{t('reports.last_measured')}</TableHead>
                                     <TableHead className="text-right">
-                                        Action
+                                        {t('reports.action')}
                                     </TableHead>
                                 </TableRow>
                             </TableHeader>

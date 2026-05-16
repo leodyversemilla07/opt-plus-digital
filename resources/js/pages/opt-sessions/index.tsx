@@ -28,6 +28,7 @@ import {
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, router } from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
 import {
     Calendar,
     CheckCheck,
@@ -73,11 +74,6 @@ interface Props {
     };
 }
 
-const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'Dashboard', href: '/dashboard' },
-    { title: 'OPT Sessions', href: '/opt-sessions' },
-];
-
 const statusColors: Record<string, string> = {
     scheduled:
         'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400',
@@ -88,19 +84,28 @@ const statusColors: Record<string, string> = {
     cancelled: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400',
 };
 
-const statusLabels: Record<string, string> = {
-    scheduled: 'Scheduled',
-    in_progress: 'In Progress',
-    completed: 'Completed',
-    cancelled: 'Cancelled',
-};
-
 export default function Index({ sessions, years, filters }: Props) {
+    const { t } = useTranslation();
     const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
     const [confirmAction, setConfirmAction] = useState<
         'start' | 'complete' | 'cancel' | null
     >(null);
     const [isProcessing, setIsProcessing] = useState(false);
+
+    const breadcrumbs: BreadcrumbItem[] = [
+        { title: t('nav.dashboard'), href: '/dashboard' },
+        { title: t('opt_session.title'), href: '/opt-sessions' },
+    ];
+
+    const getStatusLabel = (status: string) => {
+        const labels: Record<string, string> = {
+            scheduled: t('opt_session.scheduled'),
+            in_progress: t('opt_session.in_progress'),
+            completed: t('opt_session.completed'),
+            cancelled: t('opt_session.cancelled'),
+        };
+        return labels[status] || status;
+    };
 
     const handleFilterChange = (key: string, value: string) => {
         // Clear selection when filters change
@@ -160,9 +165,9 @@ export default function Index({ sessions, years, filters }: Props) {
     };
 
     const confirmTitle = {
-        start: 'Batch Start Sessions',
-        complete: 'Batch Complete Sessions',
-        cancel: 'Batch Cancel Sessions',
+        start: t('opt_session.batch_start'),
+        complete: t('opt_session.batch_complete'),
+        cancel: t('opt_session.batch_cancel'),
     };
 
     const confirmDescription = {
@@ -173,29 +178,29 @@ export default function Index({ sessions, years, filters }: Props) {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="OPT Sessions" />
+            <Head title={t('opt_session.title')} />
 
             <div className="flex flex-col gap-6 p-6">
                 {/* Header */}
                 <div className="flex items-center justify-between">
                     <div>
                         <h1 className="text-2xl font-bold tracking-tight text-foreground">
-                            OPT Sessions
+                            {t('opt_session.title')}
                         </h1>
                         <p className="text-muted-foreground">
-                            Manage Operation Timbang Plus weighing sessions
+                            {t('opt_session.manage_sessions')}
                         </p>
                     </div>
                     <Button render={<Link href="/opt-sessions/create" />}>
                         <Plus className="mr-2 h-4 w-4" />
-                        New Session
+                        {t('opt_session.new_session')}
                     </Button>
                 </div>
 
                 {/* Filters */}
                 <Card>
                     <CardHeader>
-                        <CardTitle>Filters</CardTitle>
+                        <CardTitle>{t('opt_session.filters')}</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <div className="flex gap-4">
@@ -210,23 +215,23 @@ export default function Index({ sessions, years, filters }: Props) {
                                     }
                                 >
                                     <SelectTrigger>
-                                        <SelectValue placeholder="Status" />
+                                        <SelectValue placeholder={t('common.status')} />
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectItem value="all">
-                                            All Statuses
+                                            {t('opt_session.all_statuses')}
                                         </SelectItem>
                                         <SelectItem value="scheduled">
-                                            Scheduled
+                                            {t('opt_session.scheduled')}
                                         </SelectItem>
                                         <SelectItem value="in_progress">
-                                            In Progress
+                                            {t('opt_session.in_progress')}
                                         </SelectItem>
                                         <SelectItem value="completed">
-                                            Completed
+                                            {t('opt_session.completed')}
                                         </SelectItem>
                                         <SelectItem value="cancelled">
-                                            Cancelled
+                                            {t('opt_session.cancelled')}
                                         </SelectItem>
                                     </SelectContent>
                                 </Select>
@@ -243,7 +248,7 @@ export default function Index({ sessions, years, filters }: Props) {
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectItem value="all">
-                                            All Years
+                                            {t('opt_session.all_years')}
                                         </SelectItem>
                                         {years.map((year) => (
                                             <SelectItem
@@ -264,8 +269,8 @@ export default function Index({ sessions, years, filters }: Props) {
                 {selectedIds.size > 0 && (
                     <div className="flex items-center gap-3 rounded-lg border bg-muted/50 px-4 py-3">
                         <span className="text-sm font-medium">
-                            {selectedIds.size} session
-                            {selectedIds.size === 1 ? '' : 's'} selected
+                            {selectedIds.size} {t('opt_session.session')}
+                            {selectedIds.size === 1 ? '' : 's'} {t('opt_session.selected')}
                         </span>
                         <div className="ml-auto flex items-center gap-2">
                             <Button
@@ -275,7 +280,7 @@ export default function Index({ sessions, years, filters }: Props) {
                                 disabled={isProcessing}
                             >
                                 <Play className="mr-1.5 h-4 w-4" />
-                                Batch Start
+                                {t('opt_session.batch_start')}
                             </Button>
                             <Button
                                 variant="secondary"
@@ -284,7 +289,7 @@ export default function Index({ sessions, years, filters }: Props) {
                                 disabled={isProcessing}
                             >
                                 <CheckCheck className="mr-1.5 h-4 w-4" />
-                                Batch Complete
+                                {t('opt_session.batch_complete')}
                             </Button>
                             <Button
                                 variant="outline"
@@ -293,7 +298,7 @@ export default function Index({ sessions, years, filters }: Props) {
                                 disabled={isProcessing}
                             >
                                 <SquareX className="mr-1.5 h-4 w-4" />
-                                Batch Cancel
+                                {t('opt_session.batch_cancel')}
                             </Button>
                             <Button
                                 variant="ghost"
@@ -302,7 +307,7 @@ export default function Index({ sessions, years, filters }: Props) {
                                 disabled={isProcessing}
                             >
                                 <X className="mr-1.5 h-4 w-4" />
-                                Clear
+                                {t('opt_session.clear')}
                             </Button>
                         </div>
                     </div>
@@ -325,21 +330,21 @@ export default function Index({ sessions, years, filters }: Props) {
                                             aria-label="Select all"
                                         />
                                     </TableHead>
-                                    <TableHead>Session</TableHead>
-                                    <TableHead>Barangay</TableHead>
-                                    <TableHead>Date</TableHead>
-                                    <TableHead>Status</TableHead>
+                                    <TableHead>{t('opt_session.session')}</TableHead>
+                                    <TableHead>{t('opt_session.barangay')}</TableHead>
+                                    <TableHead>{t('opt_session.date')}</TableHead>
+                                    <TableHead>{t('opt_session.status')}</TableHead>
                                     <TableHead className="text-center">
-                                        Target
+                                        {t('opt_session.target')}
                                     </TableHead>
                                     <TableHead className="text-center">
-                                        Measured
+                                        {t('opt_session.measured')}
                                     </TableHead>
                                     <TableHead className="text-center">
-                                        Coverage
+                                        {t('opt_session.coverage')}
                                     </TableHead>
                                     <TableHead className="text-right">
-                                        Actions
+                                        {t('opt_session.actions')}
                                     </TableHead>
                                 </TableRow>
                             </TableHeader>
@@ -352,14 +357,14 @@ export default function Index({ sessions, years, filters }: Props) {
                                         >
                                             <div className="flex flex-col items-center gap-2">
                                                 <Calendar className="h-8 w-8 text-muted-foreground/50" />
-                                                <p>No OPT sessions found</p>
+                                                <p>{t('opt_session.no_sessions')}</p>
                                                 <Button
                                                     render={
                                                         <Link href="/opt-sessions/create" />
                                                     }
                                                     variant="outline"
                                                 >
-                                                    Create your first session
+                                                    {t('opt_session.create_first')}
                                                 </Button>
                                             </div>
                                         </TableCell>
@@ -408,11 +413,9 @@ export default function Index({ sessions, years, filters }: Props) {
                                                         ]
                                                     }
                                                 >
-                                                    {
-                                                        statusLabels[
-                                                            session.status
-                                                        ]
-                                                    }
+                                                    {getStatusLabel(
+                                                        session.status,
+                                                    )}
                                                 </Badge>
                                             </TableCell>
                                             <TableCell className="text-center">
@@ -463,8 +466,9 @@ export default function Index({ sessions, years, filters }: Props) {
                 {/* Pagination info */}
                 {sessions.total > 0 && (
                     <div className="text-center text-sm text-muted-foreground">
-                        Showing {sessions.data.length} of {sessions.total}{' '}
-                        sessions
+                        {t('opt_session.showing')} {sessions.data.length} {t('opt_session.of')} {sessions.total}{' '}
+                        {t('opt_session.session')}
+                        {sessions.total === 1 ? '' : 's'}
                     </div>
                 )}
 
@@ -478,7 +482,7 @@ export default function Index({ sessions, years, filters }: Props) {
                             <DialogTitle>
                                 {confirmAction
                                     ? confirmTitle[confirmAction]
-                                    : 'Confirm'}
+                                    : t('opt_session.confirm')}
                             </DialogTitle>
                             <DialogDescription>
                                 {confirmAction
@@ -492,7 +496,7 @@ export default function Index({ sessions, years, filters }: Props) {
                                 onClick={() => setConfirmAction(null)}
                                 disabled={isProcessing}
                             >
-                                Cancel
+                                {t('opt_session.cancel')}
                             </Button>
                             <Button
                                 variant={
@@ -503,7 +507,7 @@ export default function Index({ sessions, years, filters }: Props) {
                                 onClick={executeBatchAction}
                                 disabled={isProcessing}
                             >
-                                {isProcessing ? 'Processing...' : 'Confirm'}
+                                {isProcessing ? t('opt_session.processing') : t('opt_session.confirm')}
                             </Button>
                         </DialogFooter>
                     </DialogContent>

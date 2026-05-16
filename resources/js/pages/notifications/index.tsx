@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils';
 import * as notifications from '@/routes/notifications/index';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, router } from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
 import { Bell, CheckCheck, ChevronRight } from 'lucide-react';
 
 interface NotificationData {
@@ -41,14 +42,7 @@ interface Props {
     unreadCount: number;
 }
 
-const breadcrumbs: BreadcrumbItem[] = [
-    {
-        title: 'Notifications',
-        href: '/notifications',
-    },
-];
-
-function timeAgo(dateString: string): string {
+function timeAgo(dateString: string, t: (key: string, options?: Record<string, string | number>) => string): string {
     const now = new Date();
     const date = new Date(dateString);
     const diffMs = now.getTime() - date.getTime();
@@ -56,10 +50,10 @@ function timeAgo(dateString: string): string {
     const diffHours = Math.floor(diffMs / 3600000);
     const diffDays = Math.floor(diffMs / 86400000);
 
-    if (diffMins < 1) return 'Just now';
-    if (diffMins < 60) return `${diffMins}m ago`;
-    if (diffHours < 24) return `${diffHours}h ago`;
-    if (diffDays < 7) return `${diffDays}d ago`;
+    if (diffMins < 1) return t('notifications.time_ago.just_now');
+    if (diffMins < 60) return t('notifications.time_ago.minutes_ago', { count: diffMins });
+    if (diffHours < 24) return t('notifications.time_ago.hours_ago', { count: diffHours });
+    if (diffDays < 7) return t('notifications.time_ago.days_ago', { count: diffDays });
     return date.toLocaleDateString();
 }
 
@@ -87,6 +81,15 @@ export default function NotificationsIndex({
     notifications: notificationsData,
     unreadCount,
 }: Props) {
+    const { t } = useTranslation();
+
+    const breadcrumbs: BreadcrumbItem[] = [
+        {
+            title: t('notifications.title'),
+            href: '/notifications',
+        },
+    ];
+
     const markAsRead = (id: string) => {
         router.post(notifications.markAsRead.url({ id }));
     };
@@ -97,19 +100,19 @@ export default function NotificationsIndex({
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Notifications" />
+            <Head title={t('notifications.title')} />
 
             <div className="flex flex-col gap-6 p-6 pb-20 md:pb-6">
                 <div className="flex items-center justify-between">
                     <div>
                         <h1 className="flex items-center gap-2 text-2xl font-bold tracking-tight text-foreground">
                             <Bell className="h-6 w-6" />
-                            Notifications
+                            {t('notifications.title')}
                         </h1>
                         <p className="mt-1 text-sm text-muted-foreground">
                             {unreadCount > 0
-                                ? `You have ${unreadCount} unread notification${unreadCount === 1 ? '' : 's'}`
-                                : 'No unread notifications'}
+                                ? t('notifications.unread_count', { count: unreadCount })
+                                : t('notifications.no_notifications')}
                         </p>
                     </div>
 
@@ -120,7 +123,7 @@ export default function NotificationsIndex({
                             onClick={markAllAsRead}
                         >
                             <CheckCheck className="mr-2 h-4 w-4" />
-                            Mark All as Read
+                            {t('notifications.mark_all_read')}
                         </Button>
                     )}
                 </div>
@@ -130,11 +133,10 @@ export default function NotificationsIndex({
                         <CardContent className="flex flex-col items-center justify-center py-12">
                             <Bell className="mb-4 h-12 w-12 text-muted-foreground/50" />
                             <p className="text-lg font-medium text-foreground">
-                                No notifications yet
+                                {t('notifications.no_notifications')}
                             </p>
                             <p className="text-sm text-muted-foreground">
-                                You'll be notified here when severe malnutrition
-                                cases are detected.
+                                {t('notifications.no_notifications_desc')}
                             </p>
                         </CardContent>
                     </Card>
@@ -183,6 +185,7 @@ export default function NotificationsIndex({
                                             >
                                                 {timeAgo(
                                                     notification.created_at,
+                                                    t,
                                                 )}
                                             </Badge>
                                         </div>
@@ -213,7 +216,7 @@ export default function NotificationsIndex({
                                                         />
                                                     }
                                                 >
-                                                    View Child Profile
+                                                    {t('notifications.view_child')}
                                                     <ChevronRight className="h-3 w-3" />
                                                 </Button>
                                             )}
@@ -229,7 +232,7 @@ export default function NotificationsIndex({
                                                         )
                                                     }
                                                 >
-                                                    Mark as read
+                                                    {t('notifications.mark_read')}
                                                 </Button>
                                             )}
                                         </div>
@@ -246,11 +249,11 @@ export default function NotificationsIndex({
                                         href={notificationsData.prev_page_url}
                                         className="text-sm text-muted-foreground hover:text-foreground"
                                     >
-                                        Previous
+                                        {t('common.previous')}
                                     </Link>
                                 )}
                                 <span className="text-sm text-muted-foreground">
-                                    Page {notificationsData.current_page} of{' '}
+                                    {t('common.page')} {notificationsData.current_page} {t('common.of')}{' '}
                                     {notificationsData.last_page}
                                 </span>
                                 {notificationsData.next_page_url && (
@@ -258,7 +261,7 @@ export default function NotificationsIndex({
                                         href={notificationsData.next_page_url}
                                         className="text-sm text-muted-foreground hover:text-foreground"
                                     >
-                                        Next
+                                        {t('common.next')}
                                     </Link>
                                 )}
                             </div>

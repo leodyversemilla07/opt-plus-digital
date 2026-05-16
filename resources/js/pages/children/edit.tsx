@@ -19,6 +19,7 @@ import AppLayout from '@/layouts/app-layout';
 import { show as childrenShow } from '@/routes/children';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, useForm } from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
 import { FormEventHandler } from 'react';
 
 interface Child {
@@ -54,6 +55,7 @@ interface Props {
 }
 
 export default function Edit({ child, barangays }: Props) {
+    const { t } = useTranslation();
     const { data, setData, put, processing, errors } = useForm({
         family_serial_number: child.family_serial_number,
         last_name: child.last_name,
@@ -82,28 +84,28 @@ export default function Edit({ child, barangays }: Props) {
     const selectedBarangay = barangays.find((b) => b.id === data.barangay_id);
 
     const breadcrumbs: BreadcrumbItem[] = [
-        { title: 'Children', href: '/children' },
+        { title: t('nav.children'), href: '/children' },
         {
             title: `${child.first_name} ${child.last_name}`,
             href: `/children/${child.id}`,
         },
-        { title: 'Edit', href: `/children/${child.id}/edit` },
+        { title: t('common.edit'), href: `/children/${child.id}/edit` },
     ];
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head
-                title={`Edit Child - ${child.first_name} ${child.last_name}`}
+                title={`${t('common.edit')} ${t('children.title')} - ${child.first_name} ${child.last_name}`}
             />
 
             <div className="flex flex-col gap-6 p-6">
                 <div className="mx-auto w-full max-w-4xl">
                     <div>
                         <h1 className="text-3xl font-bold tracking-tight">
-                            Edit Child Information
+                            {t('children.edit_child_info')}
                         </h1>
                         <p className="mt-1 text-muted-foreground">
-                            Update child registration details
+                            {t('children.update_details')}
                         </p>
                     </div>
                 </div>
@@ -114,13 +116,13 @@ export default function Edit({ child, barangays }: Props) {
                             {/* Child Information */}
                             <Card>
                                 <CardHeader>
-                                    <CardTitle>Child Information</CardTitle>
+                                    <CardTitle>{t('children.child_information')}</CardTitle>
                                 </CardHeader>
                                 <CardContent className="space-y-4">
                                     <FieldGroup>
                                         <Field>
                                             <FieldLabel htmlFor="family_serial_number">
-                                                Family Serial Number{' '}
+                                                {t('children.fsn')}{' '}
                                                 <span className="text-red-500">
                                                     *
                                                 </span>
@@ -149,7 +151,7 @@ export default function Edit({ child, barangays }: Props) {
 
                                         <Field>
                                             <FieldLabel htmlFor="last_name">
-                                                Last Name{' '}
+                                                {t('children.last_name')}{' '}
                                                 <span className="text-red-500">
                                                     *
                                                 </span>
@@ -174,7 +176,7 @@ export default function Edit({ child, barangays }: Props) {
 
                                         <Field>
                                             <FieldLabel htmlFor="first_name">
-                                                First Name{' '}
+                                                {t('children.first_name')}{' '}
                                                 <span className="text-red-500">
                                                     *
                                                 </span>
@@ -199,7 +201,7 @@ export default function Edit({ child, barangays }: Props) {
 
                                         <Field>
                                             <FieldLabel htmlFor="middle_name">
-                                                Middle Name
+                                                {t('children.middle_name')}
                                             </FieldLabel>
                                             <Input
                                                 id="middle_name"
@@ -215,7 +217,7 @@ export default function Edit({ child, barangays }: Props) {
 
                                         <Field>
                                             <FieldLabel htmlFor="name_extension">
-                                                Name Extension
+                                                {t('children.name_extension')}
                                             </FieldLabel>
                                             <Input
                                                 id="name_extension"
@@ -232,7 +234,7 @@ export default function Edit({ child, barangays }: Props) {
 
                                         <Field>
                                             <FieldLabel htmlFor="sex">
-                                                Sex{' '}
+                                                {t('children.sex')}{' '}
                                                 <span className="text-red-500">
                                                     *
                                                 </span>
@@ -253,10 +255,10 @@ export default function Edit({ child, barangays }: Props) {
                                                 </SelectTrigger>
                                                 <SelectContent>
                                                     <SelectItem value="male">
-                                                        Male
+                                                        {t('children.male')}
                                                     </SelectItem>
                                                     <SelectItem value="female">
-                                                        Female
+                                                        {t('children.female')}
                                                     </SelectItem>
                                                 </SelectContent>
                                             </Select>
@@ -269,7 +271,7 @@ export default function Edit({ child, barangays }: Props) {
 
                                         <Field>
                                             <FieldLabel htmlFor="date_of_birth">
-                                                Date of Birth{' '}
+                                                {t('children.date_of_birth')}{' '}
                                                 <span className="text-red-500">
                                                     *
                                                 </span>
@@ -300,7 +302,7 @@ export default function Edit({ child, barangays }: Props) {
 
                                         <Field>
                                             <FieldLabel htmlFor="place_of_birth">
-                                                Place of Birth
+                                                {t('children.place_of_birth')}
                                             </FieldLabel>
                                             <Input
                                                 id="place_of_birth"
@@ -320,12 +322,12 @@ export default function Edit({ child, barangays }: Props) {
                             {/* Address */}
                             <Card>
                                 <CardHeader>
-                                    <CardTitle>Address</CardTitle>
+                                    <CardTitle>{t('children.address')}</CardTitle>
                                 </CardHeader>
                                 <CardContent className="space-y-4">
                                     <div>
                                         <FieldLabel htmlFor="barangay_id">
-                                            Barangay{' '}
+                                            {t('children.barangay')}{' '}
                                             <span className="text-red-500">
                                                 *
                                             </span>
@@ -340,7 +342,7 @@ export default function Edit({ child, barangays }: Props) {
                                             }
                                         >
                                             <SelectTrigger>
-                                                <SelectValue placeholder="Select barangay" />
+                                                <SelectValue placeholder={t('children.barangay')} />
                                             </SelectTrigger>
                                             <SelectContent>
                                                 {barangays.map((barangay) => (
@@ -355,7 +357,7 @@ export default function Edit({ child, barangays }: Props) {
                                         </Select>
                                         {selectedBarangay && (
                                             <p className="mt-1 text-sm text-muted-foreground">
-                                                Municipality:{' '}
+                                                {t('children.municipality')}:{' '}
                                                 {
                                                     selectedBarangay.municipality_city
                                                 }
@@ -371,7 +373,7 @@ export default function Edit({ child, barangays }: Props) {
                                     <div className="grid gap-4 md:grid-cols-2">
                                         <div>
                                             <FieldLabel htmlFor="purok">
-                                                Purok
+                                                {t('children.purok')}
                                             </FieldLabel>
                                             <Input
                                                 id="purok"
@@ -387,7 +389,7 @@ export default function Edit({ child, barangays }: Props) {
 
                                         <div>
                                             <FieldLabel htmlFor="address_details">
-                                                Address Details
+                                                {t('children.address_details')}
                                             </FieldLabel>
                                             <Input
                                                 id="address_details"
@@ -408,13 +410,13 @@ export default function Edit({ child, barangays }: Props) {
                             {/* Parents/Guardian */}
                             <Card>
                                 <CardHeader>
-                                    <CardTitle>Parents/Guardian</CardTitle>
+                                    <CardTitle>{t('children.parents_guardian')}</CardTitle>
                                 </CardHeader>
                                 <CardContent className="space-y-4">
                                     <div className="grid gap-4 md:grid-cols-2">
                                         <div>
                                             <FieldLabel htmlFor="mother_name">
-                                                Mother's Full Name
+                                                {t('children.mother_name')}
                                             </FieldLabel>
                                             <Input
                                                 id="mother_name"
@@ -430,7 +432,7 @@ export default function Edit({ child, barangays }: Props) {
 
                                         <div>
                                             <FieldLabel htmlFor="father_name">
-                                                Father's Full Name
+                                                {t('children.father_name')}
                                             </FieldLabel>
                                             <Input
                                                 id="father_name"
@@ -447,7 +449,7 @@ export default function Edit({ child, barangays }: Props) {
 
                                     <div>
                                         <FieldLabel htmlFor="guardian_name">
-                                            Guardian's Full Name (if applicable)
+                                            {t('children.guardian_name')}
                                         </FieldLabel>
                                         <Input
                                             id="guardian_name"
@@ -466,9 +468,7 @@ export default function Edit({ child, barangays }: Props) {
                             {/* Additional Information */}
                             <Card>
                                 <CardHeader>
-                                    <CardTitle>
-                                        Additional Information
-                                    </CardTitle>
+                                    <CardTitle>{t('children.additional_information')}</CardTitle>
                                 </CardHeader>
                                 <CardContent className="space-y-4">
                                     <div className="flex items-center space-x-2">
@@ -483,14 +483,14 @@ export default function Edit({ child, barangays }: Props) {
                                             }
                                         />
                                         <FieldLabel htmlFor="is_indigenous_people">
-                                            Indigenous People
+                                            {t('children.indigenous_people')}
                                         </FieldLabel>
                                     </div>
 
                                     {data.is_indigenous_people && (
                                         <div>
                                             <FieldLabel htmlFor="indigenous_people_group">
-                                                Indigenous People Group{' '}
+                                                {t('children.indigenous_group')}{' '}
                                                 <span className="text-red-500">
                                                     *
                                                 </span>
@@ -523,7 +523,7 @@ export default function Edit({ child, barangays }: Props) {
 
                                     <div>
                                         <FieldLabel htmlFor="qr_code">
-                                            QR Code
+                                            {t('children.qr_code')}
                                         </FieldLabel>
                                         <Input
                                             id="qr_code"
@@ -547,13 +547,13 @@ export default function Edit({ child, barangays }: Props) {
                             <div className="flex justify-end gap-2">
                                 <Link href={childrenShow.url(child.id)}>
                                     <Button variant="outline" type="button">
-                                        Cancel
+                                        {t('common.cancel')}
                                     </Button>
                                 </Link>
                                 <Button type="submit" disabled={processing}>
                                     {processing
-                                        ? 'Updating...'
-                                        : 'Update Child'}
+                                    ? t('children.updating')
+                                    : t('children.update_child')}
                                 </Button>
                             </div>
                         </div>

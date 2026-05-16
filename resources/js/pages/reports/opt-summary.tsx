@@ -10,6 +10,7 @@ import {
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
 import {
     ArrowLeft,
     Calendar,
@@ -68,19 +69,19 @@ interface OPTSummaryProps {
     };
 }
 
-const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'Reports', href: '/reports' },
-    { title: 'OPT Plus Summary', href: '/reports/opt-summary' },
-];
-
 export default function OPTSummary({ summary }: OPTSummaryProps) {
+    const { t } = useTranslation();
+    const breadcrumbs: BreadcrumbItem[] = [
+        { title: t('reports.title'), href: '/reports' },
+        { title: t('reports.opt_summary'), href: '/reports/opt-summary' },
+    ];
     const handleExport = (type: 'pdf' | 'excel') => {
         window.open(`/reports/export/opt-summary/${type}`, '_blank');
     };
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="OPT Plus Summary" />
+            <Head title={t('reports.opt_summary')} />
             <div className="flex flex-col gap-6 p-6">
                 <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
                     <div>
@@ -90,7 +91,7 @@ export default function OPTSummary({ summary }: OPTSummaryProps) {
                             className="mb-2"
                             onClick={() => window.history.back()}
                         >
-                            <ArrowLeft className="mr-2 h-4 w-4" /> Back
+                            <ArrowLeft className="mr-2 h-4 w-4" /> {t('reports.back')}
                         </Button>
                         <h1 className="text-3xl font-bold tracking-tight">
                             {summary.report_title}
@@ -104,7 +105,7 @@ export default function OPTSummary({ summary }: OPTSummaryProps) {
                                 <Calendar className="h-3 w-3" />{' '}
                                 {summary.period}
                             </span>
-                            <span>Generated: {summary.generated_at}</span>
+                            <span>{t('reports.generated', { date: summary.generated_at })}</span>
                         </div>
                     </div>
                     <div className="flex gap-2">
@@ -113,39 +114,39 @@ export default function OPTSummary({ summary }: OPTSummaryProps) {
                             size="sm"
                             onClick={() => handleExport('pdf')}
                         >
-                            <FileDown className="mr-2 h-4 w-4" /> PDF
+                            <FileDown className="mr-2 h-4 w-4" /> {t('reports.pdf')}
                         </Button>
                         <Button
                             variant="outline"
                             size="sm"
                             onClick={() => handleExport('excel')}
                         >
-                            <FileSpreadsheet className="mr-2 h-4 w-4" /> Excel
+                            <FileSpreadsheet className="mr-2 h-4 w-4" /> {t('reports.excel')}
                         </Button>
                     </div>
                 </div>
 
                 <div className="grid gap-4 md:grid-cols-4">
                     <StatCard
-                        title="Total Children"
+                        title={t('reports.total_children_lg')}
                         value={summary.total_children}
                         icon={<Users className="h-4 w-4" />}
-                        description="Target population"
+                        description={t('dashboard.target_population')}
                     />
                     <StatCard
-                        title="Measured"
+                        title={t('reports.measured_count', { count: summary.coverage_summary.measured_children }).split(':')[0].trim() || 'Measured'}
                         value={summary.coverage_summary.measured_children}
-                        description={`${summary.coverage_summary.coverage_rate}% coverage rate`}
+                        description={`${summary.coverage_summary.coverage_rate}% ${t('reports.coverage_rate').toLowerCase()}`}
                     />
                     <StatCard
                         title="Unmeasured"
                         value={summary.coverage_summary.unmeasured_children}
-                        description="Remaining to be measured"
+                        description={t('reports.no_recent_measurement')}
                     />
                     <StatCard
-                        title="Malnutrition Rate"
+                        title={t('reports.malnutrition_pct')}
                         value={`${(((summary.nutritional_status.overall.mam + summary.nutritional_status.overall.sam) / summary.nutritional_status.overall.total) * 100 || 0).toFixed(1)}%`}
-                        description="MAM + SAM combined"
+                        description={t('reports.mam') + ' + ' + t('reports.sam') + ' ' + t('reports.combined', { defaultValue: 'combined' })}
                     />
                 </div>
 
@@ -162,15 +163,15 @@ export default function OPTSummary({ summary }: OPTSummaryProps) {
 
                     <Card>
                         <CardHeader>
-                            <CardTitle>By Sex</CardTitle>
+                            <CardTitle>{t('reports.male_header') + ' / ' + t('reports.female_header')}</CardTitle>
                             <CardDescription>
-                                Distribution of children by sex
+                                {t('reports.age_group_desc')}
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-4">
                             <div className="flex items-center justify-between">
                                 <span className="text-sm font-medium">
-                                    Male
+                                    {t('reports.male')}
                                 </span>
                                 <span className="font-bold">
                                     {summary.by_sex.male}
@@ -178,7 +179,7 @@ export default function OPTSummary({ summary }: OPTSummaryProps) {
                             </div>
                             <div className="flex items-center justify-between">
                                 <span className="text-sm font-medium">
-                                    Female
+                                    {t('reports.female')}
                                 </span>
                                 <span className="font-bold">
                                     {summary.by_sex.female}
@@ -203,9 +204,9 @@ export default function OPTSummary({ summary }: OPTSummaryProps) {
 
                     <Card>
                         <CardHeader>
-                            <CardTitle>By Age Group</CardTitle>
+                            <CardTitle>{t('reports.age_group_distribution')}</CardTitle>
                             <CardDescription>
-                                Age distribution in months
+                                {t('reports.age_group_desc')}
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-2">

@@ -1,28 +1,30 @@
 import { cn } from '@/lib/utils';
 import { Link, usePage } from '@inertiajs/react';
 import { FileText, LayoutDashboard, Settings, Users } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export function MobileBottomNav() {
+    const { t } = useTranslation();
     const { url } = usePage();
 
     const navItems = [
         {
-            title: 'Dashboard',
+            title: t('nav.dashboard'),
             href: '/dashboard',
             icon: LayoutDashboard,
         },
         {
-            title: 'Children',
+            title: t('children.title'),
             href: '/children',
             icon: Users,
         },
         {
-            title: 'Reports',
+            title: t('nav.reports'),
             href: '/reports',
             icon: FileText,
         },
         {
-            title: 'Settings',
+            title: t('nav.settings'),
             href: '/settings/profile',
             icon: Settings,
         },

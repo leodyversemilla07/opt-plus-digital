@@ -9,6 +9,7 @@ import {
 } from '@/routes/children';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link } from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
 import { AlertTriangle, Calendar, MapPin, User } from 'lucide-react';
 
 interface Child {
@@ -39,9 +40,10 @@ interface Props {
 }
 
 export default function Duplicates({ duplicates }: Props) {
+    const { t } = useTranslation();
     const breadcrumbs: BreadcrumbItem[] = [
-        { title: 'Children', href: '/children' },
-        { title: 'Duplicates', href: '/children/duplicates' },
+        { title: t('nav.children'), href: '/children' },
+        { title: t('children.duplicates'), href: '/children/duplicates' },
     ];
 
     const getConfidenceBadge = (confidence: string) => {
@@ -86,17 +88,17 @@ export default function Duplicates({ duplicates }: Props) {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Potential Duplicate Children" />
+            <Head title={t('children.potential_duplicates')} />
 
             <div className="flex flex-col gap-6 p-6">
                 <div className="mx-auto w-full max-w-7xl">
                     {/* Header */}
                     <div>
                         <h1 className="text-3xl font-bold tracking-tight">
-                            Potential Duplicate Children
+                            {t('children.potential_duplicates')}
                         </h1>
                         <p className="mt-1 text-muted-foreground">
-                            Review and resolve potential duplicate registrations
+                            {t('children.review_duplicates')}
                         </p>
                     </div>
                 </div>
@@ -109,15 +111,10 @@ export default function Duplicates({ duplicates }: Props) {
                                 <AlertTriangle className="h-5 w-5 text-amber-600 dark:text-amber-400" />
                                 <div>
                                     <h3 className="font-semibold text-amber-900 dark:text-amber-100">
-                                        {duplicates.length} Potential Duplicate
-                                        Group{duplicates.length > 1 ? 's' : ''}{' '}
-                                        Found
+                                        {t('children.duplicate_groups_found', { count: duplicates.length })}
                                     </h3>
                                     <p className="mt-1 text-sm text-amber-800 dark:text-amber-200">
-                                        Please review these potential duplicates
-                                        carefully. If they are the same child,
-                                        consider merging or deleting duplicate
-                                        records.
+                                        {t('children.review_alert_text')}
                                     </p>
                                 </div>
                             </div>
@@ -132,16 +129,16 @@ export default function Duplicates({ duplicates }: Props) {
                                     <User className="h-8 w-8 text-green-600" />
                                 </div>
                                 <h3 className="text-lg font-semibold tracking-tight">
-                                    No Duplicates Found
+                                    {t('children.no_duplicates')}
                                 </h3>
                                 <p className="mt-2 text-sm text-muted-foreground">
-                                    All child registrations appear to be unique.
+                                    {t('children.all_unique')}
                                 </p>
                                 <Link
                                     href={childrenIndex.url()}
                                     className="mt-4 inline-block"
                                 >
-                                    <Button>Back to Children List</Button>
+                                    <Button>{t('children.back_to_list')}</Button>
                                 </Link>
                             </CardContent>
                         </Card>
@@ -153,8 +150,7 @@ export default function Duplicates({ duplicates }: Props) {
                                         <div className="flex items-start justify-between">
                                             <div>
                                                 <CardTitle>
-                                                    Duplicate Group #
-                                                    {groupIndex + 1}
+                                                    {t('children.duplicate_group', { number: groupIndex + 1 })}
                                                 </CardTitle>
                                                 <p className="mt-1 text-sm text-muted-foreground">
                                                     {getCriteriaDescription(
@@ -195,15 +191,12 @@ export default function Duplicates({ duplicates }: Props) {
                                                                                 : 'secondary'
                                                                         }
                                                                     >
-                                                                        {child.sex ===
-                                                                        'male'
-                                                                            ? 'Male'
-                                                                            : 'Female'}
+                                                                        {child.sex === 'male' ? t('children.male') : t('children.female')}
                                                                     </Badge>
                                                                     {childIndex ===
                                                                         0 && (
                                                                         <Badge variant="outline">
-                                                                            Original
+                                                                            {t('children.original')}
                                                                         </Badge>
                                                                     )}
                                                                 </div>
@@ -212,7 +205,7 @@ export default function Duplicates({ duplicates }: Props) {
                                                                     <div className="flex items-center gap-2 text-muted-foreground">
                                                                         <Calendar className="h-4 w-4" />
                                                                         <span>
-                                                                            Born:{' '}
+                                                                            {t('children.born')}:{' '}
                                                                             {new Date(
                                                                                 child.date_of_birth,
                                                                             ).toLocaleDateString()}{' '}
@@ -241,7 +234,7 @@ export default function Duplicates({ duplicates }: Props) {
                                                                     </div>
                                                                     <div className="text-muted-foreground">
                                                                         <span className="font-medium">
-                                                                            FSN:
+                                                                            {t('children.fsn')}:
                                                                         </span>{' '}
                                                                         {
                                                                             child.family_serial_number
@@ -250,7 +243,7 @@ export default function Duplicates({ duplicates }: Props) {
                                                                     {child.mother_name && (
                                                                         <div className="text-muted-foreground">
                                                                             <span className="font-medium">
-                                                                                Mother:
+                                                                                {t('children.mother')}:
                                                                             </span>{' '}
                                                                             {
                                                                                 child.mother_name
@@ -260,7 +253,7 @@ export default function Duplicates({ duplicates }: Props) {
                                                                     {child.father_name && (
                                                                         <div className="text-muted-foreground">
                                                                             <span className="font-medium">
-                                                                                Father:
+                                                                                {t('children.father')}:
                                                                             </span>{' '}
                                                                             {
                                                                                 child.father_name
@@ -269,7 +262,7 @@ export default function Duplicates({ duplicates }: Props) {
                                                                     )}
                                                                     <div className="text-muted-foreground">
                                                                         <span className="font-medium">
-                                                                            Registered:
+                                                                            {t('children.registered')}:
                                                                         </span>{' '}
                                                                         {new Date(
                                                                             child.created_at,
@@ -288,7 +281,7 @@ export default function Duplicates({ duplicates }: Props) {
                                                                         variant="outline"
                                                                         size="sm"
                                                                     >
-                                                                        View
+                                                                        {t('children.view')}
                                                                     </Button>
                                                                 </Link>
                                                                 <Link
@@ -300,7 +293,7 @@ export default function Duplicates({ duplicates }: Props) {
                                                                         variant="outline"
                                                                         size="sm"
                                                                     >
-                                                                        Edit
+                                                                        {t('common.edit')}
                                                                     </Button>
                                                                 </Link>
                                                             </div>
@@ -314,7 +307,7 @@ export default function Duplicates({ duplicates }: Props) {
                                         <div className="mt-4 flex gap-2 border-t pt-4">
                                             <p className="flex-1 text-sm text-muted-foreground">
                                                 <span className="font-medium">
-                                                    Action Required:
+                                                    {t('children.action_required')}:
                                                 </span>{' '}
                                                 If these are the same child,
                                                 please merge or delete duplicate
@@ -330,7 +323,7 @@ export default function Duplicates({ duplicates }: Props) {
                     {/* Info Card */}
                     <Card className="mt-6">
                         <CardHeader>
-                            <CardTitle>How Duplicates Are Detected</CardTitle>
+                            <CardTitle>{t('children.how_duplicates_detected')}</CardTitle>
                         </CardHeader>
                         <CardContent>
                             <div className="space-y-2 text-sm text-muted-foreground">

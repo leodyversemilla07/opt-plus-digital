@@ -25,8 +25,10 @@ import {
     Sun,
     UserPlus,
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export function Header({ canRegister = true }: { canRegister?: boolean }) {
+    const { t } = useTranslation();
     const { auth } = usePage<SharedData>().props;
     const { appearance, updateAppearance } = useAppearance();
 
@@ -41,10 +43,10 @@ export function Header({ canRegister = true }: { canRegister?: boolean }) {
         appearance === 'dark' ? Moon : appearance === 'light' ? Sun : Monitor;
     const appearanceLabel =
         appearance === 'dark'
-            ? 'Dark'
+            ? t('common.dark')
             : appearance === 'light'
-              ? 'Light'
-              : 'System';
+              ? t('common.light')
+              : t('common.system');
 
     return (
         <nav className="sticky top-0 z-50 border-b bg-background/80 backdrop-blur-md">
@@ -86,7 +88,7 @@ export function Header({ canRegister = true }: { canRegister?: boolean }) {
                         </svg>
                     </div>
                     <span className="text-lg font-semibold tracking-tight">
-                        OPT Plus Digital
+                        {t('app.name')}
                     </span>
                 </Link>
 
@@ -96,19 +98,19 @@ export function Header({ canRegister = true }: { canRegister?: boolean }) {
                         href={home()}
                         className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
                     >
-                        Home
+                        {t('nav.home')}
                     </Link>
                     <Link
                         href={features()}
                         className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
                     >
-                        Features
+                        {t('nav.features')}
                     </Link>
                     <Link
                         href={about()}
                         className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
                     >
-                        About
+                        {t('nav.about')}
                     </Link>
                 </div>
 
@@ -125,12 +127,12 @@ export function Header({ canRegister = true }: { canRegister?: boolean }) {
                                 >
                                     <AppearanceIcon className="h-4 w-4" />
                                     <span className="sr-only">
-                                        Toggle theme ({appearanceLabel})
+                                        {t('common.toggle_theme')} ({appearanceLabel})
                                     </span>
                                 </Button>
                             </TooltipTrigger>
                             <TooltipContent>
-                                <p>Theme: {appearanceLabel}</p>
+                                <p>{t('common.theme')}: {appearanceLabel}</p>
                             </TooltipContent>
                         </Tooltip>
                     </TooltipProvider>
@@ -141,7 +143,7 @@ export function Header({ canRegister = true }: { canRegister?: boolean }) {
                             render={<Link href={dashboard()} />}
                         >
                             <LayoutDashboard className="mr-2 h-4 w-4" />
-                            Dashboard
+                            {t('nav.dashboard')}
                         </Button>
                     ) : (
                         <>
@@ -152,7 +154,7 @@ export function Header({ canRegister = true }: { canRegister?: boolean }) {
                                 render={<Link href={login()} />}
                             >
                                 <LogIn className="mr-2 h-4 w-4" />
-                                Log in
+                                {t('auth.login')}
                             </Button>
                             {canRegister && (
                                 <Button
@@ -161,7 +163,7 @@ export function Header({ canRegister = true }: { canRegister?: boolean }) {
                                     render={<Link href={register()} />}
                                 >
                                     <UserPlus className="mr-2 h-4 w-4" />
-                                    Register
+                                    {t('auth.register')}
                                 </Button>
                             )}
                         </>
@@ -185,7 +187,7 @@ export function Header({ canRegister = true }: { canRegister?: boolean }) {
                             className="w-72 bg-background"
                         >
                             <SheetTitle className="sr-only">
-                                Navigation Menu
+                                {t('common.navigation_menu')}
                             </SheetTitle>
                             <SheetHeader className="text-left">
                                 <div className="flex items-center gap-2.5">
@@ -221,7 +223,7 @@ export function Header({ canRegister = true }: { canRegister?: boolean }) {
                                         </svg>
                                     </div>
                                     <span className="text-lg font-semibold tracking-tight">
-                                        OPT Plus Digital
+                                        {t('app.name')}
                                     </span>
                                 </div>
                             </SheetHeader>
@@ -231,19 +233,19 @@ export function Header({ canRegister = true }: { canRegister?: boolean }) {
                                     href={home()}
                                     className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
                                 >
-                                    Home
+                                    {t('nav.home')}
                                 </Link>
                                 <Link
                                     href={features()}
                                     className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
                                 >
-                                    Features
+                                    {t('nav.features')}
                                 </Link>
                                 <Link
                                     href={about()}
                                     className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
                                 >
-                                    About
+                                    {t('nav.about')}
                                 </Link>
 
                                 <div className="my-2 border-t" />
@@ -254,7 +256,7 @@ export function Header({ canRegister = true }: { canRegister?: boolean }) {
                                     onClick={cycleAppearance}
                                 >
                                     <AppearanceIcon className="mr-2 h-4 w-4" />
-                                    Theme: {appearanceLabel}
+                                    {t('common.theme')}: {appearanceLabel}
                                 </Button>
 
                                 <div className="my-2 border-t" />
@@ -265,7 +267,7 @@ export function Header({ canRegister = true }: { canRegister?: boolean }) {
                                         render={<Link href={dashboard()} />}
                                     >
                                         <LayoutDashboard className="mr-2 h-4 w-4" />
-                                        Dashboard
+                                        {t('nav.dashboard')}
                                     </Button>
                                 ) : (
                                     <>
@@ -275,7 +277,7 @@ export function Header({ canRegister = true }: { canRegister?: boolean }) {
                                             render={<Link href={login()} />}
                                         >
                                             <LogIn className="mr-2 h-4 w-4" />
-                                            Log in
+                                            {t('auth.login')}
                                         </Button>
                                         {canRegister && (
                                             <Button
@@ -285,7 +287,7 @@ export function Header({ canRegister = true }: { canRegister?: boolean }) {
                                                 }
                                             >
                                                 <UserPlus className="mr-2 h-4 w-4" />
-                                                Register
+                                                {t('auth.register')}
                                             </Button>
                                         )}
                                     </>

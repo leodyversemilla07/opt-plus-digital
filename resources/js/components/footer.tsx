@@ -1,6 +1,9 @@
 import { Link } from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
 
 export function Footer() {
+    const { t } = useTranslation();
+
     return (
         <footer className="mt-auto border-t bg-card py-8 sm:py-10">
             <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-6 px-4 sm:gap-8 sm:px-6 md:flex-row">
@@ -37,7 +40,7 @@ export function Footer() {
                         </svg>
                     </div>
                     <span className="text-lg font-semibold">
-                        OPT Plus Digital
+                        {t('app.name')}
                     </span>
                 </div>
 
@@ -46,13 +49,13 @@ export function Footer() {
                         href="#"
                         className="transition-colors hover:text-primary"
                     >
-                        Privacy Policy
+                        {t('footer.privacy_policy')}
                     </Link>
                     <Link
                         href="#"
                         className="transition-colors hover:text-primary"
                     >
-                        Terms of Service
+                        {t('footer.terms_of_service')}
                     </Link>
                     <a
                         href="https://www.nnc.gov.ph"
@@ -60,7 +63,7 @@ export function Footer() {
                         target="_blank"
                         rel="noopener noreferrer"
                     >
-                        Official NNC Website
+                        {t('footer.nnc_website')}
                     </a>
                     <a
                         href="https://www.doh.gov.ph"
@@ -68,12 +71,12 @@ export function Footer() {
                         target="_blank"
                         rel="noopener noreferrer"
                     >
-                        Department of Health
+                        {t('footer.doh')}
                     </a>
                 </div>
 
                 <div className="text-xs text-muted-foreground opacity-60">
-                    &copy; {new Date().getFullYear()} OPT Plus Digital Project.
+                    {t('footer.copyright', { year: new Date().getFullYear() })}
                 </div>
             </div>
         </footer>

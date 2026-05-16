@@ -1,6 +1,11 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+    Card,
+    CardContent,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
 import { NutritionalStatusBadge } from '@/components/ui/nutritional-status-badge';
 import {
     Table,
@@ -14,6 +19,7 @@ import AppLayout from '@/layouts/app-layout';
 import { create as measurementsCreate } from '@/routes/children/measurements';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link } from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
 import { Plus, TrendingDown, TrendingUp } from 'lucide-react';
 
 interface Measurement {
@@ -50,10 +56,12 @@ interface Props {
 }
 
 export default function Index({ child, measurements }: Props) {
+    const { t } = useTranslation();
+
     const breadcrumbs: BreadcrumbItem[] = [
-        { title: 'Children', href: '/children' },
+        { title: t('nav.children'), href: '/children' },
         { title: child.full_name, href: `/children/${child.id}` },
-        { title: 'Measurements', href: `/children/${child.id}/measurements` },
+        { title: t('measurement.title'), href: `/children/${child.id}/measurements` },
     ];
 
     const getStatusBadge = (classification: string) => {
@@ -88,14 +96,14 @@ export default function Index({ child, measurements }: Props) {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title={`Measurements - ${child.full_name}`} />
+            <Head title={`${t('measurement.title')} - ${child.full_name}`} />
 
             <div className="flex flex-col gap-6 p-6">
                 <div className="mx-auto w-full max-w-7xl">
                     <div className="flex items-center justify-between">
                         <div>
                             <h1 className="text-3xl font-bold tracking-tight">
-                                Measurement History
+                                {t('measurement.history')}
                             </h1>
                             <p className="mt-1 text-muted-foreground">
                                 {child.full_name} •{' '}
@@ -107,7 +115,7 @@ export default function Index({ child, measurements }: Props) {
                         <Link href={measurementsCreate.url(child.id)}>
                             <Button>
                                 <Plus className="mr-2 h-4 w-4" />
-                                Add Measurement
+                                {t('measurement.add_measurement')}
                             </Button>
                         </Link>
                     </div>
@@ -119,7 +127,7 @@ export default function Index({ child, measurements }: Props) {
                             <Card>
                                 <CardHeader className="pb-3">
                                     <CardTitle className="text-sm font-medium text-muted-foreground">
-                                        Latest Weight
+                                        {t('measurement.latest_weight')}
                                     </CardTitle>
                                 </CardHeader>
                                 <CardContent>
@@ -147,7 +155,7 @@ export default function Index({ child, measurements }: Props) {
                             <Card>
                                 <CardHeader className="pb-3">
                                     <CardTitle className="text-sm font-medium text-muted-foreground">
-                                        Latest Height
+                                        {t('measurement.latest_height')}
                                     </CardTitle>
                                 </CardHeader>
                                 <CardContent>
@@ -175,7 +183,7 @@ export default function Index({ child, measurements }: Props) {
                             <Card>
                                 <CardHeader className="pb-3">
                                     <CardTitle className="text-sm font-medium text-muted-foreground">
-                                        Status
+                                        {t('common.status')}
                                     </CardTitle>
                                 </CardHeader>
                                 <CardContent>
@@ -188,7 +196,7 @@ export default function Index({ child, measurements }: Props) {
                             <Card>
                                 <CardHeader className="pb-3">
                                     <CardTitle className="text-sm font-medium text-muted-foreground">
-                                        Last Measured
+                                        {t('measurement.last_measured')}
                                     </CardTitle>
                                 </CardHeader>
                                 <CardContent>
@@ -207,20 +215,20 @@ export default function Index({ child, measurements }: Props) {
 
                     <Card>
                         <CardHeader>
-                            <CardTitle>All Measurements</CardTitle>
+                            <CardTitle>{t('measurement.all_measurements')}</CardTitle>
                         </CardHeader>
                         <CardContent>
                             {measurements.length === 0 ? (
                                 <div className="py-8 text-center text-muted-foreground">
                                     <p className="mb-4">
-                                        No measurements recorded yet.
+                                        {t('measurement.no_measurements')}
                                     </p>
                                     <Link
                                         href={measurementsCreate.url(child.id)}
                                     >
                                         <Button>
                                             <Plus className="mr-2 h-4 w-4" />
-                                            Add First Measurement
+                                            {t('measurement.add_first')}
                                         </Button>
                                     </Link>
                                 </div>
@@ -229,17 +237,15 @@ export default function Index({ child, measurements }: Props) {
                                     <Table>
                                         <TableHeader>
                                             <TableRow>
-                                                <TableHead>Date</TableHead>
-                                                <TableHead>Weight</TableHead>
-                                                <TableHead>Height</TableHead>
-                                                <TableHead>MUAC</TableHead>
+                                                <TableHead>{t('measurement.date')}</TableHead>
+                                                <TableHead>{t('measurement.weight')}</TableHead>
+                                                <TableHead>{t('measurement.height')}</TableHead>
+                                                <TableHead>{t('measurement.muac')}</TableHead>
                                                 <TableHead>WFA</TableHead>
                                                 <TableHead>HFA</TableHead>
                                                 <TableHead>WFH</TableHead>
-                                                <TableHead>Status</TableHead>
-                                                <TableHead>
-                                                    Measured By
-                                                </TableHead>
+                                                <TableHead>{t('common.status')}</TableHead>
+                                                <TableHead>Measured By</TableHead>
                                             </TableRow>
                                         </TableHeader>
                                         <TableBody>
@@ -379,7 +385,7 @@ export default function Index({ child, measurements }: Props) {
 
                     <Card className="mt-6">
                         <CardHeader>
-                            <CardTitle>Z-Score Interpretation</CardTitle>
+                            <CardTitle>{t('measurement.zscore_interpretation')}</CardTitle>
                         </CardHeader>
                         <CardContent>
                             <div className="grid gap-2 text-sm md:grid-cols-3">

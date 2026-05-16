@@ -19,6 +19,7 @@ import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, router, useForm } from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
 import { ArrowLeft, Save } from 'lucide-react';
 
 interface Barangay {
@@ -30,13 +31,8 @@ interface Props {
     barangays: Barangay[];
 }
 
-const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'Dashboard', href: '/dashboard' },
-    { title: 'OPT Sessions', href: '/opt-sessions' },
-    { title: 'Create', href: '/opt-sessions/create' },
-];
-
 export default function Create({ barangays }: Props) {
+    const { t } = useTranslation();
     const { data, setData, post, processing, errors } = useForm({
         barangay_id: '',
         name: '',
@@ -47,6 +43,12 @@ export default function Create({ barangays }: Props) {
         venue: '',
         notes: '',
     });
+
+    const breadcrumbs: BreadcrumbItem[] = [
+        { title: t('nav.dashboard'), href: '/dashboard' },
+        { title: t('opt_session.title'), href: '/opt-sessions' },
+        { title: t('opt_session.create'), href: '/opt-sessions/create' },
+    ];
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -84,7 +86,7 @@ export default function Create({ barangays }: Props) {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Create OPT Session" />
+            <Head title={t('opt_session.create')} />
 
             <div className="space-y-6">
                 <div className="flex items-center gap-4">
@@ -97,11 +99,10 @@ export default function Create({ barangays }: Props) {
                     </Button>
                     <div>
                         <h1 className="text-2xl font-bold tracking-tight">
-                            Create OPT Session
+                            {t('opt_session.create')}
                         </h1>
                         <p className="text-muted-foreground">
-                            Schedule a new Operation Timbang Plus weighing
-                            session
+                            {t('opt_session.manage_sessions')}
                         </p>
                     </div>
                 </div>
@@ -109,7 +110,7 @@ export default function Create({ barangays }: Props) {
                 <form onSubmit={handleSubmit}>
                     <Card>
                         <CardHeader>
-                            <CardTitle>Session Details</CardTitle>
+                            <CardTitle>{t('opt_session.session_details')}</CardTitle>
                             <CardDescription>
                                 Enter the details for the new OPT session
                             </CardDescription>
@@ -117,13 +118,13 @@ export default function Create({ barangays }: Props) {
                         <CardContent className="space-y-6">
                             {/* Barangay */}
                             <div className="space-y-2">
-                                <Label htmlFor="barangay_id">Barangay *</Label>
+                                <Label htmlFor="barangay_id">{t('opt_session.barangay')} *</Label>
                                 <Select
                                     value={data.barangay_id}
                                     onValueChange={handleBarangayChange}
                                 >
                                     <SelectTrigger>
-                                        <SelectValue placeholder="Select barangay" />
+                                        <SelectValue placeholder={t('opt_session.barangay')} />
                                     </SelectTrigger>
                                     <SelectContent>
                                         {barangays.map((barangay) => (
@@ -146,7 +147,7 @@ export default function Create({ barangays }: Props) {
                             {/* Session Date */}
                             <div className="space-y-2">
                                 <Label htmlFor="session_date">
-                                    Session Month/Year *
+                                    {t('opt_session.session_date')} *
                                 </Label>
                                 <Input
                                     id="session_date"
@@ -165,7 +166,7 @@ export default function Create({ barangays }: Props) {
 
                             {/* Session Name */}
                             <div className="space-y-2">
-                                <Label htmlFor="name">Session Name *</Label>
+                                <Label htmlFor="name">{t('opt_session.session_name')} *</Label>
                                 <Input
                                     id="name"
                                     value={data.name}
@@ -185,7 +186,7 @@ export default function Create({ barangays }: Props) {
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-2">
                                     <Label htmlFor="start_date">
-                                        Start Date (Optional)
+                                        {t('opt_session.start_date')}
                                     </Label>
                                     <Input
                                         id="start_date"
@@ -201,7 +202,7 @@ export default function Create({ barangays }: Props) {
                                 </div>
                                 <div className="space-y-2">
                                     <Label htmlFor="end_date">
-                                        End Date (Optional)
+                                        {t('opt_session.end_date')}
                                     </Label>
                                     <Input
                                         id="end_date"
@@ -217,7 +218,7 @@ export default function Create({ barangays }: Props) {
                             {/* Target Children */}
                             <div className="space-y-2">
                                 <Label htmlFor="target_children">
-                                    Target Children (Optional)
+                                    {t('opt_session.target_children')}
                                 </Label>
                                 <Input
                                     id="target_children"
@@ -240,7 +241,7 @@ export default function Create({ barangays }: Props) {
 
                             {/* Venue */}
                             <div className="space-y-2">
-                                <Label htmlFor="venue">Venue (Optional)</Label>
+                                <Label htmlFor="venue">{t('opt_session.venue')}</Label>
                                 <Input
                                     id="venue"
                                     value={data.venue}
@@ -253,7 +254,7 @@ export default function Create({ barangays }: Props) {
 
                             {/* Notes */}
                             <div className="space-y-2">
-                                <Label htmlFor="notes">Notes (Optional)</Label>
+                                <Label htmlFor="notes">{t('opt_session.notes')}</Label>
                                 <Textarea
                                     id="notes"
                                     value={data.notes}
@@ -274,11 +275,11 @@ export default function Create({ barangays }: Props) {
                                         router.visit('/opt-sessions')
                                     }
                                 >
-                                    Cancel
+                                    {t('common.cancel')}
                                 </Button>
                                 <Button type="submit" disabled={processing}>
                                     <Save className="mr-2 h-4 w-4" />
-                                    Create Session
+                                    {t('opt_session.create_session')}
                                 </Button>
                             </div>
                         </CardContent>

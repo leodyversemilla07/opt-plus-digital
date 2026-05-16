@@ -20,6 +20,7 @@ import {
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem, type SharedData } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
 import {
     Activity,
     ArrowRight,
@@ -38,7 +39,7 @@ import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from 'recharts';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Dashboard',
+        title: t('nav.dashboard'),
         href: '/dashboard',
     },
 ];
@@ -161,6 +162,7 @@ export default function Dashboard({
     pendingCertifications,
     recentActivity,
 }: DashboardProps) {
+    const { t } = useTranslation();
     const { auth } = usePage<SharedData>().props;
 
     // Chart data for monthly trends
@@ -178,7 +180,7 @@ export default function Dashboard({
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Dashboard" />
+            <Head title={t('dashboard.title')} />
             <div className="flex flex-col gap-6 p-6 pb-20 md:pb-6">
                 {/* Welcome Header */}
                 <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
@@ -187,14 +189,15 @@ export default function Dashboard({
                             Mabuhay, {auth.user.name}!
                         </h1>
                         <p className="mt-3 text-muted-foreground">
-                            Nutrition monitoring overview for{' '}
+                            {t('dashboard.subtitle')}{' '}
                             <span className="font-bold text-primary">
-                                Barangay{' '}
-                                {(
-                                    auth.user as SharedData['auth']['user'] & {
-                                        barangay?: { name?: string };
-                                    }
-                                ).barangay?.name || 'Assigned Area'}
+                                {t('dashboard.barangay', {
+                                    name: (
+                                        auth.user as SharedData['auth']['user'] & {
+                                            barangay?: { name?: string };
+                                        }
+                                    ).barangay?.name || t('dashboard.assigned_area'),
+                                })}
                             </span>
                         </p>
                     </div>
@@ -204,7 +207,7 @@ export default function Dashboard({
                             className="rounded-full px-6 shadow-lg shadow-primary/20"
                             render={<Link href="/children/create" />}
                         >
-                            <Plus className="mr-2 h-4 w-4" /> Add Child
+                            <Plus className="mr-2 h-4 w-4" /> {t('dashboard.add_child')}
                         </Button>
                     </div>
                 </div>
@@ -212,35 +215,35 @@ export default function Dashboard({
                 {/* Statistics Cards */}
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-6">
                     <StatCard
-                        title="Total Children"
+                        title={t('dashboard.total_children')}
                         value={overallStats.total_children.toLocaleString()}
-                        description="Target population"
+                        description={t('dashboard.target_population')}
                         icon={<Users className="h-5 w-5 text-primary" />}
                     />
                     <StatCard
                         title="F1K (0-23 mos)"
                         value={f1kStatistics.total_children_0to23.toLocaleString()}
-                        description="First 1000 Days"
+                        description={t('dashboard.first_1000_days')}
                         icon={<Baby className="h-5 w-5 text-primary" />}
                     />
                     <StatCard
-                        title="Coverage Rate"
+                        title={t('dashboard.coverage_rate')}
                         value={`${overallStats.coverage_rate}%`}
-                        description="Registered children measured"
+                        description={t('dashboard.registered_measured')}
                         icon={
                             <BarChart3 className="h-5 w-5 text-secondary-foreground" />
                         }
                     />
                     <StatCard
-                        title="Measured (Month)"
+                        title={t('dashboard.measured_this_month')}
                         value={overallStats.children_measured_this_month.toLocaleString()}
-                        description="Progress this month"
+                        description={t('dashboard.monthly_progress')}
                         icon={<TrendingUp className="h-5 w-5 text-green-600" />}
                     />
                     <StatCard
-                        title="High Risk"
+                        title={t('dashboard.high_risk')}
                         value={nutritionalStatus.mam + nutritionalStatus.sam}
-                        description="Children needing attention"
+                        description={t('dashboard.children_needing_attention')}
                         icon={<Activity className="h-5 w-5 text-destructive" />}
                     />
                     <StatCard
@@ -357,10 +360,10 @@ export default function Dashboard({
                             <div>
                                 <CardTitle className="flex items-center gap-2 text-foreground">
                                     <TrendingUp className="h-5 w-5 text-primary" />
-                                    Measurement Trends
+                                    {t('dashboard.measurement_trends')}
                                 </CardTitle>
                                 <CardDescription>
-                                    Activity logs for the last 6 months
+                                    {t('dashboard.activity_logs')}
                                 </CardDescription>
                             </div>
                         </CardHeader>
@@ -407,10 +410,10 @@ export default function Dashboard({
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2 text-foreground">
                             <BarChart3 className="h-5 w-5 text-primary" />
-                            Age Distribution
+                            {t('dashboard.age_distribution')}
                         </CardTitle>
                         <CardDescription>
-                            Children by age group (months)
+                            {t('dashboard.children_by_age_group')}
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -439,10 +442,10 @@ export default function Dashboard({
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2 text-foreground">
                             <Users className="h-5 w-5 text-primary" />
-                            Sex-Disaggregated Statistics
+                            {t('dashboard.sex_disaggregated')}
                         </CardTitle>
                         <CardDescription>
-                            Nutritional status breakdown by sex
+                            {t('dashboard.nutritional_status_breakdown')}
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -450,7 +453,7 @@ export default function Dashboard({
                             {/* Male Stats */}
                             <div className="rounded-lg border bg-background p-3">
                                 <p className="mb-3 text-sm font-medium text-foreground">
-                                    Male Children ({sexDisaggregated.male})
+                                    {t('dashboard.male_children', { count: sexDisaggregated.male })}
                                 </p>
                                 <div className="grid grid-cols-3 gap-4">
                                     <div>
@@ -483,7 +486,7 @@ export default function Dashboard({
                             {/* Female Stats */}
                             <div className="rounded-lg border bg-background p-3">
                                 <p className="mb-3 text-sm font-medium text-foreground">
-                                    Female Children ({sexDisaggregated.female})
+                                    {t('dashboard.female_children', { count: sexDisaggregated.female })}
                                 </p>
                                 <div className="grid grid-cols-3 gap-4">
                                     <div>
@@ -528,10 +531,10 @@ export default function Dashboard({
                             <CardHeader className="flex flex-row items-center justify-between">
                                 <div>
                                     <CardTitle className="text-lg text-foreground">
-                                        Area Performance
+                                        {t('dashboard.area_performance')}
                                     </CardTitle>
                                     <CardDescription>
-                                        Top malnutrition rates
+                                        {t('dashboard.top_malnutrition_rates')}
                                     </CardDescription>
                                 </div>
                                 <Button

@@ -19,6 +19,7 @@ import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, router, useForm } from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
 import { ArrowLeft, Save } from 'lucide-react';
 
 interface Barangay {
@@ -45,6 +46,7 @@ interface Props {
 }
 
 export default function Edit({ session, barangays }: Props) {
+    const { t } = useTranslation();
     const { data, setData, put, processing, errors } = useForm({
         name: session.name,
         barangay_id: session.barangay_id,
@@ -57,10 +59,10 @@ export default function Edit({ session, barangays }: Props) {
     });
 
     const breadcrumbs: BreadcrumbItem[] = [
-        { title: 'Dashboard', href: '/dashboard' },
-        { title: 'OPT Sessions', href: '/opt-sessions' },
+        { title: t('nav.dashboard'), href: '/dashboard' },
+        { title: t('opt_session.title'), href: '/opt-sessions' },
         { title: session.name, href: `/opt-sessions/${session.id}` },
-        { title: 'Edit', href: `/opt-sessions/${session.id}/edit` },
+        { title: t('common.edit'), href: `/opt-sessions/${session.id}/edit` },
     ];
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -83,7 +85,7 @@ export default function Edit({ session, barangays }: Props) {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title={`Edit ${session.name}`} />
+            <Head title={`${t('common.edit')} - ${session.name}`} />
 
             <div className="space-y-6">
                 {/* Header */}
@@ -99,7 +101,7 @@ export default function Edit({ session, barangays }: Props) {
                     </Button>
                     <div>
                         <h1 className="text-2xl font-bold tracking-tight">
-                            Edit OPT Session
+                            {t('opt_session.edit')}
                         </h1>
                         <p className="text-muted-foreground">
                             Update session details
@@ -110,7 +112,7 @@ export default function Edit({ session, barangays }: Props) {
                 <form onSubmit={handleSubmit}>
                     <Card>
                         <CardHeader>
-                            <CardTitle>Session Information</CardTitle>
+                            <CardTitle>{t('opt_session.session_information')}</CardTitle>
                             <CardDescription>
                                 Edit the OPT Plus session details
                             </CardDescription>
@@ -119,7 +121,7 @@ export default function Edit({ session, barangays }: Props) {
                             <div className="grid gap-4 md:grid-cols-2">
                                 <div className="space-y-2">
                                     <Label htmlFor="barangay_id">
-                                        Barangay
+                                        {t('opt_session.barangay')}
                                     </Label>
                                     <Select
                                         value={data.barangay_id}
@@ -132,7 +134,7 @@ export default function Edit({ session, barangays }: Props) {
                                         }}
                                     >
                                         <SelectTrigger>
-                                            <SelectValue placeholder="Select barangay" />
+                                            <SelectValue placeholder={t('opt_session.barangay')} />
                                         </SelectTrigger>
                                         <SelectContent>
                                             {barangays.map((barangay) => (
@@ -153,7 +155,7 @@ export default function Edit({ session, barangays }: Props) {
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label htmlFor="name">Session Name</Label>
+                                    <Label htmlFor="name">{t('opt_session.session_name')}</Label>
                                     <Input
                                         id="name"
                                         value={data.name}
@@ -173,7 +175,7 @@ export default function Edit({ session, barangays }: Props) {
                             <div className="grid gap-4 md:grid-cols-3">
                                 <div className="space-y-2">
                                     <Label htmlFor="session_date">
-                                        Session Date (Month)
+                                        {t('opt_session.session_date')}
                                     </Label>
                                     <Input
                                         id="session_date"
@@ -199,7 +201,7 @@ export default function Edit({ session, barangays }: Props) {
 
                                 <div className="space-y-2">
                                     <Label htmlFor="start_date">
-                                        Start Date (Optional)
+                                        {t('opt_session.start_date')}
                                     </Label>
                                     <Input
                                         id="start_date"
@@ -221,7 +223,7 @@ export default function Edit({ session, barangays }: Props) {
 
                                 <div className="space-y-2">
                                     <Label htmlFor="end_date">
-                                        End Date (Optional)
+                                        {t('opt_session.end_date')}
                                     </Label>
                                     <Input
                                         id="end_date"
@@ -242,7 +244,7 @@ export default function Edit({ session, barangays }: Props) {
                             <div className="grid gap-4 md:grid-cols-2">
                                 <div className="space-y-2">
                                     <Label htmlFor="target_children">
-                                        Target Children
+                                        {t('opt_session.target_children')}
                                     </Label>
                                     <Input
                                         id="target_children"
@@ -270,7 +272,7 @@ export default function Edit({ session, barangays }: Props) {
 
                                 <div className="space-y-2">
                                     <Label htmlFor="venue">
-                                        Venue (Optional)
+                                        {t('opt_session.venue')}
                                     </Label>
                                     <Input
                                         id="venue"
@@ -289,7 +291,7 @@ export default function Edit({ session, barangays }: Props) {
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="notes">Notes (Optional)</Label>
+                                <Label htmlFor="notes">{t('opt_session.notes')}</Label>
                                 <Textarea
                                     id="notes"
                                     value={data.notes}
@@ -316,11 +318,11 @@ export default function Edit({ session, barangays }: Props) {
                                         )
                                     }
                                 >
-                                    Cancel
+                                    {t('common.cancel')}
                                 </Button>
                                 <Button type="submit" disabled={processing}>
                                     <Save className="mr-2 h-4 w-4" />
-                                    Save Changes
+                                    {t('opt_session.save_changes')}
                                 </Button>
                             </div>
                         </CardContent>
