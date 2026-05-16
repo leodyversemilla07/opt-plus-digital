@@ -2,127 +2,73 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Target List - High Risk Children</title>
+    <title>Target List — High Risk Children</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            font-size: 11px;
-            margin: 20px;
-        }
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-            background-color: #DC3545;
-            color: white;
-            padding: 15px;
-        }
-        .header h1 {
-            font-size: 16px;
-            margin: 0 0 5px 0;
-        }
-        .header p {
-            margin: 0;
-        }
-        .alert {
-            background-color: #FFF3CD;
-            border: 1px solid #FFC107;
-            padding: 10px;
-            margin-bottom: 20px;
-            border-radius: 4px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-        th {
-            background-color: #DC3545;
-            color: white;
-            font-weight: bold;
-        }
-        .sam { background-color: #DC3545; color: white; font-weight: bold; text-align: center; }
-        .mam { background-color: #FFC107; color: black; font-weight: bold; text-align: center; }
-        .urgent {
-            background-color: #FFE5E5;
-        }
-        .footer {
-            margin-top: 30px;
-            text-align: center;
-            font-size: 10px;
-            color: #666;
-        }
+        body { font-family: sans-serif; font-size: 10px; color: #333; }
+        h1 { text-align: center; font-size: 16px; margin-bottom: 4px; }
+        .subtitle { text-align: center; font-size: 11px; color: #666; margin-bottom: 16px; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { border: 1px solid #ccc; padding: 4px 6px; text-align: left; }
+        th { background: #f0f0f0; font-weight: bold; text-align: center; }
+        .text-right { text-align: right; }
+        .text-center { text-align: center; }
+        .urgent { background: #ffd0d0; }
+        .high { background: #fff0d0; }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>⚠ TARGET LIST - HIGH RISK CHILDREN</h1>
-        <p>Generated: {{ now()->format('F d, Y h:i A') }}</p>
-        @if($barangay_name)
-            <p><strong>Barangay:</strong> {{ $barangay_name }}</p>
-        @endif
-    </div>
-
-    <div class="alert">
-        <strong>⚠ PRIORITY ACTION REQUIRED</strong><br>
-        These children require immediate nutritional intervention and close monitoring.
-        Total High-Risk Children: <strong>{{ count($high_risk_children) }}</strong>
-    </div>
+    <h1>Target List — High Risk Children</h1>
+    <div class="subtitle">Generated: {{ now()->format('F d, Y h:i A') }}</div>
 
     <table>
         <thead>
             <tr>
-                <th style="width: 5%;">No.</th>
-                <th style="width: 20%;">Name</th>
-                <th style="width: 8%;">Sex</th>
-                <th style="width: 10%;">Age (months)</th>
-                <th style="width: 15%;">Barangay</th>
-                <th style="width: 12%;">Last Measurement</th>
-                <th style="width: 10%;">Weight (kg)</th>
-                <th style="width: 10%;">Height (cm)</th>
-                <th style="width: 10%;">Classification</th>
+                <th>#</th>
+                <th>Priority</th>
+                <th>FSN</th>
+                <th>Name</th>
+                <th>Sex</th>
+                <th>Age (mo)</th>
+                <th>Barangay</th>
+                <th>Status</th>
+                <th>Last Measured</th>
+                <th>Weight (kg)</th>
+                <th>Height (cm)</th>
+                <th>MUAC (cm)</th>
+                <th>Actions Needed</th>
             </tr>
         </thead>
         <tbody>
-            @foreach($high_risk_children as $index => $child)
-            @php
-                $classification = $child['classification'];
-                $classStyle = strtolower(str_replace(' ', '', $classification));
-                $daysSince = $child['days_since_measurement'];
-                $isUrgent = $daysSince > 30;
-            @endphp
-            <tr class="{{ $isUrgent ? 'urgent' : '' }}">
-                <td style="text-align: center;">{{ $index + 1 }}</td>
-                <td><strong>{{ $child['full_name'] }}</strong></td>
-                <td style="text-align: center;">{{ strtoupper($child['sex']) }}</td>
-                <td style="text-align: center;">{{ $child['age_in_months'] }}</td>
-                <td>{{ $child['barangay'] }}</td>
-                <td style="text-align: center;">
-                    {{ \Carbon\Carbon::parse($child['measurement_date'])->format('m/d/Y') }}<br>
-                    <small>({{ $daysSince }} days ago)</small>
-                </td>
-                <td style="text-align: center;">{{ number_format($child['weight'], 1) }}</td>
-                <td style="text-align: center;">{{ number_format($child['height'], 1) }}</td>
-                <td class="{{ $classStyle }}">{{ $classification }}</td>
-            </tr>
-            @endforeach
+            @forelse($children ?? [] as $index => $child)
+                <tr class="{{ ($child['priority'] ?? '') === 'URGENT' ? 'urgent' : 'high' }}">
+                    <td class="text-center">{{ $index + 1 }}</td>
+                    <td class="text-center">{{ $child['priority'] ?? 'High' }}</td>
+                    <td>{{ $child['fsn'] ?? 'N/A' }}</td>
+                    <td>{{ $child['name'] ?? 'N/A' }}</td>
+                    <td class="text-center">{{ $child['sex'] ?? '' }}</td>
+                    <td class="text-right">{{ $child['age_months'] ?? '' }}</td>
+                    <td>{{ $child['barangay'] ?? '' }}</td>
+                    <td class="text-center">{{ strtoupper($child['nutritional_status'] ?? 'N/A') }}</td>
+                    <td>{{ $child['last_measured'] ?? 'N/A' }}</td>
+                    <td class="text-right">{{ $child['weight_kg'] ?? 'N/A' }}</td>
+                    <td class="text-right">{{ $child['height_cm'] ?? 'N/A' }}</td>
+                    <td class="text-right">{{ $child['muac_cm'] ?? 'N/A' }}</td>
+                    <td>
+                        @if(($child['priority'] ?? '') === 'URGENT')
+                            Immediate referral to health center
+                        @else
+                            Schedule follow-up weighing
+                        @endif
+                    </td>
+                </tr>
+            @empty
+                <tr><td colspan="13" class="text-center">No high-risk children found</td></tr>
+            @endforelse
         </tbody>
     </table>
 
-    <div style="margin-top: 20px; padding: 10px; background-color: #f8f9fa; border-left: 4px solid #DC3545;">
-        <strong>Legend:</strong><br>
-        <span class="sam" style="padding: 2px 8px; margin-right: 10px;">SAM</span> Severely Acute Malnutrition - Immediate intervention required<br>
-        <span class="mam" style="padding: 2px 8px; margin-right: 10px;">MAM</span> Moderate Acute Malnutrition - Close monitoring needed<br>
-        <span style="background-color: #FFE5E5; padding: 2px 8px;">Highlighted rows</span> - Not measured in over 30 days (urgent follow-up needed)
-    </div>
-
-    <div class="footer">
-        <p>OPT Plus Digital System | National Nutrition Council</p>
-        <p>This report contains confidential health information.</p>
+    <div style="text-align: center; color: #999; font-size: 8px; margin-top: 20px;">
+        Generated by {{ config('app.name') }} — {{ now()->format('F d, Y h:i A') }}
     </div>
 </body>
 </html>

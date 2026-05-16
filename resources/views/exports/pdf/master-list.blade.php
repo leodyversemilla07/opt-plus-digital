@@ -2,118 +2,69 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Master List - OPT Plus</title>
+    <title>Master List</title>
     <style>
-        @page { margin: 15px; }
-        body {
-            font-family: Arial, sans-serif;
-            font-size: 9px;
-            margin: 0;
-        }
-        .header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .header h1 {
-            font-size: 14px;
-            margin: 0 0 5px 0;
-        }
-        .header p {
-            margin: 0;
-            font-size: 10px;
-            color: #666;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 8px;
-        }
-        th, td {
-            border: 1px solid #000;
-            padding: 4px 2px;
-            text-align: left;
-        }
-        th {
-            background-color: #4472C4;
-            color: white;
-            font-weight: bold;
-            text-align: center;
-        }
-        td {
-            vertical-align: top;
-        }
-        .no-col { width: 3%; text-align: center; }
-        .id-col { width: 8%; }
-        .name-col { width: 15%; }
-        .sex-col { width: 4%; text-align: center; }
-        .date-col { width: 8%; text-align: center; }
-        .age-col { width: 5%; text-align: center; }
-        .brgy-col { width: 12%; }
-        .measurement-col { width: 7%; text-align: center; }
-        .status-col { width: 10%; text-align: center; }
-        .sam { background-color: #DC3545; color: white; font-weight: bold; }
-        .mam { background-color: #FFC107; color: black; font-weight: bold; }
-        .normal { background-color: #28A745; color: white; font-weight: bold; }
-        .overweight { background-color: #17A2B8; color: white; font-weight: bold; }
-        .footer {
-            margin-top: 10px;
-            text-align: center;
-            font-size: 8px;
-            color: #666;
-        }
+        body { font-family: sans-serif; font-size: 9px; color: #333; }
+        h1 { text-align: center; font-size: 16px; margin-bottom: 4px; }
+        .subtitle { text-align: center; font-size: 11px; color: #666; margin-bottom: 16px; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { border: 1px solid #ccc; padding: 3px 5px; text-align: left; }
+        th { background: #f0f0f0; font-weight: bold; text-align: center; }
+        .text-right { text-align: right; }
+        .text-center { text-align: center; }
+        .sam { background: #ffe0e0; }
+        .mam { background: #fff0d0; }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>MASTER LIST - OPT PLUS</h1>
-        <p>Generated: {{ now()->format('F d, Y h:i A') }}</p>
-        @if($barangay_name)
-            <p><strong>Barangay:</strong> {{ $barangay_name }}</p>
-        @endif
-    </div>
+    <h1>Master List — OPT Plus</h1>
+    <div class="subtitle">Generated: {{ now()->format('F d, Y h:i A') }}</div>
 
     <table>
         <thead>
             <tr>
-                <th class="no-col">No.</th>
-                <th class="id-col">Child ID</th>
-                <th class="name-col">Name</th>
-                <th class="sex-col">Sex</th>
-                <th class="date-col">Birth Date</th>
-                <th class="age-col">Age (mo)</th>
-                <th class="brgy-col">Barangay</th>
-                <th class="date-col">Last Meas.</th>
-                <th class="measurement-col">Weight (kg)</th>
-                <th class="measurement-col">Height (cm)</th>
-                <th class="status-col">Classification</th>
+                <th>#</th>
+                <th>FSN</th>
+                <th>Name</th>
+                <th>Sex</th>
+                <th>DOB</th>
+                <th>Age (mo)</th>
+                <th>Barangay</th>
+                <th>Last Measured</th>
+                <th>Weight (kg)</th>
+                <th>Height (cm)</th>
+                <th>WFZ</th>
+                <th>HFZ</th>
+                <th>Status</th>
+                <th>IP</th>
             </tr>
         </thead>
         <tbody>
-            @foreach($children as $index => $child)
-            @php
-                $measurement = $child['latest_measurement'];
-                $classification = $measurement['classification'] ?? 'N/A';
-                $classStyle = strtolower(str_replace(' ', '', $classification));
-            @endphp
-            <tr>
-                <td class="no-col">{{ $index + 1 }}</td>
-                <td class="id-col">{{ $child['child_id'] }}</td>
-                <td class="name-col">{{ $child['full_name'] }}</td>
-                <td class="sex-col">{{ strtoupper(substr($child['sex'], 0, 1)) }}</td>
-                <td class="date-col">{{ \Carbon\Carbon::parse($child['date_of_birth'])->format('m/d/Y') }}</td>
-                <td class="age-col">{{ $child['age_in_months'] }}</td>
-                <td class="brgy-col">{{ $child['barangay'] }}</td>
-                <td class="date-col">{{ $measurement ? \Carbon\Carbon::parse($measurement['measurement_date'])->format('m/d/Y') : 'N/A' }}</td>
-                <td class="measurement-col">{{ $measurement['weight'] ?? 'N/A' }}</td>
-                <td class="measurement-col">{{ $measurement['height'] ?? 'N/A' }}</td>
-                <td class="status-col {{ $classStyle }}">{{ $classification }}</td>
-            </tr>
-            @endforeach
+            @forelse($children ?? [] as $index => $child)
+                <tr class="{{ ($child['nutritional_status'] ?? '') === 'sam' ? 'sam' : (in_array($child['nutritional_status'] ?? '', ['mam', 'overweight']) ? 'mam' : '') }}">
+                    <td class="text-center">{{ $index + 1 }}</td>
+                    <td>{{ $child['fsn'] ?? 'N/A' }}</td>
+                    <td>{{ $child['name'] ?? 'N/A' }}</td>
+                    <td class="text-center">{{ $child['sex'] ?? '' }}</td>
+                    <td>{{ $child['date_of_birth'] ?? '' }}</td>
+                    <td class="text-right">{{ $child['age_months'] ?? '' }}</td>
+                    <td>{{ $child['barangay'] ?? '' }}</td>
+                    <td>{{ $child['latest_measurement_date'] ?? 'N/A' }}</td>
+                    <td class="text-right">{{ $child['weight_kg'] ?? 'N/A' }}</td>
+                    <td class="text-right">{{ $child['height_cm'] ?? 'N/A' }}</td>
+                    <td class="text-right">{{ $child['wfa_zscore'] ?? 'N/A' }}</td>
+                    <td class="text-right">{{ $child['hfa_zscore'] ?? 'N/A' }}</td>
+                    <td class="text-center">{{ strtoupper($child['nutritional_status'] ?? 'N/A') }}</td>
+                    <td class="text-center">{{ $child['is_indigenous'] ?? 'No' }}</td>
+                </tr>
+            @empty
+                <tr><td colspan="14" class="text-center">No children found</td></tr>
+            @endforelse
         </tbody>
     </table>
 
-    <div class="footer">
-        <p>OPT Plus Digital System | National Nutrition Council | Page {{ $children->currentPage() ?? 1 }} of {{ $children->lastPage() ?? 1 }}</p>
+    <div style="text-align: center; color: #999; font-size: 8px; margin-top: 20px;">
+        Generated by {{ config('app.name') }} — {{ now()->format('F d, Y h:i A') }}
     </div>
 </body>
 </html>

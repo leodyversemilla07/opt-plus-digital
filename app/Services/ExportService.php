@@ -31,9 +31,9 @@ class ExportService
 
     public function exportMasterListPDF(?string $barangayId = null, ?string $startDate = null, ?string $endDate = null)
     {
-        $data = $this->reportService->generateMasterList($barangayId, $startDate, $endDate);
+        $children = $this->reportService->generateMasterList($barangayId, $startDate, $endDate);
 
-        $pdf = Pdf::loadView('exports.pdf.master-list', $data);
+        $pdf = Pdf::loadView('exports.pdf.master-list', ['children' => $children]);
         $pdf->setPaper('a4', 'landscape');
 
         $filename = 'Master_List_'.now()->format('Y-m-d').'.pdf';
@@ -43,9 +43,9 @@ class ExportService
 
     public function exportTargetListPDF(?string $barangayId = null, ?string $startDate = null, ?string $endDate = null)
     {
-        $data = $this->reportService->generateTargetList($barangayId, $startDate, $endDate);
+        $children = $this->reportService->generateTargetList($barangayId, $startDate, $endDate);
 
-        $pdf = Pdf::loadView('exports.pdf.target-list', $data);
+        $pdf = Pdf::loadView('exports.pdf.target-list', ['children' => $children]);
         $pdf->setPaper('a4', 'portrait');
 
         $filename = 'Target_List_'.now()->format('Y-m-d').'.pdf';

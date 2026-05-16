@@ -28,6 +28,11 @@ const getSidebarNavItems = (t: (key: string) => string): NavItem[] => [
         icon: null,
     },
     {
+        title: t('settings.notifications'),
+        href: '/settings/notifications',
+        icon: null,
+    },
+    {
         title: t('settings.appearance'),
         href: editAppearance(),
         icon: null,

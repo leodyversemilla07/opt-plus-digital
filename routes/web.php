@@ -8,6 +8,7 @@ use App\Http\Controllers\ImportController;
 use App\Http\Controllers\MassMailController;
 use App\Http\Controllers\MeasurementController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\NotificationPreferenceController;
 use App\Http\Controllers\OfflineSyncController;
 use App\Http\Controllers\OptSessionController;
 use App\Http\Controllers\ReportController;
@@ -86,6 +87,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 Route::get('/export/target-list/pdf', [ReportController::class, 'exportTargetListPDF'])->name('export.target-list.pdf');
                 Route::get('/export/target-list/excel', [ReportController::class, 'exportTargetListExcel'])->name('export.target-list.excel');
             });
+
+            // Scheduled (generated) reports
+            Route::middleware('permission:view reports')->group(function () {
+                Route::get('/scheduled', [ReportController::class, 'scheduled'])->name('scheduled');
+                Route::get('/scheduled/{scheduledReport}/download', [ReportController::class, 'download'])->name('scheduled.download');
+            });
         });
 
     // Import
@@ -147,6 +154,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::post('{id}/read', [NotificationController::class, 'markAsRead'])->name('mark-as-read');
             Route::post('mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('mark-all-read');
             Route::get('{id}/redirect', [NotificationController::class, 'redirect'])->name('redirect');
+        });
+
+    // Notification Preferences
+    Route::prefix('settings')
+        ->name('settings.')
+        ->group(function () {
+            Route::get('notifications', [NotificationPreferenceController::class, 'index'])->name('notifications');
+            Route::put('notification-preferences/{preference}', [NotificationPreferenceController::class, 'update'])
+                ->name('notification-preferences.update');
         });
 
     // Audit Logs

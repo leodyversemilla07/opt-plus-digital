@@ -10,6 +10,8 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use App\Models\ScheduledReport;
+use Illuminate\Support\Facades\Storage;
 
 class ReportController extends Controller
 {
@@ -261,5 +263,40 @@ class ReportController extends Controller
             $request->query('start_date'),
             $request->query('end_date')
         );
+    }
+
+    /**
+     * Display list of scheduled/generated reports.
+     */
+    public function scheduled(Request $request): Response
+    {
+        $this->authorize('view reports');
+
+        $reports = ScheduledReport::latest('generated_at')
+            ->with('generator')
+            ->paginate(20);
+
+        return Inertia::render('reports/scheduled', [
+            'reports' => $reports,
+        ]);
+    }
+
+    /**
+     * Download a generated report file.
+     */
+    public function download(ScheduledReport $scheduledReport): BinaryFileResponse
+    {
+        $this->authorize('view reports');
+
+        if (! Storage::disk('local')->exists($scheduledReport->file_path)) {
+            abort(404, 'Report file not found.');
+        }
+
+        $filename = basename($scheduledReport->file_path);
+        $fullPath = Storage::disk('local')->path($scheduledReport->file_path);
+
+        return response()->download($fullPath, $filename, [
+            'Content-Type' => $scheduledReport->mime_type ?? 'application/pdf',
+        ]);
     }
 }
