@@ -338,7 +338,6 @@ const en = {
         muac_status: 'MUAC Status',
         no_muac: 'No children with MUAC measurements found',
         form_1c_title: 'OPT Plus Form 1C',
-        form_1c_desc: 'List of Affected/At-Risk Children • {{barangay}} • {{date}}',
         severe_acute: 'Severe Acute Malnutrition',
         moderate_acute: 'Moderate Acute Malnutrition',
         stunted: 'Stunted',
