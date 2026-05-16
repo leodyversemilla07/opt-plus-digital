@@ -41,28 +41,7 @@ export function OfflineChildrenList() {
     const [search, setSearch] = useState('');
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        loadCachedChildren();
-    }, []);
-
-    useEffect(() => {
-        if (search.trim() === '') {
-            setFilteredChildren(children);
-        } else {
-            const searchLower = search.toLowerCase();
-            const filtered = children.filter(
-                (child) =>
-                    child.full_name.toLowerCase().includes(searchLower) ||
-                    child.family_serial_number
-                        .toLowerCase()
-                        .includes(searchLower) ||
-                    child.barangay?.name.toLowerCase().includes(searchLower),
-            );
-            setFilteredChildren(filtered);
-        }
-    }, [search, children]);
-
-    const loadCachedChildren = async () => {
+    async function loadCachedChildren() {
         setLoading(true);
         try {
             const cachedChildren = await offlineDB.getAllCachedChildren();
@@ -74,7 +53,33 @@ export function OfflineChildrenList() {
         } finally {
             setLoading(false);
         }
-    };
+    }
+
+    useEffect(() => {
+        (async () => {
+            await loadCachedChildren();
+        })();
+    }, []);
+
+    useEffect(() => {
+        const updateFiltered = () => {
+            if (search.trim() === '') {
+                setFilteredChildren(children);
+            } else {
+                const searchLower = search.toLowerCase();
+                const filtered = children.filter(
+                    (child) =>
+                        child.full_name.toLowerCase().includes(searchLower) ||
+                        child.family_serial_number
+                            .toLowerCase()
+                            .includes(searchLower) ||
+                        child.barangay?.name.toLowerCase().includes(searchLower),
+                );
+                setFilteredChildren(filtered);
+            }
+        };
+        queueMicrotask(updateFiltered);
+    }, [search, children]);
 
     const getAgeDisplay = (ageInMonths: number) => {
         const years = Math.floor(ageInMonths / 12);

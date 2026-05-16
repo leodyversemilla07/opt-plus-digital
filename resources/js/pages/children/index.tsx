@@ -119,14 +119,14 @@ export default function Index({ children, filters, barangays }: Props) {
         updateCachedCount();
     }, []);
 
-    const updateCachedCount = async () => {
+    async function updateCachedCount() {
         try {
             const cachedChildren = await offlineDB.getAllCachedChildren();
             setCachedCount(cachedChildren.length);
         } catch (error) {
             console.error('Failed to get cached count:', error);
         }
-    };
+    }
 
     const handleCacheAll = async () => {
         setIsCaching(true);

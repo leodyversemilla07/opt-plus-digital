@@ -31,7 +31,7 @@ export function OfflineStorageStats() {
         loadStats();
     }, []);
 
-    const loadStats = async () => {
+    async function loadStats() {
         setLoading(true);
         try {
             const [children, measurements] = await Promise.all([
@@ -49,7 +49,7 @@ export function OfflineStorageStats() {
         } finally {
             setLoading(false);
         }
-    };
+    }
 
     const handleClearCache = async () => {
         if (
