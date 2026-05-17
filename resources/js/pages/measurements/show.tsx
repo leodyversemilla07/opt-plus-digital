@@ -75,7 +75,7 @@ export default function MeasurementShow({
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={`${t('measurement.measurement_details')}: ${child.full_name}`} />
             <div className="flex flex-col gap-6 p-6">
-                <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <div>
                         <Button
                             variant="ghost"
@@ -97,7 +97,7 @@ export default function MeasurementShow({
                             {child.full_name}
                         </p>
                     </div>
-                    <div className="flex gap-2">
+                    <div className="flex flex-wrap gap-2">
                         <Button
                             variant="outline"
                             size="sm"

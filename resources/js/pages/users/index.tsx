@@ -136,7 +136,7 @@ export default function Index({ users, filters }: Props) {
 
                 <Card>
                     <CardHeader>
-                        <div className="flex items-center justify-between">
+                        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                             <Link href={usersCreate.url()}>
                                 <Button>
                                     <Plus className="mr-2 h-4 w-4" />

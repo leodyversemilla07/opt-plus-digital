@@ -194,7 +194,7 @@ export default function Index({ children, filters, barangays }: Props) {
 
             <div className="flex flex-col gap-6 p-6">
                 {/* Header */}
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div>
                         <h1 className="text-3xl font-bold tracking-tight">
                             {t('children.registry')}
@@ -208,7 +208,7 @@ export default function Index({ children, filters, barangays }: Props) {
                             )}
                         </p>
                     </div>
-                    <div className="flex gap-2">
+                    <div className="flex flex-wrap gap-2">
                         {isOnline && (
                             <Button
                                 variant="outline"
@@ -288,7 +288,7 @@ export default function Index({ children, filters, barangays }: Props) {
                             </Select>
                         </div>
                     </div>
-                    <div className="mt-4 flex gap-2">
+                    <div className="mt-4 flex flex-wrap gap-2">
                         <Button onClick={handleSearch}>
                             <Search className="mr-2 h-4 w-4" />
                             {t('common.search')}
@@ -299,89 +299,134 @@ export default function Index({ children, filters, barangays }: Props) {
                     </div>
                 </div>
 
-                {/* Table */}
+                {/* Table - Desktop */}
                 <div className="overflow-hidden rounded-lg border bg-card shadow-sm">
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead>{t('children.name')}</TableHead>
-                                <TableHead>{t('children.sex')}</TableHead>
-                                <TableHead>{t('children.age')}</TableHead>
-                                <TableHead>{t('children.fsn')}</TableHead>
-                                <TableHead>{t('children.barangay')}</TableHead>
-                                <TableHead>{t('common.status')}</TableHead>
-                                <TableHead>{t('common.actions')}</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {children.data.length === 0 ? (
+                    <div className="hidden sm:block">
+                        <Table>
+                            <TableHeader>
                                 <TableRow>
-                                    <TableCell
-                                        colSpan={7}
-                                        className="text-center text-muted-foreground"
-                                    >
-                                        {t('children.no_children')}
-                                    </TableCell>
+                                    <TableHead>{t('children.name')}</TableHead>
+                                    <TableHead>{t('children.sex')}</TableHead>
+                                    <TableHead>{t('children.age')}</TableHead>
+                                    <TableHead>{t('children.fsn')}</TableHead>
+                                    <TableHead>{t('children.barangay')}</TableHead>
+                                    <TableHead>{t('common.status')}</TableHead>
+                                    <TableHead>{t('common.actions')}</TableHead>
                                 </TableRow>
-                            ) : (
-                                children.data.map((child) => (
-                                    <TableRow key={child.id}>
-                                        <TableCell className="font-medium">
-                                            {child.full_name}
-                                        </TableCell>
-                                        <TableCell>
-                                            <Badge
-                                                variant={
-                                                    child.sex === 'male'
-                                                        ? 'default'
-                                                        : 'secondary'
-                                                }
-                                            >
-                                                {child.sex === 'male'
-                                                    ? 'M'
-                                                    : 'F'}
-                                            </Badge>
-                                        </TableCell>
-                                        <TableCell>
-                                            {getAgeDisplay(child.age_in_months)}
-                                        </TableCell>
-                                        <TableCell className="font-mono text-sm">
-                                            {child.family_serial_number}
-                                        </TableCell>
-                                        <TableCell>
-                                            {child.barangay.name}
-                                        </TableCell>
-                                        <TableCell>
-                                            {child.is_indigenous_people && (
-                                                <Badge variant="outline">
-                                                    IP
-                                                </Badge>
-                                            )}
-                                        </TableCell>
-                                        <TableCell>
-                                            <Link
-                                                href={childrenShow.url(
-                                                    child.id,
-                                                )}
-                                            >
-                                                <Button
-                                                    variant="ghost"
-                                                    size="sm"
-                                                >
-                                                    {t('children.view')}
-                                                </Button>
-                                            </Link>
+                            </TableHeader>
+                            <TableBody>
+                                {children.data.length === 0 ? (
+                                    <TableRow>
+                                        <TableCell
+                                            colSpan={7}
+                                            className="text-center text-muted-foreground"
+                                        >
+                                            {t('children.no_children')}
                                         </TableCell>
                                     </TableRow>
-                                ))
-                            )}
-                        </TableBody>
-                    </Table>
+                                ) : (
+                                    children.data.map((child) => (
+                                        <TableRow key={child.id}>
+                                            <TableCell className="font-medium">
+                                                {child.full_name}
+                                            </TableCell>
+                                            <TableCell>
+                                                <Badge
+                                                    variant={
+                                                        child.sex === 'male'
+                                                            ? 'default'
+                                                            : 'secondary'
+                                                    }
+                                                >
+                                                    {child.sex === 'male'
+                                                        ? 'M'
+                                                        : 'F'}
+                                                </Badge>
+                                            </TableCell>
+                                            <TableCell>
+                                                {getAgeDisplay(child.age_in_months)}
+                                            </TableCell>
+                                            <TableCell className="font-mono text-sm">
+                                                {child.family_serial_number}
+                                            </TableCell>
+                                            <TableCell>
+                                                {child.barangay.name}
+                                            </TableCell>
+                                            <TableCell>
+                                                {child.is_indigenous_people && (
+                                                    <Badge variant="outline">
+                                                        IP
+                                                    </Badge>
+                                                )}
+                                            </TableCell>
+                                            <TableCell>
+                                                <Link
+                                                    href={childrenShow.url(
+                                                        child.id,
+                                                    )}
+                                                >
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="sm"
+                                                    >
+                                                        {t('children.view')}
+                                                    </Button>
+                                                </Link>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))
+                                )}
+                            </TableBody>
+                        </Table>
+                    </div>
+
+                    {/* Mobile Cards */}
+                    <div className="block sm:hidden space-y-3 p-4">
+                        {children.data.length === 0 ? (
+                            <div className="text-center text-muted-foreground py-8">
+                                {t('children.no_children')}
+                            </div>
+                        ) : (
+                            children.data.map((child) => (
+                                <div key={child.id} className="rounded-lg border bg-card p-4 shadow-sm space-y-2">
+                                    <h3 className="text-lg font-bold">
+                                        {child.full_name}
+                                    </h3>
+                                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                        <Badge
+                                            variant={
+                                                child.sex === 'male'
+                                                    ? 'default'
+                                                    : 'secondary'
+                                            }
+                                        >
+                                            {child.sex === 'male'
+                                                ? 'M'
+                                                : 'F'}
+                                        </Badge>
+                                        <span>{getAgeDisplay(child.age_in_months)}</span>
+                                        <span className="font-mono">{child.family_serial_number}</span>
+                                    </div>
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-sm">{child.barangay.name}</span>
+                                        {child.is_indigenous_people && (
+                                            <Badge variant="outline">IP</Badge>
+                                        )}
+                                    </div>
+                                    <Link href={childrenShow.url(child.id)}>
+                                        <Button variant="ghost" size="sm">
+                                            {t('children.view')}
+                                        </Button>
+                                    </Link>
+                                </div>
+                            ))
+                        )}
+                    </div>
 
                     {/* Pagination */}
                     {children.last_page > 1 && (
-                        <div className="flex items-center justify-between border-t px-6 py-3">
-                            <div className="text-sm text-muted-foreground">
+                        <div className="flex flex-col sm:flex-row items-center justify-between border-t px-6 py-3 gap-2">
+                            <div className="hidden sm:block text-sm text-muted-foreground">
                                 {t('children.showing_results', { count: children.data.length, total: children.total })}
                             </div>
                             <Pagination>

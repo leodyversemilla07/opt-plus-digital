@@ -154,7 +154,7 @@ export default function Show({ child, latestMeasurement }: Props) {
                     </Alert>
                 )}
 
-                <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <div className="flex items-center gap-4">
                         <div>
                             <h1 className="text-3xl font-bold tracking-tight">

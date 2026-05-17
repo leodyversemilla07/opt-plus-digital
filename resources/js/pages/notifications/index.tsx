@@ -103,7 +103,7 @@ export default function NotificationsIndex({
             <Head title={t('notifications.title')} />
 
             <div className="flex flex-col gap-6 p-6 pb-20 md:pb-6">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <div>
                         <h1 className="flex items-center gap-2 text-2xl font-bold tracking-tight text-foreground">
                             <Bell className="h-6 w-6" />

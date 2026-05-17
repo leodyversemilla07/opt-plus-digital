@@ -182,7 +182,7 @@ export default function Index({ sessions, years, filters }: Props) {
 
             <div className="flex flex-col gap-6 p-6">
                 {/* Header */}
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div>
                         <h1 className="text-2xl font-bold tracking-tight text-foreground">
                             {t('opt_session.title')}
@@ -203,7 +203,7 @@ export default function Index({ sessions, years, filters }: Props) {
                         <CardTitle>{t('opt_session.filters')}</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className="flex gap-4">
+                        <div className="flex flex-wrap gap-4">
                             <div className="w-48">
                                 <Select
                                     value={filters.status || 'all'}
@@ -316,70 +316,230 @@ export default function Index({ sessions, years, filters }: Props) {
                 {/* Sessions Table */}
                 <Card>
                     <CardContent className="p-0">
-                        <Table>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead className="w-10">
-                                        <Checkbox
-                                            checked={
-                                                sessions.data.length > 0 &&
-                                                selectedIds.size ===
-                                                    sessions.data.length
-                                            }
-                                            onCheckedChange={toggleSelectAll}
-                                            aria-label="Select all"
-                                        />
-                                    </TableHead>
-                                    <TableHead>{t('opt_session.session')}</TableHead>
-                                    <TableHead>{t('opt_session.barangay')}</TableHead>
-                                    <TableHead>{t('opt_session.date')}</TableHead>
-                                    <TableHead>{t('opt_session.status')}</TableHead>
-                                    <TableHead className="text-center">
-                                        {t('opt_session.target')}
-                                    </TableHead>
-                                    <TableHead className="text-center">
-                                        {t('opt_session.measured')}
-                                    </TableHead>
-                                    <TableHead className="text-center">
-                                        {t('opt_session.coverage')}
-                                    </TableHead>
-                                    <TableHead className="text-right">
-                                        {t('opt_session.actions')}
-                                    </TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {sessions.data.length === 0 ? (
+                        <div className="hidden sm:block">
+                            <Table>
+                                <TableHeader>
                                     <TableRow>
-                                        <TableCell
-                                            colSpan={9}
-                                            className="py-12 text-center text-muted-foreground"
-                                        >
-                                            <div className="flex flex-col items-center gap-2">
-                                                <Calendar className="h-8 w-8 text-muted-foreground/50" />
-                                                <p>{t('opt_session.no_sessions')}</p>
-                                                <Button
-                                                    render={
-                                                        <Link href="/opt-sessions/create" />
-                                                    }
-                                                    variant="outline"
-                                                >
-                                                    {t('opt_session.create_first')}
-                                                </Button>
-                                            </div>
-                                        </TableCell>
+                                        <TableHead className="w-10">
+                                            <Checkbox
+                                                checked={
+                                                    sessions.data.length > 0 &&
+                                                    selectedIds.size ===
+                                                        sessions.data.length
+                                                }
+                                                onCheckedChange={toggleSelectAll}
+                                                aria-label="Select all"
+                                            />
+                                        </TableHead>
+                                        <TableHead>{t('opt_session.session')}</TableHead>
+                                        <TableHead>{t('opt_session.barangay')}</TableHead>
+                                        <TableHead>{t('opt_session.date')}</TableHead>
+                                        <TableHead>{t('opt_session.status')}</TableHead>
+                                        <TableHead className="text-center">
+                                            {t('opt_session.target')}
+                                        </TableHead>
+                                        <TableHead className="text-center">
+                                            {t('opt_session.measured')}
+                                        </TableHead>
+                                        <TableHead className="text-center">
+                                            {t('opt_session.coverage')}
+                                        </TableHead>
+                                        <TableHead className="text-right">
+                                            {t('opt_session.actions')}
+                                        </TableHead>
                                     </TableRow>
-                                ) : (
-                                    sessions.data.map((session) => (
-                                        <TableRow
-                                            key={session.id}
-                                            className={
-                                                selectedIds.has(session.id)
-                                                    ? 'bg-accent/50'
-                                                    : ''
-                                            }
-                                        >
-                                            <TableCell>
+                                </TableHeader>
+                                <TableBody>
+                                    {sessions.data.length === 0 ? (
+                                        <TableRow>
+                                            <TableCell
+                                                colSpan={9}
+                                                className="py-12 text-center text-muted-foreground"
+                                            >
+                                                <div className="flex flex-col items-center gap-2">
+                                                    <Calendar className="h-8 w-8 text-muted-foreground/50" />
+                                                    <p>{t('opt_session.no_sessions')}</p>
+                                                    <Button
+                                                        render={
+                                                            <Link href="/opt-sessions/create" />
+                                                        }
+                                                        variant="outline"
+                                                    >
+                                                        {t('opt_session.create_first')}
+                                                    </Button>
+                                                </div>
+                                            </TableCell>
+                                        </TableRow>
+                                    ) : (
+                                        sessions.data.map((session) => (
+                                            <TableRow
+                                                key={session.id}
+                                                className={
+                                                    selectedIds.has(session.id)
+                                                        ? 'bg-accent/50'
+                                                        : ''
+                                                }
+                                            >
+                                                <TableCell>
+                                                    <Checkbox
+                                                        checked={selectedIds.has(
+                                                            session.id,
+                                                        )}
+                                                        onCheckedChange={() =>
+                                                            toggleSelect(session.id)
+                                                        }
+                                                        aria-label={`Select ${session.name}`}
+                                                    />
+                                                </TableCell>
+                                                <TableCell className="font-medium">
+                                                    {session.name}
+                                                </TableCell>
+                                                <TableCell>
+                                                    {session.barangay.name}
+                                                </TableCell>
+                                                <TableCell>
+                                                    {new Date(
+                                                        session.session_date,
+                                                    ).toLocaleDateString('en-US', {
+                                                        month: 'short',
+                                                        year: 'numeric',
+                                                    })}
+                                                </TableCell>
+                                                <TableCell>
+                                                    <Badge
+                                                        variant="outline"
+                                                        className={
+                                                            statusColors[
+                                                                session.status
+                                                            ]
+                                                        }
+                                                    >
+                                                        {getStatusLabel(
+                                                            session.status,
+                                                        )}
+                                                    </Badge>
+                                                </TableCell>
+                                                <TableCell className="text-center">
+                                                    {session.target_children}
+                                                </TableCell>
+                                                <TableCell className="text-center">
+                                                    {session.measured_children}
+                                                </TableCell>
+                                                <TableCell className="text-center">
+                                                    <span
+                                                        className={
+                                                            session.coverage_percentage >=
+                                                            80
+                                                                ? 'font-medium text-green-600 dark:text-green-400'
+                                                                : session.coverage_percentage >=
+                                                                    50
+                                                                  ? 'text-yellow-600 dark:text-yellow-400'
+                                                                  : 'text-red-600 dark:text-red-400'
+                                                        }
+                                                    >
+                                                        {session.coverage_percentage.toFixed(
+                                                            1,
+                                                        )}
+                                                        %
+                                                    </span>
+                                                </TableCell>
+                                                <TableCell className="text-right">
+                                                    <div className="flex items-center justify-end gap-1">
+                                                        {session.status === 'scheduled' && (
+                                                            <Button
+                                                                variant="ghost"
+                                                                size="sm"
+                                                                onClick={() =>
+                                                                    router.post(
+                                                                        `/opt-sessions/${session.id}/start`,
+                                                                        undefined,
+                                                                        {
+                                                                            preserveState: true,
+                                                                        },
+                                                                    )
+                                                                }
+                                                                title="Start session"
+                                                            >
+                                                                <Play className="h-4 w-4 text-green-600" />
+                                                            </Button>
+                                                        )}
+                                                        {session.status === 'in_progress' && (
+                                                            <Button
+                                                                variant="ghost"
+                                                                size="sm"
+                                                                onClick={() =>
+                                                                    router.post(
+                                                                        `/opt-sessions/${session.id}/complete`,
+                                                                        undefined,
+                                                                        {
+                                                                            preserveState: true,
+                                                                        },
+                                                                    )
+                                                                }
+                                                                title="Complete session"
+                                                            >
+                                                                <CheckCheck className="h-4 w-4 text-blue-600" />
+                                                            </Button>
+                                                        )}
+                                                        {(session.status === 'scheduled' ||
+                                                            session.status === 'in_progress') && (
+                                                            <Button
+                                                                variant="ghost"
+                                                                size="sm"
+                                                                onClick={() =>
+                                                                    router.post(
+                                                                        `/opt-sessions/${session.id}/cancel`,
+                                                                        undefined,
+                                                                        {
+                                                                            preserveState: true,
+                                                                        },
+                                                                    )
+                                                                }
+                                                                title="Cancel session"
+                                                            >
+                                                                <SquareX className="h-4 w-4 text-red-600" />
+                                                            </Button>
+                                                        )}
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="sm"
+                                                            render={
+                                                                <Link
+                                                                    href={`/opt-sessions/${session.id}`}
+                                                                />
+                                                            }
+                                                        >
+                                                            <Eye className="h-4 w-4" />
+                                                        </Button>
+                                                    </div>
+                                                </TableCell>
+                                            </TableRow>
+                                        ))
+                                    )}
+                                </TableBody>
+                            </Table>
+                        </div>
+
+                        {/* Mobile Cards */}
+                        <div className="block sm:hidden space-y-3 p-4">
+                            {sessions.data.length === 0 ? (
+                                <div className="flex flex-col items-center gap-2 py-12 text-center text-muted-foreground">
+                                    <Calendar className="h-8 w-8 text-muted-foreground/50" />
+                                    <p>{t('opt_session.no_sessions')}</p>
+                                    <Button
+                                        render={
+                                            <Link href="/opt-sessions/create" />
+                                        }
+                                        variant="outline"
+                                    >
+                                        {t('opt_session.create_first')}
+                                    </Button>
+                                </div>
+                            ) : (
+                                sessions.data.map((session) => (
+                                    <div key={session.id} className="rounded-lg border bg-card p-4 shadow-sm space-y-2">
+                                        <div className="flex items-start justify-between gap-2">
+                                            <div className="flex items-center gap-2 min-w-0">
                                                 <Checkbox
                                                     checked={selectedIds.has(
                                                         session.id,
@@ -389,140 +549,127 @@ export default function Index({ sessions, years, filters }: Props) {
                                                     }
                                                     aria-label={`Select ${session.name}`}
                                                 />
-                                            </TableCell>
-                                            <TableCell className="font-medium">
-                                                {session.name}
-                                            </TableCell>
-                                            <TableCell>
-                                                {session.barangay.name}
-                                            </TableCell>
-                                            <TableCell>
+                                                <h3 className="font-medium truncate">
+                                                    {session.name}
+                                                </h3>
+                                            </div>
+                                            <Badge
+                                                variant="outline"
+                                                className={`shrink-0 ${statusColors[session.status]}`}
+                                            >
+                                                {getStatusLabel(
+                                                    session.status,
+                                                )}
+                                            </Badge>
+                                        </div>
+                                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                            <span>{session.barangay.name}</span>
+                                            <span>•</span>
+                                            <span>
                                                 {new Date(
                                                     session.session_date,
                                                 ).toLocaleDateString('en-US', {
                                                     month: 'short',
                                                     year: 'numeric',
                                                 })}
-                                            </TableCell>
-                                            <TableCell>
-                                                <Badge
-                                                    variant="outline"
-                                                    className={
-                                                        statusColors[
-                                                            session.status
-                                                        ]
-                                                    }
-                                                >
-                                                    {getStatusLabel(
-                                                        session.status,
-                                                    )}
-                                                </Badge>
-                                            </TableCell>
-                                            <TableCell className="text-center">
+                                            </span>
+                                        </div>
+                                        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
+                                            <span>
+                                                <span className="text-muted-foreground">{t('opt_session.target')}:</span>{' '}
                                                 {session.target_children}
-                                            </TableCell>
-                                            <TableCell className="text-center">
+                                            </span>
+                                            <span>
+                                                <span className="text-muted-foreground">{t('opt_session.measured')}:</span>{' '}
                                                 {session.measured_children}
-                                            </TableCell>
-                                            <TableCell className="text-center">
+                                            </span>
+                                            <span>
+                                                <span className="text-muted-foreground">{t('opt_session.coverage')}:</span>{' '}
                                                 <span
                                                     className={
-                                                        session.coverage_percentage >=
-                                                        80
+                                                        session.coverage_percentage >= 80
                                                             ? 'font-medium text-green-600 dark:text-green-400'
-                                                            : session.coverage_percentage >=
-                                                                50
+                                                            : session.coverage_percentage >= 50
                                                               ? 'text-yellow-600 dark:text-yellow-400'
                                                               : 'text-red-600 dark:text-red-400'
                                                     }
                                                 >
-                                                    {session.coverage_percentage.toFixed(
-                                                        1,
-                                                    )}
-                                                    %
+                                                    {session.coverage_percentage.toFixed(1)}%
                                                 </span>
-                                            </TableCell>
-                                            <TableCell className="text-right">
-                                                <div className="flex items-center justify-end gap-1">
-                                                    {session.status === 'scheduled' && (
-                                                        <Button
-                                                            variant="ghost"
-                                                            size="sm"
-                                                            onClick={() =>
-                                                                router.post(
-                                                                    `/opt-sessions/${session.id}/start`,
-                                                                    undefined,
-                                                                    {
-                                                                        preserveState: true,
-                                                                    },
-                                                                )
-                                                            }
-                                                            title="Start session"
-                                                        >
-                                                            <Play className="h-4 w-4 text-green-600" />
-                                                        </Button>
-                                                    )}
-                                                    {session.status === 'in_progress' && (
-                                                        <Button
-                                                            variant="ghost"
-                                                            size="sm"
-                                                            onClick={() =>
-                                                                router.post(
-                                                                    `/opt-sessions/${session.id}/complete`,
-                                                                    undefined,
-                                                                    {
-                                                                        preserveState: true,
-                                                                    },
-                                                                )
-                                                            }
-                                                            title="Complete session"
-                                                        >
-                                                            <CheckCheck className="h-4 w-4 text-blue-600" />
-                                                        </Button>
-                                                    )}
-                                                    {(session.status === 'scheduled' ||
-                                                        session.status === 'in_progress') && (
-                                                        <Button
-                                                            variant="ghost"
-                                                            size="sm"
-                                                            onClick={() =>
-                                                                router.post(
-                                                                    `/opt-sessions/${session.id}/cancel`,
-                                                                    undefined,
-                                                                    {
-                                                                        preserveState: true,
-                                                                    },
-                                                                )
-                                                            }
-                                                            title="Cancel session"
-                                                        >
-                                                            <SquareX className="h-4 w-4 text-red-600" />
-                                                        </Button>
-                                                    )}
-                                                    <Button
-                                                        variant="ghost"
-                                                        size="sm"
-                                                        render={
-                                                            <Link
-                                                                href={`/opt-sessions/${session.id}`}
-                                                            />
-                                                        }
-                                                    >
-                                                        <Eye className="h-4 w-4" />
-                                                    </Button>
-                                                </div>
-                                            </TableCell>
-                                        </TableRow>
-                                    ))
-                                )}
-                            </TableBody>
-                        </Table>
+                                            </span>
+                                        </div>
+                                        <div className="flex items-center gap-1 pt-1">
+                                            {session.status === 'scheduled' && (
+                                                <Button
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    onClick={() =>
+                                                        router.post(
+                                                            `/opt-sessions/${session.id}/start`,
+                                                            undefined,
+                                                            { preserveState: true },
+                                                        )
+                                                    }
+                                                    title="Start session"
+                                                >
+                                                    <Play className="h-4 w-4 text-green-600" />
+                                                </Button>
+                                            )}
+                                            {session.status === 'in_progress' && (
+                                                <Button
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    onClick={() =>
+                                                        router.post(
+                                                            `/opt-sessions/${session.id}/complete`,
+                                                            undefined,
+                                                            { preserveState: true },
+                                                        )
+                                                    }
+                                                    title="Complete session"
+                                                >
+                                                    <CheckCheck className="h-4 w-4 text-blue-600" />
+                                                </Button>
+                                            )}
+                                            {(session.status === 'scheduled' ||
+                                                session.status === 'in_progress') && (
+                                                <Button
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    onClick={() =>
+                                                        router.post(
+                                                            `/opt-sessions/${session.id}/cancel`,
+                                                            undefined,
+                                                            { preserveState: true },
+                                                        )
+                                                    }
+                                                    title="Cancel session"
+                                                >
+                                                    <SquareX className="h-4 w-4 text-red-600" />
+                                                </Button>
+                                            )}
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                render={
+                                                    <Link
+                                                        href={`/opt-sessions/${session.id}`}
+                                                    />
+                                                }
+                                            >
+                                                <Eye className="h-4 w-4" />
+                                            </Button>
+                                        </div>
+                                    </div>
+                                ))
+                            )}
+                        </div>
                     </CardContent>
                 </Card>
 
                 {/* Pagination info */}
                 {sessions.total > 0 && (
-                    <div className="text-center text-sm text-muted-foreground">
+                    <div className="hidden sm:block text-center text-sm text-muted-foreground">
                         {t('opt_session.showing')} {sessions.data.length} {t('opt_session.of')} {sessions.total}{' '}
                         {t('opt_session.session')}
                         {sessions.total === 1 ? '' : 's'}

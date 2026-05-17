@@ -217,7 +217,7 @@ export default function Show({ session, stats, recentMeasurements }: Props) {
 
             <div className="space-y-6">
                 {/* Header */}
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <div className="flex items-center gap-4">
                         <Button
                             variant="outline"
@@ -249,7 +249,7 @@ export default function Show({ session, stats, recentMeasurements }: Props) {
                             </p>
                         </div>
                     </div>
-                    <div className="flex gap-2">
+                    <div className="flex flex-wrap gap-2">
                         {session.status === 'scheduled' && (
                             <>
                                 <Button variant="outline" onClick={handleStart}>
