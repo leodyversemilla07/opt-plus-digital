@@ -182,7 +182,7 @@ export default function Create({ roles, barangays }: Props) {
                                             onChange={(e) =>
                                                 setData('phone', e.target.value)
                                             }
-                                            placeholder="09XX XXX XXXX"
+                                            placeholder={t('users.phone_placeholder')}
                                         />
                                         {errors.phone && (
                                             <FieldDescription className="text-red-500">

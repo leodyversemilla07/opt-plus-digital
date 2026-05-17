@@ -456,7 +456,7 @@ export default function Create({ barangays }: Props) {
                                                     e.target.value,
                                                 )
                                             }
-                                            placeholder="09XX XXX XXXX"
+                                            placeholder={t('users.phone_placeholder')}
                                         />
                                     </Field>
                                 </FieldGroup>

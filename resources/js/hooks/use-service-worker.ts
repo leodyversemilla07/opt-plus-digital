@@ -35,11 +35,6 @@ export function useServiceWorker() {
                     },
                 );
 
-                console.log(
-                    '[SW] Service Worker registered:',
-                    registration.scope,
-                );
-
                 setState((prev) => ({
                     ...prev,
                     isRegistered: true,
@@ -100,7 +95,6 @@ export function useServiceWorker() {
                 await (state.registration as any).sync.register(
                     'sync-measurements',
                 );
-                console.log('[SW] Background sync registered');
             } catch (error) {
                 console.error('[SW] Background sync failed:', error);
             }

@@ -1,9 +1,10 @@
 # OPT Plus Digital System
 
-[![Laravel](https://img.shields.io/badge/Laravel-12.36-FF2D20?style=flat&logo=laravel)](https://laravel.com)
-[![React](https://img.shields.io/badge/React-19.2-61DAFB?style=flat&logo=react)](https://react.dev)
+[![Laravel](https://img.shields.io/badge/Laravel-13.9-FF2D20?style=flat&logo=laravel)](https://laravel.com)
+[![React](https://img.shields.io/badge/React-19-61DAFB?style=flat&logo=react)](https://react.dev)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178C6?style=flat&logo=typescript)](https://www.typescriptlang.org)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.1-38B2AC?style=flat&logo=tailwind-css)](https://tailwindcss.com)
+[![Tests](https://img.shields.io/badge/Tests-425%20passing-brightgreen)](tests/)
 
 > **Modernizing nutrition surveillance for Filipino children at the barangay level through digital innovation.**
 
@@ -29,7 +30,7 @@ A comprehensive Progressive Web Application (PWA) for the Operation Timbang Plus
 
 ### Prerequisites
 
-- **PHP 8.3+** with extensions: `pdo`, `mbstring`, `openssl`, `json`, `curl`
+- **PHP 8.4+** with extensions: `pdo`, `mbstring`, `openssl`, `json`, `curl`
 - **Composer 2.x**
 - **Node.js 20+** and npm
 - **MySQL 8.0+** or **SQLite** (for development)
